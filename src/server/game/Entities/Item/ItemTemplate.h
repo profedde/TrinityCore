@@ -460,7 +460,8 @@ enum ItemSubclassGem
     ITEM_SUBCLASS_GEM_SIMPLE                    = 7,
     ITEM_SUBCLASS_GEM_PRISMATIC                 = 8,
     ITEM_SUBCLASS_GEM_HYDRAULIC                 = 9,
-    ITEM_SUBCLASS_GEM_COGWHEEL                  = 10
+    ITEM_SUBCLASS_GEM_COGWHEEL                  = 10,
+	ITEM_SUBCLASS_GEM_SHA_TOUCHED				= 16,
 };
 
 #define MAX_ITEM_SUBCLASS_GEM                     11

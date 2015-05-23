@@ -2451,6 +2451,74 @@ class spell_item_pygmy_oil : public SpellScriptLoader
         }
 };
 
+/*
+enum shatounched
+{
+	SHA_TOUCHED1 = 86226,
+	SHA_TOUCHED2 = 86227,
+	SHA_TOUCHED3 = 86321,
+	SHA_TOUCHED4 = 86328,
+	SHA_TOUCHED5 = 86331,
+	SHA_TOUCHED6 = 86335,
+	SHA_TOUCHED7 = 86386,
+	SHA_TOUCHED8 = 86387,
+	SHA_TOUCHED9 = 86391,
+	SHA_TOUCHED10 = 86864,
+	SHA_TOUCHED11 = 86865,
+	SHA_TOUCHED12 = 86879,
+	SHA_TOUCHED13 = 86886,
+	SHA_TOUCHED14 = 86889,
+	SHA_TOUCHED15 = 86893,
+	SHA_TOUCHED16 = 86905,
+	SHA_TOUCHED17 = 86906,
+	SHA_TOUCHED18 = 86910,
+	SHA_TOUCHED19 = 86988,
+	SHA_TOUCHED20 = 86990,
+	SHA_TOUCHED21 = 87156,
+	SHA_TOUCHED22 = 87164,
+	SHA_TOUCHED23 = 87166,
+	SHA_TOUCHED24 = 87168,
+	SHA_TOUCHED25 = 87170,
+	SHA_TOUCHED26 = 87173,
+	SHA_TOUCHED27 = 87176,
+};*/
+
+class spell_item_eye_of_the_black_prince : public SpellScriptLoader
+{
+	public:
+		spell_item_eye_of_the_black_prince() : SpellScriptLoader("spell_item_eye_of_the_black_prince") { }
+
+		class spell_item_eye_of_the_black_prince_SpellScript : public SpellScript
+		{
+			PrepareSpellScript(spell_item_eye_of_the_black_prince_SpellScript);
+			void HandleDummy(SpellEffIndex /* effIndex */)
+			{
+				Unit* caster = GetCaster();
+				
+				Item* targetitem = GetExplTargetItem();
+				if (targetitem->GetOwner == caster)
+				{
+					if (targetitem->GetSocketColor = ITEM_SUBCLASS_GEM_SHA_TOUCHED)
+					{
+						if (!targetitem->GetEnchantmentId = PRISMATIC_ENCHANTMENT_SLOT)
+							targetitem->SetEnchantment = PRISMATIC_ENCHANTMENT_SLOT;
+					}
+				}
+			}
+
+			void Register() override
+			{
+				OnEffectHitTarget += SpellEffectFn(spell_item_eye_of_the_black_prince_SpellScript::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
+			}
+		};
+
+	SpellScript* GetSpellScript() const override
+	{
+		return new spell_item_eye_of_the_black_prince_SpellScript();
+	}
+};
+
+
 class spell_item_unusual_compass : public SpellScriptLoader
 {
     public:
@@ -2603,6 +2671,7 @@ void AddSC_item_spell_scripts()
     new spell_item_trigger_spell("spell_item_mithril_mechanical_dragonling", SPELL_MITHRIL_MECHANICAL_DRAGONLING);
 
     new spell_item_aegis_of_preservation();
+	new spell_item_eye_of_the_black_prince();
     new spell_item_arcane_shroud();
     new spell_item_blessing_of_ancient_kings();
     new spell_item_defibrillate("spell_item_goblin_jumper_cables", 67, SPELL_GOBLIN_JUMPER_CABLES_FAIL);
