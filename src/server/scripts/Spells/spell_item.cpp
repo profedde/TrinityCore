@@ -2451,7 +2451,7 @@ class spell_item_pygmy_oil : public SpellScriptLoader
         }
 };
 
-/*
+
 enum shatounched
 {
 	SHA_TOUCHED1 = 86226,
@@ -2481,7 +2481,7 @@ enum shatounched
 	SHA_TOUCHED25 = 87170,
 	SHA_TOUCHED26 = 87173,
 	SHA_TOUCHED27 = 87176,
-};*/
+};
 
 class spell_item_eye_of_the_black_prince : public SpellScriptLoader
 {
@@ -2496,14 +2496,13 @@ class spell_item_eye_of_the_black_prince : public SpellScriptLoader
 				Unit* caster = GetCaster();
 				
 				Item* targetitem = GetExplTargetItem();
-				if (targetitem->GetOwner == caster)
-				{
-					if (targetitem->GetSocketColor = ITEM_SUBCLASS_GEM_SHA_TOUCHED)
+				//if (targetitem->GetOwner() == caster)
+				//{
+					if (targetitem->GetEntry() == SHA_TOUCHED1)
 					{
-						if (!targetitem->GetEnchantmentId = PRISMATIC_ENCHANTMENT_SLOT)
-							targetitem->SetEnchantment = PRISMATIC_ENCHANTMENT_SLOT;
+						
 					}
-				}
+				//}
 			}
 
 			void Register() override
