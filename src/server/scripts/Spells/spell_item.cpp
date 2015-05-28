@@ -2500,7 +2500,7 @@ class spell_item_eye_of_the_black_prince : public SpellScriptLoader
 				//{
 					if (targetitem->GetEntry() != SHA_TOUCHED1)
 						{
-							return false;
+							return;
 						}
 				//}
 			}
