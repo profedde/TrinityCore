@@ -2491,7 +2491,7 @@ class spell_item_eye_of_the_black_prince : public SpellScriptLoader
 		class spell_item_eye_of_the_black_prince_SpellScript : public SpellScript
 		{
 			PrepareSpellScript(spell_item_eye_of_the_black_prince_SpellScript);
-			void HandleDummy(SpellEffIndex /* effIndex */)
+			bool Validate(SpellInfo const* /*spell*/) override
 			{
 				Unit* caster = GetCaster();
 				
@@ -2505,6 +2505,9 @@ class spell_item_eye_of_the_black_prince : public SpellScriptLoader
 				//}
 			}
 
+			void HandleDummy(SpellEffIndex /* effIndex */)
+			{
+			}
 			void Register() override
 			{
 				OnEffectHitTarget += SpellEffectFn(spell_item_eye_of_the_black_prince_SpellScript::HandleDummy, EFFECT_0, SPELL_EFFECT_ENCHANT_ITEM_PRISMATIC);
