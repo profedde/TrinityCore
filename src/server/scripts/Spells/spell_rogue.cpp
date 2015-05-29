@@ -736,15 +736,12 @@ class spell_rog_stealth : public SpellScriptLoader
             {
                 if (!sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE) ||
                     !sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_DAMAGE_PERCENT) ||
-                    !sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_PERIODIC) ||
-                    !sSpellMgr->GetSpellInfo(SPELL_ROGUE_OVERKILL_TALENT) ||
-                    !sSpellMgr->GetSpellInfo(SPELL_ROGUE_OVERKILL_POWER_REGEN) ||
-                    !sSpellMgr->GetSpellInfo(SPELL_ROGUE_OVERKILL_PERIODIC))
+                    !sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_PERIODIC))
                     return false;
                 return true;
             }
 
-            void HandleEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+            void HandleEffectApply(AuraEffect const* aurEff, AuraEffectHandleModes mode)
             {
                 Unit* target = GetTarget();
 
@@ -754,10 +751,6 @@ class spell_rog_stealth : public SpellScriptLoader
                     int32 basepoints0 = aurEff->GetAmount();
                     target->CastCustomSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_DAMAGE_PERCENT, &basepoints0, NULL, NULL, true);
                 }
-
-                // Overkill
-                if (target->HasAura(SPELL_ROGUE_OVERKILL_TALENT))
-                    target->CastSpell(target, SPELL_ROGUE_OVERKILL_POWER_REGEN, true);
             }
 
             void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
@@ -767,11 +760,7 @@ class spell_rog_stealth : public SpellScriptLoader
                 // Master of subtlety
                 if (target->HasAura(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE))
                     target->CastSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_PERIODIC, true);
-
-                // Overkill
-                if (target->HasAura(SPELL_ROGUE_OVERKILL_TALENT))
-                    target->CastSpell(target, SPELL_ROGUE_OVERKILL_PERIODIC, true);
-            }
+				}
 
             void Register()
             {
