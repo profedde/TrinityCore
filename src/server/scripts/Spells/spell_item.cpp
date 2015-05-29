@@ -2498,7 +2498,7 @@ class spell_item_eye_of_the_black_prince : public SpellScriptLoader
 				Item* targetitem = GetExplTargetItem();
 				//if (targetitem->GetOwner() == caster)
 				//{
-					if (targetitem->GetEntry != SHA_TOUCHED1)
+					if (targetitem->GetEntry() != SHA_TOUCHED1)
 						{
 							return;
 						}
