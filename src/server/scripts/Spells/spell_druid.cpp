@@ -1109,9 +1109,9 @@ public:
 				{
 					caster->SetShapeshiftForm(FORM_AQUA);
 					caster->SetDisplayId(caster->GetModelForForm(FORM_AQUA));
-					caster->SetSpeed(MOVE_SWIM, caster->GetSpeedRate(MOVE_SWIM)*1.5f, false);
-					caster->SetSpeed(MOVE_RUN, caster->GetSpeedRate(MOVE_RUN), false);
-					caster->SetSpeed(MOVE_FLIGHT, caster->GetSpeedRate(MOVE_FLIGHT), false);
+					caster->SetSpeed(MOVE_SWIM, playerBaseMoveSpeed[MOVE_SWIM]* 1.5f, false);
+					caster->SetSpeed(MOVE_RUN, playerBaseMoveSpeed[MOVE_RUN], false);
+					caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveSpeed[MOVE_FLIGHT], false);
 					caster->SetCanFly(false);
 				}
 				else if (caster->CanFlyInZone(caster->GetMapId(),caster->GetZoneId()))
@@ -1119,17 +1119,17 @@ public:
 					caster->SetShapeshiftForm(FORM_FLIGHT);
 					caster->SetDisplayId(caster->GetModelForForm(FORM_FLIGHT));
 					caster->SetCanFly(true);
-					caster->SetSpeed(MOVE_FLIGHT, caster->GetSpeedRate(MOVE_FLIGHT)*2.5f, false);
-					caster->SetSpeed(MOVE_RUN, caster->GetSpeedRate(MOVE_RUN), false);
-					caster->SetSpeed(MOVE_SWIM, caster->GetSpeedRate(MOVE_SWIM), false);
+					caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveSpeed[MOVE_FLIGHT] * 2.5f, false);
+					caster->SetSpeed(MOVE_RUN, playerBaseMoveSpeed[MOVE_RUN], false);
+					caster->SetSpeed(MOVE_SWIM, playerBaseMoveSpeed[MOVE_SWIM], false);
 				}
 				else 
 				{
 					caster->SetShapeshiftForm(FORM_TRAVEL);
 					caster->SetDisplayId(caster->GetModelForForm(FORM_TRAVEL));
-					caster->SetSpeed(MOVE_RUN, caster->GetSpeedRate(MOVE_RUN)*1.4f, false);
-					caster->SetSpeed(MOVE_SWIM, caster->GetSpeedRate(MOVE_SWIM), false);
-					caster->SetSpeed(MOVE_FLIGHT, caster->GetSpeedRate(MOVE_FLIGHT), false);
+					caster->SetSpeed(MOVE_RUN, playerBaseMoveSpeed[MOVE_RUN] * 1.4f, false);
+					caster->SetSpeed(MOVE_SWIM, playerBaseMoveSpeed[MOVE_SWIM], false);
+					caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveSpeed[MOVE_FLIGHT], false);
 					caster->SetCanFly(false);
 				}
 			}
@@ -1140,11 +1140,11 @@ public:
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
 				caster->SetShapeshiftForm(FORM_NONE);
-				caster->SetCanFly(false);
-				caster->SetDisplayId(caster->GetModelForForm(FORM_NONE));
-				caster->SetSpeed(MOVE_RUN, caster->GetSpeedRate(MOVE_RUN), false);
-				caster->SetSpeed(MOVE_SWIM, caster->GetSpeedRate(MOVE_SWIM), false);
-				caster->SetSpeed(MOVE_FLIGHT, caster->GetSpeedRate(MOVE_FLIGHT), false);
+				caster->SetCanFly(false);				
+				caster->RestoreDisplayId();
+				caster->SetSpeed(MOVE_RUN, playerBaseMoveSpeed[MOVE_RUN], false);
+				caster->SetSpeed(MOVE_SWIM, playerBaseMoveSpeed[MOVE_SWIM], false);
+				caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveSpeed[MOVE_FLIGHT], false);
 			}
 		}
 
