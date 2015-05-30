@@ -1085,6 +1085,47 @@ class spell_dru_tiger_s_fury : public SpellScriptLoader
         }
 };
 
+
+// Travel Form - 783
+class spell_dru_travel_form : public SpellScriptLoader
+{
+public:
+	spell_dru_travel_form() : SpellScriptLoader("spell_dru_travel_form") { }
+
+	class spell_dru_travel_form_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_travel_form_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void OnApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{ 
+				if (caster->IsInWater())
+					caster->SetShapeshiftForm(FORM_AQUA);
+				else if (caster->CanFly())
+					caster->SetShapeshiftForm(FORM_FLIGHT);
+				else 
+					caster->SetShapeshiftForm(FORM_TRAVEL);
+			}
+		}
+
+		void Register() override
+		{
+			OnEffectApply += AuraEffectApplyFn(spell_dru_travel_form_AuraScript::OnApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_travel_form_AuraScript();
+	}
+};
+
 // 61391 - Typhoon
 class spell_dru_typhoon : public SpellScriptLoader
 {
@@ -1264,6 +1305,7 @@ void AddSC_druid_spell_scripts()
     new spell_dru_survival_instincts();
     new spell_dru_swift_flight_passive();
     new spell_dru_tiger_s_fury();
+	new spell_dru_travel_form();
     new spell_dru_typhoon();
     new spell_dru_t10_restoration_4p_bonus();
     new spell_dru_wild_growth();
