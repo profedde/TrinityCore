@@ -1101,7 +1101,7 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 
-		void OnApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		void AfterApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{ 
@@ -1114,9 +1114,19 @@ public:
 			}
 		}
 
+		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				caster->SetShapeshiftForm(FORM_NONE);
+			}
+		}
+
 		void Register() override
 		{
-			OnEffectApply += AuraEffectApplyFn(spell_dru_travel_form_AuraScript::OnApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			AfterEffectApply += AuraEffectApplyFn(spell_dru_travel_form_AuraScript::AfterApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_travel_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+
 		}
 	};
 
