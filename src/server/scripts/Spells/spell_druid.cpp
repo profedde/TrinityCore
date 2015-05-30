@@ -1114,13 +1114,21 @@ public:
 					caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveRate[MOVE_FLIGHT], false);
 					caster->SetCanFly(false);
 				}
-				else if (caster->CanFlyInZone(caster->GetMapId(),caster->GetZoneId()))
+				else if (caster->GetSkillValue(SKILL_RIDING) >= 225 && 
+					((caster->GetMapId() == 530) || 
+					(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
+					(caster->HasSpell(115193) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
+					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646))))
 				{
+					if (caster->GetSkillValue(SKILL_RIDING) >= 375)
+						caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveRate[MOVE_FLIGHT] * 4.1f, false);
+					else if (caster->GetSkillValue(SKILL_RIDING) >= 300)
+						caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveRate[MOVE_FLIGHT] * 3.8f, false);
+					else
+						caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveRate[MOVE_FLIGHT] * 1.5f, false);
 					caster->SetShapeshiftForm(FORM_FLIGHT);
 					caster->SetDisplayId(caster->GetModelForForm(FORM_FLIGHT));
 					caster->SetCanFly(true);
-					
-					caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveRate[MOVE_FLIGHT] * 2.5f, false);
 					caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN], false);
 					caster->SetSpeed(MOVE_SWIM, playerBaseMoveRate[MOVE_SWIM], false);
 				}
