@@ -83,6 +83,18 @@ float baseMoveSpeed[MAX_MOVE_TYPE] =
     4.5f,                  // MOVE_FLIGHT_BACK
     3.14f                  // MOVE_PITCH_RATE
 };
+float playerBaseMoveRate[MAX_MOVE_TYPE] =
+{
+	2.5f/7,                  // MOVE_WALK
+	7.0f/7,                  // MOVE_RUN
+	4.5f/7,                  // MOVE_RUN_BACK
+	4.722222f/7,             // MOVE_SWIM
+	2.5f/7,                  // MOVE_SWIM_BACK
+	3.141594f/7,             // MOVE_TURN_RATE
+	7.0f/7,                  // MOVE_FLIGHT
+	4.5f/7,                  // MOVE_FLIGHT_BACK
+	3.14f/7                  // MOVE_PITCH_RATE
+};
 
 float playerBaseMoveSpeed[MAX_MOVE_TYPE] =
 {
