@@ -1106,11 +1106,24 @@ public:
 			if (Player* caster = GetCaster()->ToPlayer())
 			{ 
 				if (caster->IsInWater())
+				{
 					caster->SetShapeshiftForm(FORM_AQUA);
-				else if (caster->CanFly())
+					caster->SetDisplayId(caster->GetModelForForm(FORM_AQUA));
+					caster->SetSpeed(MOVE_SWIM, caster->GetSpeed(MOVE_SWIM)*1.5f, false);
+				}
+				else if (caster->CanFlyInZone(caster->GetMapId(),caster->GetZoneId()))
+				{
 					caster->SetShapeshiftForm(FORM_FLIGHT);
+					caster->SetDisplayId(caster->GetModelForForm(FORM_FLIGHT));
+					caster->SetCanFly(true);
+					caster->SetSpeed(MOVE_FLIGHT, caster->GetSpeed(MOVE_FLIGHT)*2.5f, false);
+				}
 				else 
+				{
 					caster->SetShapeshiftForm(FORM_TRAVEL);
+					caster->SetDisplayId(caster->GetModelForForm(FORM_TRAVEL));
+					caster->SetSpeed(MOVE_RUN, caster->GetSpeed(MOVE_RUN)*1.4f, false);
+				}
 			}
 		}
 
