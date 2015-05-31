@@ -1594,7 +1594,6 @@ bool SpellInfo::IsAuraExclusiveBySpecificWith(SpellInfo const* spellInfo) const
         case SPELL_SPECIFIC_PRESENCE:
         case SPELL_SPECIFIC_CHARM:
         case SPELL_SPECIFIC_SCROLL:
-        case SPELL_SPECIFIC_WARRIOR_ENRAGE:
         case SPELL_SPECIFIC_MAGE_ARCANE_BRILLANCE:
         case SPELL_SPECIFIC_PRIEST_DIVINE_SPIRIT:
             return spellSpec1 == spellSpec2;
@@ -2300,8 +2299,6 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
                     case 8115: // Agility
                     case 8091: // Armor
                         return SPELL_SPECIFIC_SCROLL;
-                    case 12880: // Enrage (Enrage)
-                        return SPELL_SPECIFIC_WARRIOR_ENRAGE;
                 }
             }
             break;
