@@ -2301,7 +2301,6 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
                     case 8091: // Armor
                         return SPELL_SPECIFIC_SCROLL;
                     case 12880: // Enrage (Enrage)
-                    case 57518: // Enrage (Wrecking Crew)
                         return SPELL_SPECIFIC_WARRIOR_ENRAGE;
                 }
             }
@@ -2319,13 +2318,6 @@ SpellSpecificType SpellInfo::GetSpellSpecific() const
             SpellEffectInfo const* effect = GetEffect(DIFFICULTY_NONE, EFFECT_0);
             if (effect && (SpellFamilyFlags[0] & 0x1000000) && effect->ApplyAuraName == SPELL_AURA_MOD_CONFUSE)
                 return SPELL_SPECIFIC_MAGE_POLYMORPH;
-
-            break;
-        }
-        case SPELLFAMILY_WARRIOR:
-        {
-            if (Id == 12292) // Death Wish
-                return SPELL_SPECIFIC_WARRIOR_ENRAGE;
 
             break;
         }
