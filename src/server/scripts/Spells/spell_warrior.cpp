@@ -194,6 +194,45 @@ class spell_warr_concussion_blow : public SpellScriptLoader
         }
 };
 
+// enrage - 12880
+class spell_warr_enrage : public SpellScriptLoader
+{
+public:
+	spell_warr_enrage() : SpellScriptLoader("spell_warr_enrage") { }
+
+	class spell_warr_enrage_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_warr_enrage_AuraScript);
+
+		bool Validate(SpellInfo const* /*spellInfo*/) override
+		{
+			return true;
+		}
+
+		void OnProc(AuraEffect const* /*aurEff*/, ProcEventInfo& eventInfo)
+		{
+			Unit* caster = GetCaster();
+			float minDamage, maxDamage;
+			minDamage = caster->GetWeaponDamageRange(BASE_ATTACK, MINDAMAGE);
+			maxDamage = caster->GetWeaponDamageRange(BASE_ATTACK, MAXDAMAGE);
+			caster->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, minDamage *1.1f);
+			caster->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, maxDamage *1.1f);
+			
+		}
+
+		void Register() override
+		{
+			OnEffectProc += AuraEffectProcFn(spell_warr_enrage_AuraScript::OnProc, EFFECT_1, SPELL_AURA_MOD_DAMAGE_PERCENT_DONE);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_warr_enrage_AuraScript();
+	}
+};
+
+
 /// Updated 4.3.4
 class spell_warr_execute : public SpellScriptLoader
 {
@@ -295,43 +334,6 @@ class spell_warr_intimidating_shout : public SpellScriptLoader
         SpellScript* GetSpellScript() const override
         {
             return new spell_warr_intimidating_shout_SpellScript();
-        }
-};
-
-// -84583 Lambs to the Slaughter
-class spell_warr_lambs_to_the_slaughter : public SpellScriptLoader
-{
-    public:
-        spell_warr_lambs_to_the_slaughter() : SpellScriptLoader("spell_warr_lambs_to_the_slaughter") { }
-
-        class spell_warr_lambs_to_the_slaughter_AuraScript : public AuraScript
-        {
-            PrepareAuraScript(spell_warr_lambs_to_the_slaughter_AuraScript);
-
-            bool Validate(SpellInfo const* /*spellInfo*/) override
-            {
-                if (!sSpellMgr->GetSpellInfo(SPELL_WARRIOR_MORTAL_STRIKE) ||
-                    !sSpellMgr->GetSpellInfo(SPELL_WARRIOR_REND))
-                    return false;
-                return true;
-            }
-
-            void OnProc(AuraEffect const* /*aurEff*/, ProcEventInfo& eventInfo)
-            {
-                if (Aura* aur = eventInfo.GetProcTarget()->GetAura(SPELL_WARRIOR_REND, GetTarget()->GetGUID()))
-                    aur->SetDuration(aur->GetSpellInfo()->GetMaxDuration(), true);
-
-            }
-
-            void Register() override
-            {
-                OnEffectProc += AuraEffectProcFn(spell_warr_lambs_to_the_slaughter_AuraScript::OnProc, EFFECT_0, SPELL_AURA_PROC_TRIGGER_SPELL);
-            }
-        };
-
-        AuraScript* GetAuraScript() const override
-        {
-            return new spell_warr_lambs_to_the_slaughter_AuraScript();
         }
 };
 
@@ -1052,10 +1054,10 @@ void AddSC_warrior_spell_scripts()
     new spell_warr_bloodthirst();
     new spell_warr_charge();
     new spell_warr_concussion_blow();
+	new spell_warr_enrage();
     new spell_warr_execute();
     new spell_warr_improved_spell_reflection();
     new spell_warr_intimidating_shout();
-    new spell_warr_lambs_to_the_slaughter();
     new spell_warr_last_stand();
     new spell_warr_overpower();
     new spell_warr_rallying_cry();
