@@ -496,114 +496,113 @@ public:
 		case 57:
 		{
 			/* Classic Dungeons*/
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 97);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 98);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 99);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 100);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 101);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 102);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 103);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 104);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 105);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 106);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 107);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 108);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 109);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 110);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 111);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 112);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 113);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 114);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 115);
+			plr->ADD_GOSSIP_ITEM(3, "Blackfathom Deeps", GOSSIP_SENDER_MAIN, 97);
+			plr->ADD_GOSSIP_ITEM(3, "Blackrock Depths", GOSSIP_SENDER_MAIN, 98);
+			plr->ADD_GOSSIP_ITEM(3, "Blackrock Spire", GOSSIP_SENDER_MAIN, 99);
+			plr->ADD_GOSSIP_ITEM(3, "Dire Maul", GOSSIP_SENDER_MAIN, 100);
+			plr->ADD_GOSSIP_ITEM(3, "Gnomeregan", GOSSIP_SENDER_MAIN, 101);
+			plr->ADD_GOSSIP_ITEM(3, "Maraudon", GOSSIP_SENDER_MAIN, 102);
+			plr->ADD_GOSSIP_ITEM(3, "Ragefire Chasm", GOSSIP_SENDER_MAIN, 103);
+			plr->ADD_GOSSIP_ITEM(3, "Razorfen Downs", GOSSIP_SENDER_MAIN, 104);
+			plr->ADD_GOSSIP_ITEM(3, "Razorfen Kraul", GOSSIP_SENDER_MAIN, 105);
+			plr->ADD_GOSSIP_ITEM(3, "Scarlet Monastery", GOSSIP_SENDER_MAIN, 106);
+			plr->ADD_GOSSIP_ITEM(3, "Scholomance", GOSSIP_SENDER_MAIN, 107);
+			plr->ADD_GOSSIP_ITEM(3, "Shadowfang Keep", GOSSIP_SENDER_MAIN, 108);
+			plr->ADD_GOSSIP_ITEM(3, "Stratholme", GOSSIP_SENDER_MAIN, 109);
+			plr->ADD_GOSSIP_ITEM(3, "The Deadmines", GOSSIP_SENDER_MAIN, 110);
+			plr->ADD_GOSSIP_ITEM(3, "The Stockade", GOSSIP_SENDER_MAIN, 111);
+			plr->ADD_GOSSIP_ITEM(3, "The Temple of Atal'Hakkar", GOSSIP_SENDER_MAIN, 112);
+			plr->ADD_GOSSIP_ITEM(3, "Uldaman", GOSSIP_SENDER_MAIN, 113);
+			plr->ADD_GOSSIP_ITEM(3, "Wailing Caverns", GOSSIP_SENDER_MAIN, 114);
+			plr->ADD_GOSSIP_ITEM(3, "Zul'Farrak", GOSSIP_SENDER_MAIN, 115);
 			plr->SEND_GOSSIP_MENU(plr->GetGossipTextId(npc), npc->GetGUID());
 			break;
 		}
 		case 58:
 		{
 			/* TBC Dungeons*/
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 116);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 117);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 118);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 119);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 120);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 121);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 122);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 123);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 124);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 125);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 126);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 127);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 128);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 129);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 130);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 131);
+			plr->ADD_GOSSIP_ITEM(3, "Auchenai Crypts", GOSSIP_SENDER_MAIN, 116);
+			plr->ADD_GOSSIP_ITEM(3, "Hellfire Ramparts", GOSSIP_SENDER_MAIN, 117);
+			plr->ADD_GOSSIP_ITEM(3, "Magisters' Terrace", GOSSIP_SENDER_MAIN, 118);
+			plr->ADD_GOSSIP_ITEM(3, "Mana-Tombs", GOSSIP_SENDER_MAIN, 119);
+			plr->ADD_GOSSIP_ITEM(3, "Old Hillsbrad Foothills", GOSSIP_SENDER_MAIN, 120);
+			plr->ADD_GOSSIP_ITEM(3, "Sethekk Halls", GOSSIP_SENDER_MAIN, 121);
+			plr->ADD_GOSSIP_ITEM(3, "Shadow Labyrinth", GOSSIP_SENDER_MAIN, 122);
+			plr->ADD_GOSSIP_ITEM(3, "The Arcatraz", GOSSIP_SENDER_MAIN, 123);
+			plr->ADD_GOSSIP_ITEM(3, "The Black Morass", GOSSIP_SENDER_MAIN, 124);
+			plr->ADD_GOSSIP_ITEM(3, "The Blood Furnace", GOSSIP_SENDER_MAIN, 125);
+			plr->ADD_GOSSIP_ITEM(3, "The Botanica", GOSSIP_SENDER_MAIN, 126);
+			plr->ADD_GOSSIP_ITEM(3, "The Mechanar", GOSSIP_SENDER_MAIN, 127);
+			plr->ADD_GOSSIP_ITEM(3, "The Shattered Halls", GOSSIP_SENDER_MAIN, 128);
+			plr->ADD_GOSSIP_ITEM(3, "The Slave Pens", GOSSIP_SENDER_MAIN, 129);
+			plr->ADD_GOSSIP_ITEM(3, "The Steamvault", GOSSIP_SENDER_MAIN, 130);
+			plr->ADD_GOSSIP_ITEM(3, "The Underbog", GOSSIP_SENDER_MAIN, 131);
 			plr->SEND_GOSSIP_MENU(plr->GetGossipTextId(npc), npc->GetGUID());
 			break;
 		}
 		case 59:
 		{
 			/* WOTLK Dungeons*/
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 132);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 133);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 134);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 135);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 136);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 137);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 138);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 139);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 140);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 141);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 142);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 143);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 144);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 145);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 146);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 147);
+			plr->ADD_GOSSIP_ITEM(3, "Ahn'kahet: The Old Kingdom", GOSSIP_SENDER_MAIN, 132);
+			plr->ADD_GOSSIP_ITEM(3, "Azjol-Nerub", GOSSIP_SENDER_MAIN, 133);
+			plr->ADD_GOSSIP_ITEM(3, "Drak'Tharon Keep", GOSSIP_SENDER_MAIN, 134);
+			plr->ADD_GOSSIP_ITEM(3, "Gundrak", GOSSIP_SENDER_MAIN, 135);
+			plr->ADD_GOSSIP_ITEM(3, "Halls of Lightning", GOSSIP_SENDER_MAIN, 136);
+			plr->ADD_GOSSIP_ITEM(3, "Halls of Reflection", GOSSIP_SENDER_MAIN, 137);
+			plr->ADD_GOSSIP_ITEM(3, "Halls of Stone", GOSSIP_SENDER_MAIN, 138);
+			plr->ADD_GOSSIP_ITEM(3, "Pit of Saron", GOSSIP_SENDER_MAIN, 139);
+			plr->ADD_GOSSIP_ITEM(3, "The Culling of Stratholme", GOSSIP_SENDER_MAIN, 140);
+			plr->ADD_GOSSIP_ITEM(3, "The Forge of Souls", GOSSIP_SENDER_MAIN, 141);
+			plr->ADD_GOSSIP_ITEM(3, "The Nexus", GOSSIP_SENDER_MAIN, 142);
+			plr->ADD_GOSSIP_ITEM(3, "The Oculus", GOSSIP_SENDER_MAIN, 143);
+			plr->ADD_GOSSIP_ITEM(3, "The Violet Hold", GOSSIP_SENDER_MAIN, 144);
+			plr->ADD_GOSSIP_ITEM(3, "Trial of the Champion", GOSSIP_SENDER_MAIN, 145);
+			plr->ADD_GOSSIP_ITEM(3, "Utgarde Keep", GOSSIP_SENDER_MAIN, 146);
+			plr->ADD_GOSSIP_ITEM(3, "Utgarde Pinnacle", GOSSIP_SENDER_MAIN, 147);
 			plr->SEND_GOSSIP_MENU(plr->GetGossipTextId(npc), npc->GetGUID());
 			break;
 		}
 		case 60:
 		{
 			/* CATA Dungeons*/
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 148);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 149);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 150);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 151);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 152);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 153);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 154);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 155);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 156);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 157);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 158);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 159);
+			plr->ADD_GOSSIP_ITEM(3, "Blackrock Caverns", GOSSIP_SENDER_MAIN, 148);
+			plr->ADD_GOSSIP_ITEM(3, "End Time", GOSSIP_SENDER_MAIN, 149);
+			plr->ADD_GOSSIP_ITEM(3, "Grim Batol", GOSSIP_SENDER_MAIN, 150);
+			plr->ADD_GOSSIP_ITEM(3, "Halls of Origination", GOSSIP_SENDER_MAIN, 151);
+			plr->ADD_GOSSIP_ITEM(3, "Hour of Twilight", GOSSIP_SENDER_MAIN, 152);
+			plr->ADD_GOSSIP_ITEM(3, "Lost City of the Tol'vir", GOSSIP_SENDER_MAIN, 153);
+			plr->ADD_GOSSIP_ITEM(3, "The Stonecore", GOSSIP_SENDER_MAIN, 154);
+			plr->ADD_GOSSIP_ITEM(3, "The Vortex Pinnacle", GOSSIP_SENDER_MAIN, 155);
+			plr->ADD_GOSSIP_ITEM(3, "Throne of the Tides", GOSSIP_SENDER_MAIN, 156);
+			plr->ADD_GOSSIP_ITEM(3, "Well of Eternity", GOSSIP_SENDER_MAIN, 157);
+			plr->ADD_GOSSIP_ITEM(3, "Zul'Aman", GOSSIP_SENDER_MAIN, 158);
+			plr->ADD_GOSSIP_ITEM(3, "Zul'Gurub", GOSSIP_SENDER_MAIN, 159);
 			plr->SEND_GOSSIP_MENU(plr->GetGossipTextId(npc), npc->GetGUID());
 			break;
 		}
 		case 61:
 		{
 			/* MOP Dungeons*/
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 160);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 161);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 162);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 163);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 164);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 165);
-			plr->SEND_GOSSIP_MENU(plr->GetGossipTextId(npc), npc->GetGUID());
+			plr->ADD_GOSSIP_ITEM(3, "Gate of the Setting Sun", GOSSIP_SENDER_MAIN, 160);
+			plr->ADD_GOSSIP_ITEM(3, "Mogu'Shan Palace", GOSSIP_SENDER_MAIN, 161);
+			plr->ADD_GOSSIP_ITEM(3, "Shado-pan Monastery", GOSSIP_SENDER_MAIN, 162);
+			plr->ADD_GOSSIP_ITEM(3, "Siege of Niuzao Temple ", GOSSIP_SENDER_MAIN, 163);
+			plr->ADD_GOSSIP_ITEM(3, "Stormstout Brewery", GOSSIP_SENDER_MAIN, 164);
+			plr->ADD_GOSSIP_ITEM(3, "Temple of the Jade Serpent", GOSSIP_SENDER_MAIN, 165);
 			plr->SEND_GOSSIP_MENU(plr->GetGossipTextId(npc), npc->GetGUID());
 			break;
 		}
 		case 62:
 		{
 			/* WOD Dungeons*/
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 166);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 167);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 168);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 169);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 170);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 171);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 172);
-			plr->ADD_GOSSIP_ITEM(3, "Cataclysm", GOSSIP_SENDER_MAIN, 173);
+			plr->ADD_GOSSIP_ITEM(3, "Auchindoun", GOSSIP_SENDER_MAIN, 166);
+			plr->ADD_GOSSIP_ITEM(3, "Bloodmaul Slag Mines", GOSSIP_SENDER_MAIN, 167);
+			plr->ADD_GOSSIP_ITEM(3, "Grimrail Depot", GOSSIP_SENDER_MAIN, 168);
+			plr->ADD_GOSSIP_ITEM(3, "Iron Docks", GOSSIP_SENDER_MAIN, 169);
+			plr->ADD_GOSSIP_ITEM(3, "Shadowmoon Burial Grounds", GOSSIP_SENDER_MAIN, 170);
+			plr->ADD_GOSSIP_ITEM(3, "Skyreach", GOSSIP_SENDER_MAIN, 171);
+			plr->ADD_GOSSIP_ITEM(3, "The Everbloom", GOSSIP_SENDER_MAIN, 172);
+			plr->ADD_GOSSIP_ITEM(3, "Upper Blackrock Spire", GOSSIP_SENDER_MAIN, 173);
 			plr->SEND_GOSSIP_MENU(plr->GetGossipTextId(npc), npc->GetGUID());
 			break;
 		}

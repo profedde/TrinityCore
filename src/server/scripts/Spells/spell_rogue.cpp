@@ -744,6 +744,7 @@ class spell_rog_stealth : public SpellScriptLoader
             void HandleEffectApply(AuraEffect const* aurEff, AuraEffectHandleModes mode)
             {
                 Unit* target = GetTarget();
+				Unit* caster = GetCaster();
 
                 // Master of Subtlety
                 if (AuraEffect const* aurEff = target->GetAuraEffect(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE, EFFECT_0))
