@@ -233,7 +233,7 @@ void WorldSession::HandleVoidStorageTransfer(WorldPackets::VoidStorage::VoidStor
 
 void WorldSession::HandleVoidSwapItem(WorldPackets::VoidStorage::SwapVoidItem& swapVoidItem)
 {
-    Creature* unit = _player->GetNPCIfCanInteractWith(swapVoidItem.Npc, UNIT_NPC_FLAG_VAULTKEEPER);
+	Creature* unit = _player->GetNPCIfCanInteractWith(swapVoidItem.Npc, UNIT_NPC_FLAG_VAULTKEEPER || UNIT_NPC_FLAG_TRANSMOGRIFIER);
     if (!unit)
     {
         TC_LOG_DEBUG("network", "WORLD: HandleVoidSwapItem - %s not found or player can't interact with it.", swapVoidItem.Npc.ToString().c_str());
