@@ -204,12 +204,12 @@ public:
 	{
 		PrepareAuraScript(spell_warr_enrage_AuraScript);
 
-		bool Validate(SpellInfo const* /*spellInfo*/) override
+		bool Load() override
 		{
-			return true;
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
-
-		void OnProc(AuraEffect const* /*aurEff*/, ProcEventInfo& eventInfo)
+		
+		void HandleEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
 			Unit* caster = GetCaster();
 			float minDamage, maxDamage;
@@ -220,9 +220,21 @@ public:
 			
 		}
 
+		void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			Unit* caster = GetCaster();
+			float minDamage, maxDamage;
+			minDamage = caster->GetWeaponDamageRange(BASE_ATTACK, MINDAMAGE);
+			maxDamage = caster->GetWeaponDamageRange(BASE_ATTACK, MAXDAMAGE);
+			caster->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, minDamage /1.1f);
+			caster->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, maxDamage /1.1f);
+		}
+
+
 		void Register() override
 		{
-			OnEffectProc += AuraEffectProcFn(spell_warr_enrage_AuraScript::OnProc, EFFECT_1, SPELL_AURA_MOD_DAMAGE_PERCENT_DONE);
+			AfterEffectApply += AuraEffectApplyFn(spell_warr_enrage_AuraScript::HandleEffectApply, EFFECT_1, SPELL_AURA_MOD_DAMAGE_PERCENT_DONE, AURA_EFFECT_HANDLE_REAL);
+			AfterEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_AuraScript::HandleEffectRemove, EFFECT_1, SPELL_AURA_MOD_DAMAGE_PERCENT_DONE, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
 		}
 	};
 
