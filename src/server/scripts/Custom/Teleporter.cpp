@@ -407,25 +407,25 @@ public:
 		}
 		case 47:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(1191, 4533.540527f, -4030.800781f, 7.066647f, 1.581452f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		case 48:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(1116, 6413.165527f, 4146.602539f, 92.128616f, 6.227400f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		case 49:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(1116, 3010.448730f, 4887.337891f, 130.602585f, 5.380615f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		case 50:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(1331, -513.643311f, -603.774353f, 19.650669f, 6.074896);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}
