@@ -570,7 +570,7 @@ void Player::UpdateMastery()
                 if (G3D::fuzzyEq(mult, 0.0f))
                     continue;
 
-                aura->GetEffect(effect->EffectIndex)->ChangeAmount(int32(value * effect->BonusCoefficient));
+                aura->GetEffect(effect->EffectIndex)->ChangeAmount(int32(value * mult));
             }
         }
     }

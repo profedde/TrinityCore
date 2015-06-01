@@ -208,51 +208,29 @@ public:
 		{
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
-		/*
-		void HandleEffectApply(AuraEffect const* aurEff, AuraEffectHandleModes mode)
-		{
-			Unit* caster = GetCaster();
-			float minDamage, maxDamage;
-			minDamage = caster->GetWeaponDamageRange(BASE_ATTACK, MINDAMAGE);
-			maxDamage = caster->GetWeaponDamageRange(BASE_ATTACK, MAXDAMAGE);
-			caster->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, minDamage *1.1f);
-			caster->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, maxDamage *1.1f);
-			
-		}
 		
-		void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
-			Unit* caster = GetCaster();
-			float minDamage, maxDamage;
-			minDamage = caster->GetWeaponDamageRange(BASE_ATTACK, MINDAMAGE);
-			maxDamage = caster->GetWeaponDamageRange(BASE_ATTACK, MAXDAMAGE);
-			caster->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, minDamage /1.1f);
-			caster->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, maxDamage /1.1f);
-		}*/
-
-		void CalculateAmountDamageDone(AuraEffect const* /* aurEff */, int32& amount, bool& /*canBeRecalculated*/)
-		{
-			if (!GetCaster() || !GetCaster()->GetOwner())
-				return;
-			if (GetCaster()->ToPlayer())
+			if (Player* caster = GetCaster()->ToPlayer())
 			{
-				amount += 11;
+				caster->RemoveAura(76856);
 			}
 		}
-
 
 		void Register() override
 		{
 
-			DoEffectCalcAmount += AuraEffectCalcAmountFn(spell_warr_enrage_AuraScript::CalculateAmountDamageDone, EFFECT_0, SPELL_AURA_MOD_DAMAGE_PERCENT_DONE);
+			AfterEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_AuraScript::AfterRemove, EFFECT_2, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			AfterEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_AuraScript::AfterRemove, EFFECT_3, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 		}
-	};
+	}; 
 
 	AuraScript* GetAuraScript() const override
 	{
 		return new spell_warr_enrage_AuraScript();
 	}
-};
+}; 
+
 
 
 /// Updated 4.3.4

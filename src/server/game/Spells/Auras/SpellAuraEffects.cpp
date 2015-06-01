@@ -1992,8 +1992,7 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
                     target->CastSpell(target, 37325, true, NULL, dummy);
                 break;
             case FORM_BATTLESTANCE:
-            case FORM_DEFENSIVESTANCE:
-            case FORM_BERSERKERSTANCE:
+            case FORM_DEFENSIVESTANCE:            
             {
                 int32 Rage_val = 0;
                 // Defensive Tactics
