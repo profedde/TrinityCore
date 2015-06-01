@@ -231,7 +231,45 @@ public:
 	}
 }; 
 
+// 13046 - Enrage
+class spell_warr_enrage_proc : public SpellScriptLoader
+{
+public:
+	spell_warr_enrage_proc() : SpellScriptLoader("spell_warr_enrage_proc") { }
 
+	class spell_warr_enrage_proc_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_warr_enrage_proc_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void HandleRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (!caster->GetSpellHistory()->HasCooldown(18499))
+				{
+					caster->RemoveAurasDueToSpell(13046);
+					caster->RemoveAurasDueToSpell(12880);
+					caster->RemoveAura(12880);
+				}
+			}
+		}
+
+		void Register() override
+		{
+			OnEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_proc_AuraScript::HandleRemove, EFFECT_0, SPELL_AURA_PROC_TRIGGER_SPELL, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_warr_enrage_proc_AuraScript();
+	}
+};
 
 /// Updated 4.3.4
 class spell_warr_execute : public SpellScriptLoader
@@ -904,7 +942,7 @@ class spell_warr_vigilance : public SpellScriptLoader
                 {
                     if (caster->HasAura(SPELL_WARRIOR_VENGEANCE))
                         caster->RemoveAurasDueToSpell(SPELL_WARRIOR_VENGEANCE);
-                }
+				}
             }
 
             void Register() override
@@ -1078,6 +1116,7 @@ void AddSC_warrior_spell_scripts()
     new spell_warr_charge();
     new spell_warr_concussion_blow();
 	new spell_warr_enrage();
+	new spell_warr_enrage_proc();
     new spell_warr_execute();
     new spell_warr_improved_spell_reflection();
     new spell_warr_intimidating_shout();
