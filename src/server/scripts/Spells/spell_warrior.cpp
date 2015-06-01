@@ -208,7 +208,7 @@ public:
 		{
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
-		bool Validate(SpellInfo const* /*spellInfo*/) override
+		bool Validate()
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 				return caster->GetSpellHistory()->HasCooldown(18499);
