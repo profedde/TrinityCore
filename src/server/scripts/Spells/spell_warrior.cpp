@@ -212,7 +212,6 @@ public:
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 				return caster->GetSpellHistory()->HasCooldown(18499);
-			return false;
 		}
 
 		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
