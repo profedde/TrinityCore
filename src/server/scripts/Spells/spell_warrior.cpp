@@ -208,12 +208,7 @@ public:
 		{
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
-		bool Validate()
-		{
-			if (Player* caster = GetCaster()->ToPlayer())
-				return caster->GetSpellHistory()->HasCooldown(18499);
-		}
-
+		
 		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
