@@ -857,12 +857,14 @@ void Spell::SelectSpellTargets()
                     // Do not check for selfcast
                     if (!ihit->scaleAura && ihit->targetGUID != m_caster->GetGUID())
                     {
-                         m_UniqueTargetInfo.erase(ihit++);
-                         continue;
+                        ihit = m_UniqueTargetInfo.erase(ihit);
+                        continue;
                     }
                 }
+
                 ++ihit;
             }
+
             if (checkLvl && m_UniqueTargetInfo.empty())
             {
                 SendCastResult(SPELL_FAILED_LOWLEVEL);
@@ -2326,6 +2328,9 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         return;
     }
 
+    if (!unit)
+        return;
+
     if (unit->IsAlive() != target->alive)
         return;
 
@@ -2873,7 +2878,7 @@ bool Spell::UpdateChanneledTargetList()
             modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_RANGE, range, this);
     }
 
-    for (std::vector<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
+    for (std::vector<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
     {
         if (ihit->missCondition == SPELL_MISS_NONE && (channelTargetEffectMask & ihit->effectMask))
         {
@@ -3366,10 +3371,10 @@ void Spell::handle_immediate()
     // process immediate effects (items, ground, etc.) also initialize some variables
     _handle_immediate_phase();
 
-    for (std::vector<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
+    for (std::vector<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
         DoAllEffectOnTarget(&(*ihit));
 
-    for (std::vector<GOTargetInfo>::iterator ihit= m_UniqueGOTargetInfo.begin(); ihit != m_UniqueGOTargetInfo.end(); ++ihit)
+    for (std::vector<GOTargetInfo>::iterator ihit = m_UniqueGOTargetInfo.begin(); ihit != m_UniqueGOTargetInfo.end(); ++ihit)
         DoAllEffectOnTarget(&(*ihit));
 
     FinishTargetProcessing();
@@ -3409,7 +3414,7 @@ uint64 Spell::handle_delayed(uint64 t_offset)
     bool single_missile = (m_targets.HasDst());
 
     // now recheck units targeting correctness (need before any effects apply to prevent adding immunity at first effect not allow apply second spell effect and similar cases)
-    for (std::vector<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
+    for (std::vector<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
     {
         if (ihit->processed == false)
         {
@@ -3424,7 +3429,7 @@ uint64 Spell::handle_delayed(uint64 t_offset)
     }
 
     // now recheck gameobject targeting correctness
-    for (std::vector<GOTargetInfo>::iterator ighit= m_UniqueGOTargetInfo.begin(); ighit != m_UniqueGOTargetInfo.end(); ++ighit)
+    for (std::vector<GOTargetInfo>::iterator ighit = m_UniqueGOTargetInfo.begin(); ighit != m_UniqueGOTargetInfo.end(); ++ighit)
     {
         if (ighit->processed == false)
         {
@@ -3482,7 +3487,7 @@ void Spell::_handle_immediate_phase()
     }
 
     // process items
-    for (std::vector<ItemTargetInfo>::iterator ihit= m_UniqueItemInfo.begin(); ihit != m_UniqueItemInfo.end(); ++ihit)
+    for (std::vector<ItemTargetInfo>::iterator ihit = m_UniqueItemInfo.begin(); ihit != m_UniqueItemInfo.end(); ++ihit)
         DoAllEffectOnTarget(&(*ihit));
 
     if (!m_originalCaster)
@@ -5822,7 +5827,7 @@ bool Spell::CanAutoCast(Unit* target)
     {
         SelectSpellTargets();
         //check if among target units, our WANTED target is as well (->only self cast spells return false)
-        for (std::vector<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
+        for (std::vector<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
             if (ihit->targetGUID == targetguid)
                 return true;
     }
@@ -6839,7 +6844,7 @@ void Spell::HandleLaunchPhase()
         if (effect && (m_applyMultiplierMask & (1 << effect->EffectIndex)))
             multiplier[effect->EffectIndex] = effect->CalcDamageMultiplier(m_originalCaster, this);
 
-    for (std::vector<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
+    for (std::vector<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
     {
         TargetInfo& target = *ihit;
 
