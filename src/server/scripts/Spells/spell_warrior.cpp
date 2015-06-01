@@ -246,22 +246,16 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 
-		void HandleRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		bool CheckProc(ProcEventInfo& eventInfo)
 		{
-			if (Player* caster = GetCaster()->ToPlayer())
-			{
-				if (!caster->GetSpellHistory()->HasCooldown(18499))
-				{
-					caster->RemoveAurasDueToSpell(13046);
-					caster->RemoveAurasDueToSpell(12880);
-					caster->RemoveAura(12880);
-				}
-			}
+			if (eventInfo.GetSpellInfo()->Id != 18499)
+				return false;
+			return true;
 		}
 
 		void Register() override
 		{
-			OnEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_proc_AuraScript::HandleRemove, EFFECT_0, SPELL_AURA_PROC_TRIGGER_SPELL, AURA_EFFECT_HANDLE_REAL);
+			DoCheckProc += AuraCheckProcFn(spell_warr_enrage_proc_AuraScript::CheckProc);
 		}
 	};
 
