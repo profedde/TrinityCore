@@ -282,8 +282,8 @@ public:
 
 		bool CheckProc(ProcEventInfo& eventInfo)
 		{
-			if (eventInfo.GetHitMask() == 66)
-				return true;
+			/*if (eventInfo.GetHitMask() == 66)
+				return true;*/
 			return false;
 		}
 
@@ -316,8 +316,8 @@ public:
 
 		bool CheckProc(ProcEventInfo& eventInfo)
 		{
-			if (eventInfo.GetSpellInfo()->Id == 85288 && eventInfo.GetHitMask() == 2)
-				return true;
+			/*if (eventInfo.GetSpellInfo()->Id == 85288 && eventInfo.GetHitMask() == 2)
+				return true;*/
 			return false;
 		}
 
