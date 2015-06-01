@@ -236,7 +236,7 @@ public:
 				return;
 			if (GetCaster()->ToPlayer())
 			{
-				amount -= 10;
+				amount += 11;
 			}
 		}
 
@@ -244,7 +244,7 @@ public:
 		void Register() override
 		{
 
-			DoEffectCalcAmount += AuraEffectCalcAmountFn(spell_warr_enrage_AuraScript::CalculateAmountDamageDone, EFFECT_1, SPELL_AURA_MOD_DAMAGE_PERCENT_DONE);
+			DoEffectCalcAmount += AuraEffectCalcAmountFn(spell_warr_enrage_AuraScript::CalculateAmountDamageDone, EFFECT_0, SPELL_AURA_MOD_DAMAGE_PERCENT_DONE);
 		}
 	};
 
