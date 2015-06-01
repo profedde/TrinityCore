@@ -248,7 +248,7 @@ public:
 
 		bool CheckProc(ProcEventInfo& eventInfo)
 		{
-			if (eventInfo.GetSpellInfo()->Id != 18499 && eventInfo.GetSpellInfo()->Id != 23881 && eventInfo.GetSpellInfo()->Id != 23922 && eventInfo.GetSpellInfo()->Id != 20243)
+			if (eventInfo.GetSpellInfo()->Id != 18499 && (eventInfo.GetSpellInfo()->Id != 23881 && eventInfo.GetHitMask() != 2 && eventInfo.GetSpellInfo()->Id != 23922 && eventInfo.GetSpellInfo()->Id != 20243) && eventInfo.GetHitMask() != 66)
 				return false;
 			return true;
 		}
