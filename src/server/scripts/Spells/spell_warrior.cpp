@@ -194,7 +194,7 @@ class spell_warr_concussion_blow : public SpellScriptLoader
         }
 };
 
-// enrage - 12880
+// 12880 - Enrage
 class spell_warr_enrage : public SpellScriptLoader
 {
 public:
@@ -208,8 +208,8 @@ public:
 		{
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
-		
-		void HandleEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		/*
+		void HandleEffectApply(AuraEffect const* aurEff, AuraEffectHandleModes mode)
 		{
 			Unit* caster = GetCaster();
 			float minDamage, maxDamage;
@@ -219,8 +219,8 @@ public:
 			caster->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, maxDamage *1.1f);
 			
 		}
-
-		void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		
+		void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
 		{
 			Unit* caster = GetCaster();
 			float minDamage, maxDamage;
@@ -228,13 +228,23 @@ public:
 			maxDamage = caster->GetWeaponDamageRange(BASE_ATTACK, MAXDAMAGE);
 			caster->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, minDamage /1.1f);
 			caster->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, maxDamage /1.1f);
+		}*/
+
+		void CalculateAmountDamageDone(AuraEffect const* /* aurEff */, int32& amount, bool& /*canBeRecalculated*/)
+		{
+			if (!GetCaster() || !GetCaster()->GetOwner())
+				return;
+			if (GetCaster()->ToPlayer())
+			{
+				amount += 10;
+			}
 		}
 
 
 		void Register() override
 		{
-			AfterEffectApply += AuraEffectApplyFn(spell_warr_enrage_AuraScript::HandleEffectApply, EFFECT_1, SPELL_AURA_MOD_DAMAGE_PERCENT_DONE, AURA_EFFECT_HANDLE_REAL);
-			AfterEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_AuraScript::HandleEffectRemove, EFFECT_1, SPELL_AURA_MOD_DAMAGE_PERCENT_DONE, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
+
+			DoEffectCalcAmount += AuraEffectCalcAmountFn(spell_warr_enrage_AuraScript::CalculateAmountDamageDone, EFFECT_1, SPELL_AURA_MOD_DAMAGE_PERCENT_DONE);
 		}
 	};
 
