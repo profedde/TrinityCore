@@ -236,7 +236,7 @@ public:
 				return;
 			if (GetCaster()->ToPlayer())
 			{
-				amount += 10;
+				amount -= 10;
 			}
 		}
 
