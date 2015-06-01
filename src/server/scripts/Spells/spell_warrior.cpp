@@ -248,7 +248,7 @@ public:
 
 		bool CheckProc(ProcEventInfo& eventInfo)
 		{
-			if (eventInfo.GetSpellInfo()->Id == 18499 || ((eventInfo.GetSpellInfo()->Id == 23881 || eventInfo.GetSpellInfo()->Id == 23922 || eventInfo.GetSpellInfo()->Id == 20243) && eventInfo.GetHitMask() == 2) || eventInfo.GetHitMask() == 66)
+			if (eventInfo.GetSpellInfo()->Id == 18499 || ((eventInfo.GetSpellInfo()->Id == 23881 || eventInfo.GetSpellInfo()->Id == 23922 || eventInfo.GetSpellInfo()->Id == 20243) && eventInfo.GetHitMask() == 2))
 				return true;
 			return false;
 		}
@@ -264,6 +264,75 @@ public:
 		return new spell_warr_enrage_proc_AuraScript();
 	}
 };
+
+// 76857 - Mastery: Critical Block
+class spell_warr_prot_mastery : public SpellScriptLoader
+{
+public:
+	spell_warr_prot_mastery() : SpellScriptLoader("spell_warr_prot_mastery") { }
+
+	class spell_warr_prot_mastery_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_warr_prot_mastery_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		bool CheckProc(ProcEventInfo& eventInfo)
+		{
+			if (eventInfo.GetHitMask() == 66)
+				return true;
+			return false;
+		}
+
+		void Register() override
+		{
+			DoCheckProc += AuraCheckProcFn(spell_warr_prot_mastery_AuraScript::CheckProc);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_warr_prot_mastery_AuraScript();
+	}
+};
+
+// 165337 - T17 war 2p bonus
+class spell_warr_t17_2p_fury : public SpellScriptLoader
+{
+public:
+	spell_warr_t17_2p_fury() : SpellScriptLoader("spell_warr_t17_2p_fury") { }
+
+	class spell_warr_t17_2p_fury_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_warr_t17_2p_fury_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		bool CheckProc(ProcEventInfo& eventInfo)
+		{
+			if (eventInfo.GetSpellInfo()->Id == 85288 && eventInfo.GetHitMask() == 2)
+				return true;
+			return false;
+		}
+
+		void Register() override
+		{
+			DoCheckProc += AuraCheckProcFn(spell_warr_t17_2p_fury_AuraScript::CheckProc);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_warr_t17_2p_fury_AuraScript();
+	}
+};
+
 
 /// Updated 4.3.4
 class spell_warr_execute : public SpellScriptLoader
@@ -1111,6 +1180,8 @@ void AddSC_warrior_spell_scripts()
     new spell_warr_concussion_blow();
 	new spell_warr_enrage();
 	new spell_warr_enrage_proc();
+	new spell_warr_t17_2p_fury();
+	new spell_warr_prot_mastery();
     new spell_warr_execute();
     new spell_warr_improved_spell_reflection();
     new spell_warr_intimidating_shout();
