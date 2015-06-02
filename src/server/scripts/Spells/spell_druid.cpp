@@ -1139,6 +1139,7 @@ public:
 					caster->RemoveAura(40120);
 				if (caster->HasAura(1066))
 					caster->RemoveAura(1066);
+				caster->DeMorph();
 			}
 		}
 
