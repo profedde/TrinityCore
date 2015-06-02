@@ -64,6 +64,79 @@ enum DruidSpells
     SPELL_DRUID_TIGER_S_FURY_ENERGIZE       = 51178
 };
 
+// 768 - Cat Form
+class spell_dru_cat_form : public SpellScriptLoader
+{
+public:
+	spell_dru_cat_form() : SpellScriptLoader("spell_dru_cat_form") { }
+
+	class spell_dru_cat_form_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_cat_form_AuraScript);
+
+		void ApplyEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			Unit* caster = GetCaster();
+			if (caster->HasAura(783) && !caster->IsFlying())
+				caster->RemoveAura(783);
+			caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN] *2, false);
+		}
+
+		void RemoveEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			Unit* caster = GetCaster();
+			caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN], false);
+		}
+
+		void Register() override
+		{
+			OnEffectApply  += AuraEffectApplyFn(spell_dru_cat_form_AuraScript::ApplyEffect, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
+			OnEffectRemove += AuraEffectRemoveFn(spell_dru_cat_form_AuraScript::RemoveEffect, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_cat_form_AuraScript();
+	}
+};
+
+// 5487 - Bear Form
+class spell_dru_bear_form : public SpellScriptLoader
+{
+public:
+	spell_dru_bear_form() : SpellScriptLoader("spell_dru_bear_form") { }
+
+	class spell_dru_bear_form_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_bear_form_AuraScript);
+
+		void ApplyEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			Unit* caster = GetCaster();
+			if (caster->HasAura(783) && !caster->IsFlying())
+				caster->RemoveAura(783);
+		}
+
+		void RemoveEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			Unit* caster = GetCaster();
+			caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN], false);
+		}
+
+		void Register() override
+		{
+			OnEffectApply += AuraEffectApplyFn(spell_dru_bear_form_AuraScript::ApplyEffect, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_bear_form_AuraScript();
+	}
+};
+
+
 // 1850 - Dash
 class spell_dru_dash : public SpellScriptLoader
 {
@@ -74,16 +147,16 @@ class spell_dru_dash : public SpellScriptLoader
         {
             PrepareAuraScript(spell_dru_dash_AuraScript);
 
-            void CalculateAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
+			void ApplyEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
             {
                 // do not set speed if not in cat form
-                if (GetUnitOwner()->GetShapeshiftForm() != FORM_CAT)
-                    amount = 0;
+				if (GetUnitOwner()->GetShapeshiftForm() != FORM_CAT)
+					GetCaster()->AddAura(768, GetCaster());
             }
 
             void Register() override
             {
-                DoEffectCalcAmount += AuraEffectCalcAmountFn(spell_dru_dash_AuraScript::CalculateAmount, EFFECT_0, SPELL_AURA_MOD_INCREASE_SPEED);
+				OnEffectApply += AuraEffectApplyFn(spell_dru_dash_AuraScript::ApplyEffect, EFFECT_0, SPELL_AURA_MOD_INCREASE_SPEED, AURA_EFFECT_HANDLE_REAL);
             }
         };
 
@@ -1086,7 +1159,7 @@ class spell_dru_tiger_s_fury : public SpellScriptLoader
 };
 
 
-// Travel Form - 783
+// 783 - Travel Form 
 class spell_dru_travel_form : public SpellScriptLoader
 {
 public:
@@ -1477,6 +1550,8 @@ void AddSC_druid_spell_scripts()
     new spell_dru_tiger_s_fury();
 	new spell_dru_travel_form();
 	new spell_dru_aqua_form();
+	new spell_dru_bear_form();
+	new spell_dru_cat_form();
 	new spell_dru_flight_form();
 	new spell_dru_stag_form();
     new spell_dru_typhoon();
