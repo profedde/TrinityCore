@@ -118,12 +118,6 @@ public:
 				caster->RemoveAura(783);
 		}
 
-		void RemoveEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
-		{
-			Unit* caster = GetCaster();
-			caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN], false);
-		}
-
 		void Register() override
 		{
 			OnEffectApply += AuraEffectApplyFn(spell_dru_bear_form_AuraScript::ApplyEffect, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
@@ -151,13 +145,26 @@ class spell_dru_dash : public SpellScriptLoader
             {
                 // do not set speed if not in cat form
 				if (GetUnitOwner()->GetShapeshiftForm() != FORM_CAT)
+				{
 					GetCaster()->AddAura(768, GetCaster());
+					GetCaster()->SetSpeed(MOVE_RUN, (playerBaseMoveRate[MOVE_RUN] * 1.3)*1.7, false);
+				}
             }
+
+			void RemoveEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+			{
+				Unit* caster = GetCaster();
+				if (caster->HasAura(768))
+					GetCaster()->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN] * 1.3, false);
+				else
+					caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN], false);
+			}
 
             void Register() override
             {
 				OnEffectApply += AuraEffectApplyFn(spell_dru_dash_AuraScript::ApplyEffect, EFFECT_0, SPELL_AURA_MOD_INCREASE_SPEED, AURA_EFFECT_HANDLE_REAL);
-            }
+				OnEffectRemove += AuraEffectRemoveFn(spell_dru_dash_AuraScript::RemoveEffect, EFFECT_0, SPELL_AURA_MOD_INCREASE_SPEED, AURA_EFFECT_HANDLE_REAL);
+			}
         };
 
         AuraScript* GetAuraScript() const override
