@@ -1224,7 +1224,7 @@ public:
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
-				if (caster->IsInWater)				
+				if (caster->IsInWater())				
 					caster->AddAura(1066, caster);				
 				else 
 					caster->AddAura(165961, caster);
@@ -1263,7 +1263,7 @@ public:
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
-				if (caster->IsInWater)
+				if (caster->IsInWater())
 				{
 					caster->AddAura(1066,caster);
 				}
