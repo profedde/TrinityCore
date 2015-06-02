@@ -14905,7 +14905,9 @@ uint32 Unit::GetModelForForm(ShapeshiftForm form) const
                 else
                     return 2289;
 			case FORM_TRAVEL:
-				
+				if (Player::TeamForRace(getRace()) == ALLIANCE)
+					return 40816;
+				return 45339;
             case FORM_FLIGHT:
                 if (Player::TeamForRace(getRace()) == ALLIANCE)
                     return 20857;
