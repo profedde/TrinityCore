@@ -744,7 +744,9 @@ class spell_rog_stealth : public SpellScriptLoader
             void HandleEffectApply(AuraEffect const* aurEff, AuraEffectHandleModes mode)
             {
                 Unit* target = GetTarget();
-				Unit* caster = GetCaster();
+				
+				if (Unit* caster = GetCaster())
+					caster->AddAura(158185, caster);
 
                 // Master of Subtlety
                 if (AuraEffect const* aurEff = target->GetAuraEffect(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE, EFFECT_0))
@@ -752,16 +754,22 @@ class spell_rog_stealth : public SpellScriptLoader
                     int32 basepoints0 = aurEff->GetAmount();
                     target->CastCustomSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_DAMAGE_PERCENT, &basepoints0, NULL, NULL, true);
                 }
+				
+
+
             }
 
             void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
             {
-                Unit* target = GetTarget();
-
-                // Master of subtlety
+				if (Unit* caster = GetCaster())
+					caster->RemoveAura(158185);
+				Unit* target = GetTarget();
+				// Master of subtlety
                 if (target->HasAura(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE))
                     target->CastSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_PERIODIC, true);
-				}
+				
+			}
+
 
             void Register()
             {
