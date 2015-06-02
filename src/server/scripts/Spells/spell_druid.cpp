@@ -1252,9 +1252,9 @@ public:
 					((caster->GetMapId() == 530) ||
 					(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
 					(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
-					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))))
+					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))) && caster->HasAura(783) && caster->CanFly())
 				{
-					if (caster->GetSkillValue(SKILL_RIDING) >= 300 && caster->HasAura(783))
+					if (caster->GetSkillValue(SKILL_RIDING) >= 300)
 						caster->AddAura(40120, caster);
 					else
 						caster->AddAura(33943, caster);
@@ -1301,9 +1301,7 @@ public:
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
 				if (caster->IsInWater() && caster->HasAura(783))
-					caster->AddAura(1066, caster);				
-				else if (caster->HasAura(783))
-					caster->AddAura(165961, caster);
+					caster->AddAura(1066, caster);
 				else
 					caster->DeMorph();
 			}
@@ -1349,7 +1347,7 @@ public:
 					((caster->GetMapId() == 530) ||
 					(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
 					(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
-					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))) && caster->HasAura(783))
+					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))) && caster->HasAura(783) && caster->CanFly())
 				{
 					if (caster->GetSkillValue(SKILL_RIDING) >= 300 && caster->HasAura(783))
 						caster->AddAura(40120, caster);
