@@ -144,11 +144,12 @@ class spell_dru_dash : public SpellScriptLoader
 			void ApplyEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
             {
                 // do not set speed if not in cat form
+				Unit* caster = GetCaster();
 				if (GetUnitOwner()->GetShapeshiftForm() != FORM_CAT)
 				{
-					GetCaster()->AddAura(768, GetCaster());
-					GetCaster()->SetSpeed(MOVE_RUN, (playerBaseMoveRate[MOVE_RUN] * 1.3)*1.7, false);
-				}
+					GetCaster()->AddAura(768, GetCaster());					
+				}				
+				caster->SetSpeed(MOVE_RUN, (playerBaseMoveRate[MOVE_RUN] * 1.3)*1.7, false);
             }
 
 			void RemoveEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)

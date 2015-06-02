@@ -746,8 +746,10 @@ class spell_rog_stealth : public SpellScriptLoader
                 Unit* target = GetTarget();
 				
 				if (Unit* caster = GetCaster())
+				{
 					caster->AddAura(158185, caster);
-
+					caster->SetShapeshiftForm(FORM_STEALTH);
+				}
                 // Master of Subtlety
                 if (AuraEffect const* aurEff = target->GetAuraEffect(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE, EFFECT_0))
                 {
@@ -762,7 +764,10 @@ class spell_rog_stealth : public SpellScriptLoader
             void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
             {
 				if (Unit* caster = GetCaster())
+				{
 					caster->RemoveAura(158185);
+					caster->SetShapeshiftForm(FORM_NONE);
+				}
 				Unit* target = GetTarget();
 				// Master of subtlety
                 if (target->HasAura(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE))
