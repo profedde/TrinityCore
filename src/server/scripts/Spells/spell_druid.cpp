@@ -1107,12 +1107,7 @@ public:
 			{ 
 				if (caster->IsInWater())
 				{
-					caster->SetShapeshiftForm(FORM_AQUA);
-					caster->SetDisplayId(caster->GetModelForForm(FORM_AQUA));
-					caster->SetSpeed(MOVE_SWIM, playerBaseMoveRate[MOVE_SWIM] * 1.5f, false);
-					caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN], false);
-					caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveRate[MOVE_FLIGHT], false);
-					caster->SetCanFly(false);
+					caster->AddAura(1066,caster);
 				}
 				else if (caster->GetSkillValue(SKILL_RIDING) >= 225 && 
 					((caster->GetMapId() == 530) || 
@@ -1120,26 +1115,14 @@ public:
 					(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
 					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646))))
 				{
-					if (caster->GetSkillValue(SKILL_RIDING) >= 375)
-						caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveRate[MOVE_FLIGHT] * 4.1f, false);
-					else if (caster->GetSkillValue(SKILL_RIDING) >= 300)
-						caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveRate[MOVE_FLIGHT] * 3.8f, false);
+					if (caster->GetSkillValue(SKILL_RIDING) >= 300)
+						caster->AddAura(40120, caster);
 					else
-						caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveRate[MOVE_FLIGHT] * 1.5f, false);
-					caster->SetShapeshiftForm(FORM_FLIGHT);
-					caster->SetDisplayId(caster->GetModelForForm(FORM_FLIGHT));
-					caster->SetCanFly(true);
-					caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN], false);
-					caster->SetSpeed(MOVE_SWIM, playerBaseMoveRate[MOVE_SWIM], false);
+						caster->AddAura(33943, caster);
 				}
 				else 
 				{
-					caster->SetShapeshiftForm(FORM_TRAVEL);
-					caster->SetDisplayId(caster->GetModelForForm(FORM_TRAVEL));
-					caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN] * 1.4f, false);
-					caster->SetSpeed(MOVE_SWIM, playerBaseMoveRate[MOVE_SWIM], false);
-					caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveRate[MOVE_FLIGHT], false);
-					caster->SetCanFly(false);
+					caster->AddAura(165961, caster);
 				}
 			}
 		}
@@ -1148,12 +1131,14 @@ public:
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
-				caster->SetShapeshiftForm(FORM_NONE);
-				caster->SetCanFly(false);				
-				caster->RestoreDisplayId();
-				caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN], false);
-				caster->SetSpeed(MOVE_SWIM, playerBaseMoveRate[MOVE_SWIM], false);
-				caster->SetSpeed(MOVE_FLIGHT, playerBaseMoveRate[MOVE_FLIGHT], false);
+				if (caster->HasAura(165961))
+					caster->RemoveAura(165961);
+				if (caster->HasAura(33943))
+					caster->RemoveAura(33943);
+				if (caster->HasAura(40120))
+					caster->RemoveAura(40120);
+				if (caster->HasAura(1066))
+					caster->RemoveAura(1066);
 			}
 		}
 
@@ -1161,7 +1146,6 @@ public:
 		{
 			AfterEffectApply += AuraEffectApplyFn(spell_dru_travel_form_AuraScript::AfterApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_travel_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
-
 		}
 	};
 
@@ -1170,6 +1154,146 @@ public:
 		return new spell_dru_travel_form_AuraScript();
 	}
 };
+
+// 1066 - Aqua Form
+class spell_dru_aqua_form : public SpellScriptLoader
+{
+public:
+	spell_dru_aqua_form() : SpellScriptLoader("spell_dru_aqua_form") { }
+
+	class spell_dru_aqua_form_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_aqua_form_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (caster->HasAura(783) && (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
+					((caster->GetMapId() == 530) ||
+					(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
+					(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
+					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))))
+				{
+					if (caster->GetSkillValue(SKILL_RIDING) >= 300)
+						caster->AddAura(40120, caster);
+					else
+						caster->AddAura(33943, caster);
+				}
+				else
+				{
+					caster->AddAura(165961, caster);
+				}
+			
+			}
+		}
+
+		void Register() override
+		{
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_aqua_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_aqua_form_AuraScript();
+	}
+};
+
+// 33943/40120 - Flight Form
+class spell_dru_flight_form : public SpellScriptLoader
+{
+public:
+	spell_dru_flight_form() : SpellScriptLoader("spell_dru_flight_form") { }
+
+	class spell_dru_flight_form_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_flight_form_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (caster->IsInWater)				
+					caster->AddAura(1066, caster);				
+				else 
+					caster->AddAura(165961, caster);
+
+			}
+		}
+
+		void Register() override
+		{
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_flight_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_flight_form_AuraScript();
+	}
+};
+
+// 165961 - Stag Form
+class spell_dru_stag_form : public SpellScriptLoader
+{
+public:
+	spell_dru_stag_form() : SpellScriptLoader("spell_dru_stag_form") { }
+
+	class spell_dru_stag_form_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_stag_form_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (caster->IsInWater)
+				{
+					caster->AddAura(1066,caster);
+				}
+
+				else if (caster->HasAura(783) && (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
+					((caster->GetMapId() == 530) ||
+					(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
+					(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
+					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))))
+				{
+					if (caster->GetSkillValue(SKILL_RIDING) >= 300)
+						caster->AddAura(40120, caster);
+					else
+						caster->AddAura(33943, caster);
+				}
+			}
+		}
+
+		void Register() override
+		{
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_stag_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_stag_form_AuraScript();
+	}
+};
+
 
 // 61391 - Typhoon
 class spell_dru_typhoon : public SpellScriptLoader
@@ -1351,6 +1475,9 @@ void AddSC_druid_spell_scripts()
     new spell_dru_swift_flight_passive();
     new spell_dru_tiger_s_fury();
 	new spell_dru_travel_form();
+	new spell_dru_aqua_form();
+	new spell_dru_flight_form();
+	new spell_dru_stag_form();
     new spell_dru_typhoon();
     new spell_dru_t10_restoration_4p_bonus();
     new spell_dru_wild_growth();
