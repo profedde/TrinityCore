@@ -1195,7 +1195,7 @@ public:
 
 		void Register() override
 		{
-			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_aqua_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_aqua_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
 		}
 	};
 
@@ -1234,7 +1234,7 @@ public:
 
 		void Register() override
 		{
-			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_flight_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_flight_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
 		}
 	};
 
@@ -1284,7 +1284,7 @@ public:
 
 		void Register() override
 		{
-			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_stag_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_stag_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
 		}
 	};
 
