@@ -1213,6 +1213,7 @@ public:
 				if (caster->HasAura(1066))
 					caster->RemoveAura(1066);
 				caster->DeMorph();
+				caster->RemoveAura(783);
 			}
 		}
 
