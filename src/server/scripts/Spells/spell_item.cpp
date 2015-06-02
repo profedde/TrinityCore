@@ -2452,7 +2452,7 @@ class spell_item_pygmy_oil : public SpellScriptLoader
 };
 
 
-uint32 shatounched[] = {
+uint32 shatouched[] = {
 	86226,
 	86227,
 	86321,
@@ -2677,9 +2677,9 @@ class spell_item_eye_of_the_black_prince : public SpellScriptLoader
 			SpellCastResult CheckShaTouched()
 			{
 				Unit* caster = GetCaster();
-				for (int i = 0; i < sizeof(shatounched); i++)
+				for (int i = 0; i < sizeof(shatouched); i++)
 				{
-					if (GetExplTargetItem()->GetEntry() == shatounched[i])
+					if (GetExplTargetItem()->GetEntry() == shatouched[i])
 						return SPELL_CAST_OK;
 				}
 				for (int i = 0; i < sizeof(armamentsofthunderking); i++)
