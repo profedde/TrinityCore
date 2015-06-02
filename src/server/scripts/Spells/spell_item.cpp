@@ -2687,8 +2687,8 @@ class spell_item_eye_of_the_black_prince : public SpellScriptLoader
 					if (GetExplTargetItem()->GetEntry() == armamentsofthunderking[i])
 						return SPELL_CAST_OK;
 				}
-				SetCustomCastResultMessage(SPELL_CUSTOM_ERROR_NONE);
-				return SPELL_FAILED_CUSTOM_ERROR;
+				
+				return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
 			}
 
 			void Register() override
