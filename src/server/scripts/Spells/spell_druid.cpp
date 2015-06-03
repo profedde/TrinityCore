@@ -1299,10 +1299,21 @@ public:
 				}
 			}*/
 		}
+		void HandleEffectPeriodicUpdate(AuraEffect* aurEff)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (Player* plr = caster->ToPlayer())
+				{
+					GetTarget()->CastSpell(GetTarget(), 165961);
+				}
+			}
+		}
 
 		void Register() override
 		{
 			OnEffectPeriodic += AuraEffectPeriodicFn(spell_dru_form_controller_AuraScript::OnPeriodic, EFFECT_0, SPELL_AURA_PERIODIC_DUMMY);
+			OnEffectUpdatePeriodic += AuraEffectUpdatePeriodicFn(spell_dru_form_controller_AuraScript::HandleEffectPeriodicUpdate, EFFECT_0, SPELL_AURA_PERIODIC_DUMMY);
 		}
 	};
 
