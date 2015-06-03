@@ -1188,6 +1188,8 @@ public:
 			{ 
 				if (Player* plr = caster->ToPlayer())
 				{
+					if (caster->HasAura(98386))
+						caster->AddAura(98386,caster);
 					if (caster->IsInWater() && caster->HasAura(783) && plr->isOutside())
 					{
 						if (!caster->HasAura(1066))
@@ -1211,6 +1213,54 @@ public:
 				}
 			}
 		}
+	
+		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (caster->HasAura(98386))
+					caster->RemoveAura(98386);
+				if (caster->HasAura(165961))
+					caster->RemoveAura(165961);
+				if (caster->HasAura(33943))
+					caster->RemoveAura(33943);
+				if (caster->HasAura(40120))
+					caster->RemoveAura(40120);
+				if (caster->HasAura(1066))
+					caster->RemoveAura(1066);
+				caster->DeMorph();
+				caster->RemoveAura(783);
+			}
+		}
+
+		void Register() override
+		{
+			AfterEffectApply += AuraEffectApplyFn(spell_dru_travel_form_AuraScript::AfterApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_travel_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_travel_form_AuraScript();
+	}
+};
+
+// 98386 - Form Controller
+class spell_dru_form_controller : public SpellScriptLoader
+{
+public:
+	spell_dru_form_controller() : SpellScriptLoader("spell_dru_form_controller") { }
+
+	class spell_dru_form_controller_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_form_controller_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
 		void OnPeriodic(AuraEffect const* /*aurEff*/)
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
@@ -1241,34 +1291,15 @@ public:
 			}
 		}
 
-		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
-		{
-			if (Player* caster = GetCaster()->ToPlayer())
-			{
-				if (caster->HasAura(165961))
-					caster->RemoveAura(165961);
-				if (caster->HasAura(33943))
-					caster->RemoveAura(33943);
-				if (caster->HasAura(40120))
-					caster->RemoveAura(40120);
-				if (caster->HasAura(1066))
-					caster->RemoveAura(1066);
-				caster->DeMorph();
-				caster->RemoveAura(783);
-			}
-		}
-
 		void Register() override
 		{
-			AfterEffectApply += AuraEffectApplyFn(spell_dru_travel_form_AuraScript::AfterApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
-			OnEffectPeriodic += AuraEffectPeriodicFn(spell_dru_travel_form_AuraScript::OnPeriodic, EFFECT_0, SPELL_AURA_DUMMY);
-			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_travel_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			OnEffectPeriodic += AuraEffectPeriodicFn(spell_dru_form_controller_AuraScript::OnPeriodic, EFFECT_0, SPELL_AURA_PERIODIC_DUMMY);
 		}
 	};
 
 	AuraScript* GetAuraScript() const override
 	{
-		return new spell_dru_travel_form_AuraScript();
+		return new spell_dru_form_controller_AuraScript();
 	}
 };
 
@@ -1595,6 +1626,7 @@ void AddSC_druid_spell_scripts()
     new spell_dru_swift_flight_passive();
     new spell_dru_tiger_s_fury();
 	new spell_dru_travel_form();
+	new spell_dru_form_controller();
 	new spell_dru_aqua_form();
 	new spell_dru_bear_form();
 	new spell_dru_cat_form();
