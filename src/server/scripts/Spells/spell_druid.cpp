@@ -115,7 +115,7 @@ public:
 		{
 			Unit* caster = GetCaster();
 			if (caster->HasAura(783) && !caster->IsFlying())
-				caster->RemoveAura(783);
+				caster->RemoveAura(783);			
 		}
 
 		void Register() override
@@ -1186,24 +1186,27 @@ public:
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{ 
-				if (caster->IsInWater() && caster->HasAura(783))
+				if (Player* plr = caster->ToPlayer())
 				{
-					caster->AddAura(1066,caster);
-				}
-				else if (caster->GetSkillValue(SKILL_RIDING) >= 225 && 
-					((caster->GetMapId() == 530) || 
-					(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
-					(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
-					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646))) && caster->HasAura(783))
-				{
-					if (caster->GetSkillValue(SKILL_RIDING) >= 300 && caster->HasAura(783))
-						caster->AddAura(40120, caster);
-					else
-						caster->AddAura(33943, caster);
-				}
-				else if (caster->HasAura(783))
-				{
-					caster->AddAura(165961, caster);
+					if (caster->IsInWater() && caster->HasAura(783) && plr->isOutside())
+					{
+						caster->AddAura(1066, caster);
+					}
+					else if (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
+						((caster->GetMapId() == 530) ||
+						(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
+						(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
+						(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646))) && caster->HasAura(783) && plr->isOutside())
+					{
+						if (caster->GetSkillValue(SKILL_RIDING) >= 300 && caster->HasAura(783))
+							caster->AddAura(40120, caster);
+						else
+							caster->AddAura(33943, caster);
+					}
+					else if (caster->HasAura(783) && plr->isOutside())
+					{
+						caster->AddAura(165961, caster);
+					}
 				}
 			}
 		}

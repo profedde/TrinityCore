@@ -1338,6 +1338,7 @@ class Player : public Unit, public GridObject<Player>
 
         void AddToWorld() override;
         void RemoveFromWorld() override;
+		bool isOutside();
 
         void SetObjectScale(float scale) override
         {

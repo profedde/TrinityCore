@@ -6366,6 +6366,14 @@ void Player::SendMovieStart(uint32 MovieId)
     SendDirectMessage(packet.Write());
 }
 
+bool Player::isOutside()
+{
+	bool isOutdoor;
+	uint16 areaFlag = GetBaseMap()->GetAreaFlag(GetPositionX(), GetPositionY(), GetPositionZ(), &isOutdoor);
+	return isOutdoor;
+
+}
+
 void Player::CheckAreaExploreAndOutdoor()
 {
     if (!IsAlive())
