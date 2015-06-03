@@ -61,7 +61,15 @@ enum DruidSpells
     SPELL_DRUID_STAMPEDE_BAER_RANK_1        = 81016,
     SPELL_DRUID_STAMPEDE_CAT_RANK_1         = 81021,
     SPELL_DRUID_STAMPEDE_CAT_STATE          = 109881,
-    SPELL_DRUID_TIGER_S_FURY_ENERGIZE       = 51178
+    SPELL_DRUID_TIGER_S_FURY_ENERGIZE       = 51178,
+	SPELL_DRUID_TRAVEL_FORM					= 783,
+	SPELL_DRUID_AQUATIC_FORM				= 1066,
+	SPELL_DRUID_BEAR_FORM					= 5487,
+	SPELL_DRUID_CAT_FORM					= 768,
+	SPELL_DRUID_FLIGHT_FORM					= 33943,
+	SPELL_DRUID_SWIFT_FLIGHT_FORM			= 40120,
+	SPELL_DRUID_STAG_FORM					= 165961,
+	SPELL_DRUID_FORM_CONTROLLER				= 98386
 };
 
 // 768 - Cat Form
@@ -77,8 +85,8 @@ public:
 		void ApplyEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
 			Unit* caster = GetCaster();
-			if (caster->HasAura(783) && !caster->IsFlying())
-				caster->RemoveAura(783);
+			if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM) && !caster->IsFlying())
+				caster->RemoveAura(SPELL_DRUID_TRAVEL_FORM);
 			caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN] *1.3, false);
 		}
 
@@ -114,8 +122,8 @@ public:
 		void ApplyEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
 			Unit* caster = GetCaster();
-			if (caster->HasAura(783) && !caster->IsFlying())
-				caster->RemoveAura(783);			
+			if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM) && !caster->IsFlying())
+				caster->RemoveAura(SPELL_DRUID_TRAVEL_FORM);
 		}
 
 		void Register() override
@@ -127,6 +135,293 @@ public:
 	AuraScript* GetAuraScript() const override
 	{
 		return new spell_dru_bear_form_AuraScript();
+	}
+};
+
+
+// 783 - Travel Form 
+class spell_dru_travel_form : public SpellScriptLoader
+{
+public:
+	spell_dru_travel_form() : SpellScriptLoader("spell_dru_travel_form") { }
+
+	class spell_dru_travel_form_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_travel_form_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void AfterApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (!caster->HasAura(SPELL_DRUID_FORM_CONTROLLER))
+					caster->AddAura(SPELL_DRUID_FORM_CONTROLLER, caster);
+
+				if (caster->IsInWater() && !caster->HasAura(SPELL_DRUID_AQUATIC_FORM))
+						caster->AddAura(SPELL_DRUID_AQUATIC_FORM, caster);
+				else if (caster->isOutside())
+				{
+					if (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
+						((caster->GetMapId() == 530) ||
+						(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
+						(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
+						(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646))))
+					{
+						if (caster->GetSkillValue(SKILL_RIDING) >= 300 && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
+							caster->AddAura(SPELL_DRUID_SWIFT_FLIGHT_FORM, caster);
+						else if (!caster->HasAura(SPELL_DRUID_FLIGHT_FORM))
+							caster->AddAura(SPELL_DRUID_FLIGHT_FORM, caster);
+					}
+					else if (!caster->HasAura(SPELL_DRUID_STAG_FORM))
+					{
+						caster->AddAura(SPELL_DRUID_STAG_FORM, caster);
+					}
+				}
+				else
+					caster->DeMorph();
+			}
+		}
+
+		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (caster->HasAura(SPELL_DRUID_FORM_CONTROLLER))
+					caster->RemoveAura(SPELL_DRUID_FORM_CONTROLLER);
+				if (caster->HasAura(SPELL_DRUID_STAG_FORM))
+					caster->RemoveAura(SPELL_DRUID_STAG_FORM);
+				if (caster->HasAura(SPELL_DRUID_FLIGHT_FORM))
+					caster->RemoveAura(SPELL_DRUID_FLIGHT_FORM);
+				if (caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
+					caster->RemoveAura(SPELL_DRUID_SWIFT_FLIGHT_FORM);
+				if (caster->HasAura(SPELL_DRUID_AQUATIC_FORM))
+					caster->RemoveAura(SPELL_DRUID_AQUATIC_FORM);
+				caster->DeMorph();
+			}
+		}
+
+		void Register() override
+		{
+			AfterEffectApply += AuraEffectApplyFn(spell_dru_travel_form_AuraScript::AfterApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_travel_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_travel_form_AuraScript();
+	}
+};
+
+// 98386 - Form Controller
+class spell_dru_form_controller : public SpellScriptLoader
+{
+public:
+	spell_dru_form_controller() : SpellScriptLoader("spell_dru_form_controller") { }
+
+	class spell_dru_form_controller_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_form_controller_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void OnPeriodic(AuraEffect const* aurEff)
+		{
+
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (Player* plr = caster->ToPlayer())
+				{
+					if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
+					{
+						if (caster->IsInWater() && !caster->HasAura(SPELL_DRUID_AQUATIC_FORM))
+							caster->CastSpell(caster, SPELL_DRUID_AQUATIC_FORM);
+						else if (caster->isOutside())
+						{
+							if (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
+								((caster->GetMapId() == 530) ||
+								(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
+								(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
+								(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646))))
+							{
+								if (caster->GetSkillValue(SKILL_RIDING) >= 300 && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
+									caster->CastSpell(caster, SPELL_DRUID_SWIFT_FLIGHT_FORM);
+								else if (!caster->HasAura(SPELL_DRUID_FLIGHT_FORM))
+									caster->CastSpell(caster, SPELL_DRUID_FLIGHT_FORM);
+							}
+							else if (!caster->HasAura(SPELL_DRUID_STAG_FORM))
+							{
+								caster->CastSpell(caster, SPELL_DRUID_STAG_FORM);
+							}
+						}
+						else
+							caster->DeMorph();
+					}
+				}
+			}
+		}
+
+		void Register() override
+		{
+			OnEffectPeriodic += AuraEffectPeriodicFn(spell_dru_form_controller_AuraScript::OnPeriodic, EFFECT_0, SPELL_AURA_PERIODIC_DUMMY);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_form_controller_AuraScript();
+	}
+};
+
+// 1066 - Aqua Form
+class spell_dru_aqua_form : public SpellScriptLoader
+{
+public:
+	spell_dru_aqua_form() : SpellScriptLoader("spell_dru_aqua_form") { }
+
+	class spell_dru_aqua_form_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_aqua_form_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
+				{				
+					if (caster->isOutside())
+					{
+						if ((caster->GetSkillValue(SKILL_RIDING) >= 225 &&
+							((caster->GetMapId() == 530) ||
+							(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
+							(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
+							(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))))
+							{
+								if (caster->GetSkillValue(SKILL_RIDING) >= 300 && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
+									caster->AddAura(SPELL_DRUID_SWIFT_FLIGHT_FORM, caster);
+								else if (!caster->HasAura(SPELL_DRUID_FLIGHT_FORM))
+									caster->AddAura(SPELL_DRUID_FLIGHT_FORM, caster);
+							}
+							else if (!caster->HasAura(SPELL_DRUID_STAG_FORM))
+								caster->AddAura(SPELL_DRUID_STAG_FORM, caster);
+					}
+					else
+						caster->DeMorph();
+				}
+			}
+		}
+
+		void Register() override
+		{
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_aqua_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_aqua_form_AuraScript();
+	}
+};
+
+// 33943/40120 - Flight Form
+class spell_dru_flight_form : public SpellScriptLoader
+{
+public:
+	spell_dru_flight_form() : SpellScriptLoader("spell_dru_flight_form") { }
+
+	class spell_dru_flight_form_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_flight_form_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (caster->IsInWater() && caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
+					caster->AddAura(SPELL_DRUID_AQUATIC_FORM, caster);
+				else if (caster->isOutside())
+					caster->AddAura(SPELL_DRUID_STAG_FORM, caster);
+				else
+					caster->DeMorph();
+			}
+		}
+
+		void Register() override
+		{
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_flight_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_flight_form_AuraScript();
+	}
+};
+
+// 165961 - Stag Form
+class spell_dru_stag_form : public SpellScriptLoader
+{
+public:
+	spell_dru_stag_form() : SpellScriptLoader("spell_dru_stag_form") { }
+
+	class spell_dru_stag_form_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_stag_form_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (caster->IsInWater() && caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
+					caster->AddAura(SPELL_DRUID_AQUATIC_FORM, caster);
+
+				else if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM) && (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
+					((caster->GetMapId() == 530) ||
+					(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
+					(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
+					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))) && caster->CanFly() && caster->isOutside())
+				{
+					if (caster->GetSkillValue(SKILL_RIDING) >= 300)
+						caster->AddAura(SPELL_DRUID_SWIFT_FLIGHT_FORM, caster);
+					else
+						caster->AddAura(SPELL_DRUID_FLIGHT_FORM, caster);
+				}
+				else
+					caster->DeMorph();
+			}
+		}
+
+		void Register() override
+		{
+			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_stag_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_stag_form_AuraScript();
 	}
 };
 
@@ -1165,295 +1460,6 @@ class spell_dru_tiger_s_fury : public SpellScriptLoader
             return new spell_dru_tiger_s_fury_SpellScript();
         }
 };
-
-
-// 783 - Travel Form 
-class spell_dru_travel_form : public SpellScriptLoader
-{
-public:
-	spell_dru_travel_form() : SpellScriptLoader("spell_dru_travel_form") { }
-
-	class spell_dru_travel_form_AuraScript : public AuraScript
-	{
-		PrepareAuraScript(spell_dru_travel_form_AuraScript);
-
-		bool Load() override
-		{
-			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
-		}
-
-		void AfterApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
-		{
-			if (Player* caster = GetCaster()->ToPlayer())
-			{ 
-				if (Player* plr = caster->ToPlayer())
-				{
-					if (caster->HasAura(98386))
-						caster->AddAura(98386,caster);
-					if (caster->IsInWater() && caster->HasAura(783) && plr->isOutside())
-					{
-						if (!caster->HasAura(1066))
-							caster->AddAura(1066, caster);
-					}
-					else if (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
-						((caster->GetMapId() == 530) ||
-						(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
-						(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
-						(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646))) && caster->HasAura(783) && plr->isOutside())
-					{
-						if (caster->GetSkillValue(SKILL_RIDING) >= 300 && caster->HasAura(783) && !caster->HasAura(40120))
-							caster->AddAura(40120, caster);
-						else if (!caster->HasAura(33943))
-							caster->AddAura(33943, caster);
-					}
-					else if (caster->HasAura(783) && plr->isOutside() && !caster->HasAura(165961))
-					{
-						caster->AddAura(165961, caster);
-					}
-				}
-			}
-		}
-	
-		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
-		{
-			if (Player* caster = GetCaster()->ToPlayer())
-			{
-				if (caster->HasAura(98386))
-					caster->RemoveAura(98386);
-				if (caster->HasAura(165961))
-					caster->RemoveAura(165961);
-				if (caster->HasAura(33943))
-					caster->RemoveAura(33943);
-				if (caster->HasAura(40120))
-					caster->RemoveAura(40120);
-				if (caster->HasAura(1066))
-					caster->RemoveAura(1066);
-				caster->DeMorph();
-				caster->RemoveAura(783);
-			}
-		}
-
-		void Register() override
-		{
-			AfterEffectApply += AuraEffectApplyFn(spell_dru_travel_form_AuraScript::AfterApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
-			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_travel_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
-		}
-	};
-
-	AuraScript* GetAuraScript() const override
-	{
-		return new spell_dru_travel_form_AuraScript();
-	}
-};
-
-// 98386 - Form Controller
-class spell_dru_form_controller : public SpellScriptLoader
-{
-public:
-	spell_dru_form_controller() : SpellScriptLoader("spell_dru_form_controller") { }
-
-	class spell_dru_form_controller_AuraScript : public AuraScript
-	{
-		PrepareAuraScript(spell_dru_form_controller_AuraScript);
-
-		bool Load() override
-		{
-			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
-		}
-
-		void OnPeriodic(AuraEffect const* aurEff )
-		{
-
-			if (Player* caster = GetCaster()->ToPlayer())
-			{
-				if (Player* plr = caster->ToPlayer())
-				{
-					GetTarget()->CastSpell(caster, 165961);
-				}
-			}
-				/*
-			if (Player* caster = GetCaster()->ToPlayer())
-			{
-				if (Player* plr = caster->ToPlayer())
-				{
-					if (caster->IsInWater() && caster->HasAura(783) && plr->isOutside())
-					{
-						if (!caster->HasAura(1066))
-							caster->AddAura(1066, caster);
-					}
-					else if (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
-						((caster->GetMapId() == 530) ||
-						(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
-						(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
-						(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646))) && caster->HasAura(783) && plr->isOutside())
-					{
-						if (caster->GetSkillValue(SKILL_RIDING) >= 300 && caster->HasAura(783) && !caster->HasAura(40120))
-							caster->AddAura(40120, caster);
-						else if (!caster->HasAura(33943))
-							caster->AddAura(33943, caster);
-					}
-					else if (caster->HasAura(783) && plr->isOutside() && !caster->HasAura(165961))
-					{
-						caster->AddAura(165961, caster);
-					}
-				}
-			}*/
-		}
-
-		void Register() override
-		{
-			OnEffectPeriodic += AuraEffectPeriodicFn(spell_dru_form_controller_AuraScript::OnPeriodic, EFFECT_0, SPELL_AURA_PERIODIC_DUMMY);
-		}
-	};
-
-	AuraScript* GetAuraScript() const override
-	{
-		return new spell_dru_form_controller_AuraScript();
-	}
-};
-
-// 1066 - Aqua Form
-class spell_dru_aqua_form : public SpellScriptLoader
-{
-public:
-	spell_dru_aqua_form() : SpellScriptLoader("spell_dru_aqua_form") { }
-
-	class spell_dru_aqua_form_AuraScript : public AuraScript
-	{
-		PrepareAuraScript(spell_dru_aqua_form_AuraScript);
-
-		bool Load() override
-		{
-			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
-		}
-
-		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
-		{
-			if (Player* caster = GetCaster()->ToPlayer())
-			{
-				if (caster->HasAura(783) && (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
-					((caster->GetMapId() == 530) ||
-					(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
-					(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
-					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))) && caster->HasAura(783))
-				{
-					if (caster->GetSkillValue(SKILL_RIDING) >= 300)
-						caster->AddAura(40120, caster);
-					else
-						caster->AddAura(33943, caster);
-				}
-				else if (caster->HasAura(783))
-				{
-					caster->AddAura(165961, caster);
-				}
-				else
-					caster->DeMorph();
-			
-			}
-		}
-
-		void Register() override
-		{
-			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_aqua_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
-		}
-	};
-
-	AuraScript* GetAuraScript() const override
-	{
-		return new spell_dru_aqua_form_AuraScript();
-	}
-};
-
-// 33943/40120 - Flight Form
-class spell_dru_flight_form : public SpellScriptLoader
-{
-public:
-	spell_dru_flight_form() : SpellScriptLoader("spell_dru_flight_form") { }
-
-	class spell_dru_flight_form_AuraScript : public AuraScript
-	{
-		PrepareAuraScript(spell_dru_flight_form_AuraScript);
-
-		bool Load() override
-		{
-			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
-		}
-
-		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
-		{
-			if (Player* caster = GetCaster()->ToPlayer())
-			{
-				if (caster->IsInWater() && caster->HasAura(783))
-					caster->AddAura(1066, caster);
-				else
-					caster->DeMorph();
-			}
-		}
-
-		void Register() override
-		{
-			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_flight_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
-		}
-	};
-
-	AuraScript* GetAuraScript() const override
-	{
-		return new spell_dru_flight_form_AuraScript();
-	}
-};
-
-// 165961 - Stag Form
-class spell_dru_stag_form : public SpellScriptLoader
-{
-public:
-	spell_dru_stag_form() : SpellScriptLoader("spell_dru_stag_form") { }
-
-	class spell_dru_stag_form_AuraScript : public AuraScript
-	{
-		PrepareAuraScript(spell_dru_stag_form_AuraScript);
-
-		bool Load() override
-		{
-			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
-		}
-
-		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
-		{
-			if (Player* caster = GetCaster()->ToPlayer())
-			{
-				if (caster->IsInWater() && caster->HasAura(783))
-				{
-					caster->AddAura(1066,caster);
-				}
-
-				else if (caster->HasAura(783) && (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
-					((caster->GetMapId() == 530) ||
-					(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
-					(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
-					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))) && caster->HasAura(783) && caster->CanFly())
-				{
-					if (caster->GetSkillValue(SKILL_RIDING) >= 300 && caster->HasAura(783))
-						caster->AddAura(40120, caster);
-					else if (caster->HasAura(783))
-						caster->AddAura(33943, caster);
-				}
-				else
-					caster->DeMorph();
-			}
-		}
-
-		void Register() override
-		{
-			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_stag_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
-		}
-	};
-
-	AuraScript* GetAuraScript() const override
-	{
-		return new spell_dru_stag_form_AuraScript();
-	}
-};
-
 
 // 61391 - Typhoon
 class spell_dru_typhoon : public SpellScriptLoader
