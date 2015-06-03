@@ -1188,6 +1188,8 @@ public:
 			{ 
 				if (Player* plr = caster->ToPlayer())
 				{
+					while (plr->HasAura(783))
+					{
 					if (caster->IsInWater() && caster->HasAura(783) && plr->isOutside())
 					{
 						caster->AddAura(1066, caster);
@@ -1206,6 +1208,8 @@ public:
 					else if (caster->HasAura(783) && plr->isOutside())
 					{
 						caster->AddAura(165961, caster);
+					}
+
 					}
 				}
 			}
