@@ -668,112 +668,112 @@ public:
 			break;
 		}case 75:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(571, 5919.968262f, 2082.419678f, 636.041931f, 2.712678f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 76:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(571, 3673.700684f, -1272.615356f, 243.511673f, 5.605888f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 77:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(1, -4701.958984f, -3723.593262f, 52.618992f, 3.777768f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 78:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(571, 3823.578369f, 7008.200684f, 161.507401f, 5.839439f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 79:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(571, 3452.629883f, 269.256989f, -113.680000f, 0.122173f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 80:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(571, 3578.251953f, 228.475403f, -120.056206f, 5.366899f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 81:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(571, 8505.018555f, 621.337036f, 547.690674f, 1.119184f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 82:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(571, 9171.525391f, -1148.768555f, 1221.193726f, 0.267034f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 83:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(571, 5437.122559f, 2840.711426f, 420.428741f, 0.011778f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 84:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(732, -1210.910400f, 1112.434814f, 119.974411f, 4.959787f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 85:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(0, -7508.862793f, -1237.262817f, 477.719757f, 2.273720f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 86:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(1, -8284.776367f, -4517.057129f, -217.847198f, 0.243473f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 87:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(1, 3999.760010f, -2972.738770f, 1002.547180f, 2.034182f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 88:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(0, -4912.042969f, -4205.448730f, 827.764343f, 5.301435f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 89:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(1, -11359.574219f, 25.256653f, 720.049805f, 1.668724f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 90:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(870, 4016.332520f, 1062.922119f, 461.015228f, 5.434958f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 91:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(870, 911.444275f, -81.111122f, 482.370880f, 0.613590f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 92:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(870, 182.353378f, 3972.915283f, 232.152618f, 1.780925f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 93:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(1064, 7134.598145f, 5147.270508f, 66.038300f, 5.495378f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 94:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(870, 1182.856079f, 667.443359f, 347.076355f, 5.451113f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 95:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(1116, 3473.945312f, 7371.453125f, 15.572385f, 1.621843f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 96:
 		{
-			//plr->TeleportTo(0, -3493.13f, -4912.95f, 77.1887f, 0.522433f);
+			plr->TeleportTo(1116, 7854.221680f, 875.020447f, 31.456554f, 0.052784f);
 			plr->CLOSE_GOSSIP_MENU();
 			break;
 		}case 97:
