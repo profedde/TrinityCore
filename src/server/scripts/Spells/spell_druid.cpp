@@ -354,9 +354,9 @@ public:
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
-				if (caster->IsInWater() && caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
+				if (caster->IsInWater() && caster->HasAura(SPELL_DRUID_TRAVEL_FORM) && !caster->HasAura(SPELL_DRUID_AQUATIC_FORM))
 					caster->AddAura(SPELL_DRUID_AQUATIC_FORM, caster);
-				else if (caster->isOutside())
+				else if (caster->isOutside() && !caster->HasAura(SPELL_DRUID_STAG_FORM))
 					caster->AddAura(SPELL_DRUID_STAG_FORM, caster);
 				else
 					caster->DeMorph();
@@ -394,7 +394,7 @@ public:
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
-				if (caster->IsInWater() && caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
+				if (caster->IsInWater() && caster->HasAura(SPELL_DRUID_TRAVEL_FORM) && !caster->HasAura(SPELL_DRUID_AQUATIC_FORM))
 					caster->AddAura(SPELL_DRUID_AQUATIC_FORM, caster);
 
 				else if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM) && (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
@@ -403,9 +403,9 @@ public:
 					(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
 					(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))) && caster->CanFly() && caster->isOutside())
 				{
-					if (caster->GetSkillValue(SKILL_RIDING) >= 300)
+					if (caster->GetSkillValue(SKILL_RIDING) >= 300 && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
 						caster->AddAura(SPELL_DRUID_SWIFT_FLIGHT_FORM, caster);
-					else
+					else if (!caster->HasAura(SPELL_DRUID_FLIGHT_FORM))
 						caster->AddAura(SPELL_DRUID_FLIGHT_FORM, caster);
 				}
 				else
