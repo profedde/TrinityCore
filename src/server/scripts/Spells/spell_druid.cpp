@@ -1261,8 +1261,17 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 
-		void OnPeriodic(AuraEffect const* /*aurEff*/)
+		void OnPeriodic(AuraEffect const* aurEff )
 		{
+
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (Player* plr = caster->ToPlayer())
+				{
+					GetTarget()->CastSpell(GetTarget(), 165961);
+				}
+			}
+				/*
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
 				if (Player* plr = caster->ToPlayer())
@@ -1288,7 +1297,7 @@ public:
 						caster->AddAura(165961, caster);
 					}
 				}
-			}
+			}*/
 		}
 
 		void Register() override
