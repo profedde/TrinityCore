@@ -1192,8 +1192,7 @@ public:
 					{
 					if (caster->IsInWater() && caster->HasAura(783) && plr->isOutside())
 					{
-						if (!caster->HasAura(1066))
-							caster->AddAura(1066, caster);
+						caster->AddAura(1066, caster);
 					}
 					else if (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
 						((caster->GetMapId() == 530) ||
@@ -1201,12 +1200,12 @@ public:
 						(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
 						(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646))) && caster->HasAura(783) && plr->isOutside())
 					{
-						if (caster->GetSkillValue(SKILL_RIDING) >= 300 && caster->HasAura(783) && !caster->HasAura(40120))
+						if (caster->GetSkillValue(SKILL_RIDING) >= 300 && caster->HasAura(783))
 							caster->AddAura(40120, caster);
-						else if (!caster->HasAura(33943))
+						else
 							caster->AddAura(33943, caster);
 					}
-					else if (caster->HasAura(783) && plr->isOutside() && !caster->HasAura(165961))
+					else if (caster->HasAura(783) && plr->isOutside())
 					{
 						caster->AddAura(165961, caster);
 					}
