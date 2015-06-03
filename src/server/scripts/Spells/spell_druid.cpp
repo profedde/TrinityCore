@@ -261,9 +261,9 @@ public:
 								caster->CastSpell(caster, SPELL_DRUID_STAG_FORM);
 							}
 						}
-						else
-							caster->DeMorph();
 					}
+					else
+						caster->DeMorph();
 				}
 			}
 		}
