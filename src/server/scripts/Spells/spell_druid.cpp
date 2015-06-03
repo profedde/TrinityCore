@@ -241,9 +241,7 @@ public:
 				{
 					if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
 					{
-						if (caster->IsUnderWater() && !caster->HasAura(SPELL_DRUID_AQUATIC_FORM))
-							caster->CastSpell(caster, SPELL_DRUID_AQUATIC_FORM);
-						else if (caster->isOutside() && !caster->HasAura(SPELL_DRUID_AQUATIC_FORM))
+						if (caster->isOutside() && !caster->HasAura(SPELL_DRUID_AQUATIC_FORM))
 						{
 							if (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
 								((caster->GetMapId() == 530) ||
