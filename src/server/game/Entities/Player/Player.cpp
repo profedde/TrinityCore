@@ -20531,7 +20531,7 @@ void Player::PetSpellInitialize()
     TC_LOG_DEBUG("entities.pet", "Pet Spells Groups");
 
     CharmInfo* charmInfo = pet->GetCharmInfo();
-
+	/*
     WorldPacket data(SMSG_PET_SPELLS_MESSAGE, 8 + 2 + 4 + 4 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 1);
     data << pet->GetGUID();
     data << uint16(pet->GetCreatureTemplate()->family);         // creature family (required for pet talents)
@@ -20567,7 +20567,7 @@ void Player::PetSpellInitialize()
     // Cooldowns
     //pet->GetSpellHistory()->WritePacket(&petSpells);
 
-    GetSession()->SendPacket(&data);
+    GetSession()->SendPacket(&data);*/
 }
 
 void Player::PossessSpellInitialize()
@@ -20583,7 +20583,7 @@ void Player::PossessSpellInitialize()
         TC_LOG_ERROR("entities.player", "Player::PossessSpellInitialize(): charm (%s) has no charminfo!", charm->GetGUID().ToString().c_str());
         return;
     }
-
+	/*
     WorldPacket data(SMSG_PET_SPELLS_MESSAGE, 8 + 2 + 4 + 4 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 1);
     data << charm->GetGUID();
     data << uint16(0);
@@ -20597,7 +20597,7 @@ void Player::PossessSpellInitialize()
     // Cooldowns
     //charm->GetSpellHistory()->WritePacket(&petSpells);
 
-    GetSession()->SendPacket(&data);
+    GetSession()->SendPacket(&data);*/
 }
 
 void Player::VehicleSpellInitialize()
@@ -20607,7 +20607,7 @@ void Player::VehicleSpellInitialize()
         return;
 
     uint8 cooldownCount = 0;
-
+	/*
     WorldPacket data(SMSG_PET_SPELLS_MESSAGE, 8 + 2 + 4 + 4 + 4 * 10 + 1 + 1 + cooldownCount * (4 + 2 + 4 + 4));
     data << vehicle->GetGUID();                             // Guid
     data << uint16(0);                                      // Pet Family (0 for all vehicles)
@@ -20648,7 +20648,7 @@ void Player::VehicleSpellInitialize()
 
     // Cooldowns
     //vehicle->GetSpellHistory()->WritePacket(&petSpells);
-    GetSession()->SendPacket(&data);
+    GetSession()->SendPacket(&data);*/
 }
 
 void Player::CharmSpellInitialize()
@@ -20675,7 +20675,7 @@ void Player::CharmSpellInitialize()
                     ++addlist;
         }
     }
-
+	/*
     WorldPacket data(SMSG_PET_SPELLS_MESSAGE, 8 + 2 + 4 + 4 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 4 * addlist + 1);
     data << charm->GetGUID();
     data << uint16(0);
@@ -20703,14 +20703,14 @@ void Player::CharmSpellInitialize()
     // Cooldowns
     //charm->GetSpellHistory()->WritePacket(&petSpells);
 
-    GetSession()->SendPacket(&data);
+    GetSession()->SendPacket(&data);*/
 }
 
 void Player::SendRemoveControlBar()
 {
-    WorldPacket data(SMSG_PET_SPELLS_MESSAGE, 8);
+   /* WorldPacket data(SMSG_PET_SPELLS_MESSAGE, 8);
     data << uint64(0);
-    GetSession()->SendPacket(&data);
+    GetSession()->SendPacket(&data);*/
 }
 
 bool Player::IsAffectedBySpellmod(SpellInfo const* spellInfo, SpellModifier* mod, Spell* spell)
