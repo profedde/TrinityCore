@@ -1201,7 +1201,7 @@ void ObjectMgr::LoadEquipmentTemplates()
 			continue;
 		}
 
-		QueryResult result = WorldDatabase.Query("SELECT CreatureID, ID, ItemID1, ItemID2, ItemID3 FROM creature_equip_template where ID =" + id );
+		QueryResult result = WorldDatabase.PQuery("SELECT CreatureID, ID, ItemID1, ItemID2, ItemID3 FROM creature_equip_template where ID =%u", id );
 
 		if (!result)
 		{
