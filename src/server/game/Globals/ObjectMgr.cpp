@@ -1145,18 +1145,16 @@ EquipmentInfo const* ObjectMgr::GetEquipmentInfo(uint32 entry, int32& id)
     EquipmentInfoContainer::const_iterator itr = _equipmentInfoStore.find(entry);
 	if (itr == _equipmentInfoStore.end())
 	{
-		TC_LOG_INFO("server.loading", ">> ERROR 1 << >> %u << >> %u <<", entry , id);
+		TC_LOG_INFO("server.loading", ">> ERROR 1 << >> %u << >> %u << >> %u << >> %u << >> %u <<", entry , id, itr->first, itr->second);
 		return NULL;
 	}
 	if (itr->second.empty())
 	{
-		TC_LOG_INFO("server.loading", ">> ERROR 2 << >> %u << >> %u <<", entry, id);
 		return NULL;
 	}
 
     if (id == -1) // select a random element
     {
-		TC_LOG_INFO("server.loading", ">> ERROR 3 << >> %u << >> %u <<", entry, id);
 		EquipmentInfoContainerInternal::const_iterator ritr = itr->second.begin();
         std::advance(ritr, urand(0u, itr->second.size() - 1));
         id = std::distance(itr->second.begin(), ritr) + 1;
@@ -1164,13 +1162,11 @@ EquipmentInfo const* ObjectMgr::GetEquipmentInfo(uint32 entry, int32& id)
     }
     else
     {
-		TC_LOG_INFO("server.loading", ">> ERROR 4 << >> %u << >> %u <<", entry, id);
+		TC_LOG_INFO("server.loading", ">> ERROR 4 << >> %u << >> %u << >> %u << >> %u << >> %u <<", entry, id, itr->first, itr->second);
 		EquipmentInfoContainerInternal::const_iterator itr2 = itr->second.find(id);
         if (itr2 != itr->second.end())
             return &itr2->second;
     }
-	TC_LOG_INFO("server.loading", ">> ERROR 5 << >> %u << >> %u <<", entry, id);
-
     return NULL;
 }
 
