@@ -1145,7 +1145,8 @@ EquipmentInfo const* ObjectMgr::GetEquipmentInfo(uint32 entry, int32& id)
     EquipmentInfoContainer::const_iterator itr = _equipmentInfoStore.find(entry);
 	if (itr == _equipmentInfoStore.end())
 	{
-		TC_LOG_INFO("server.loading", ">> ERROR 1 << >> %u << >> %u << >> %u << >> %u << >> %u <<", entry , id, itr->first, itr->second);
+		uint32 id2 = itr->first;
+		TC_LOG_INFO("server.loading", ">> ERROR 1 << >> %u << >> %u << >> %u << ", entry , id, id2);
 		return NULL;
 	}
 	if (itr->second.empty())
