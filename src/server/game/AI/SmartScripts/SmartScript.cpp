@@ -1541,7 +1541,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                 if (Creature* npc = (*itr)->ToCreature())
                 {
                     uint32 slot[3];
-                    int8 equipId = (int8)e.action.equip.entry;
+                    int32 equipId = (int32)e.action.equip.entry;
                     if (equipId)
                     {
                         EquipmentInfo const* einfo = sObjectMgr->GetEquipmentInfo(npc->GetEntry(), equipId);

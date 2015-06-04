@@ -1121,7 +1121,7 @@ bool SmartAIMgr::IsEventValid(SmartScriptHolder& e)
         {
             if (e.GetScriptType() == SMART_SCRIPT_TYPE_CREATURE)
             {
-                int8 equipId = (int8)e.action.equip.entry;
+                int32 equipId = (int32)e.action.equip.entry;
 
                 if (equipId)
                 {

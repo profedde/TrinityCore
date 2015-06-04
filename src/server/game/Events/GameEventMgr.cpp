@@ -483,7 +483,7 @@ void GameEventMgr::LoadFromDB()
 
                 if (newModelEquipSet.equipment_id > 0)
                 {
-                    int8 equipId = static_cast<int8>(newModelEquipSet.equipment_id);
+                    int32 equipId = static_cast<int32>(newModelEquipSet.equipment_id);
                     if (!sObjectMgr->GetEquipmentInfo(entry, equipId))
                     {
                         TC_LOG_ERROR("sql.sql", "Table `game_event_model_equip` have creature (Guid: " UI64FMTD ", entry: %u) with equipment_id %u not found in table `creature_equip_template`, set to no equipment.",

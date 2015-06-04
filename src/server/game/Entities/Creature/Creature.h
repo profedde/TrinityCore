@@ -278,7 +278,7 @@ struct EquipmentInfo
 };
 
 // Benchmarked: Faster than std::map (insert/find)
-typedef std::unordered_map<uint8, EquipmentInfo> EquipmentInfoContainerInternal;
+typedef std::unordered_map<uint32, EquipmentInfo> EquipmentInfoContainerInternal;
 typedef std::unordered_map<uint32, EquipmentInfoContainerInternal> EquipmentInfoContainer;
 
 // from `creature` table
@@ -292,7 +292,7 @@ struct CreatureData
     uint16 mapid;
     uint32 phaseMask;
     uint32 displayid;
-    int8 equipmentId;
+    int32 equipmentId;
     float posX;
     float posY;
     float posZ;
@@ -475,7 +475,7 @@ class Creature : public Unit, public GridObject<Creature>, public MapObject
         bool Create(ObjectGuid::LowType guidlow, Map* map, uint32 phaseMask, uint32 entry, float x, float y, float z, float ang, CreatureData const* data = nullptr, uint32 vehId = 0);
         bool LoadCreaturesAddon(bool reload = false);
         void SelectLevel();
-        void LoadEquipment(int8 id = 1, bool force = false);
+        void LoadEquipment(int32 id = 1, bool force = false);
 
         ObjectGuid::LowType GetSpawnId() const { return m_spawnId; }
 
@@ -536,9 +536,9 @@ class Creature : public Unit, public GridObject<Creature>, public MapObject
         void CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage) override;
 
         void SetCanDualWield(bool value) override;
-        int8 GetOriginalEquipmentId() const { return m_originalEquipmentId; }
-        uint8 GetCurrentEquipmentId() { return m_equipmentId; }
-        void SetCurrentEquipmentId(uint8 id) { m_equipmentId = id; }
+        uint32 GetOriginalEquipmentId() const { return m_originalEquipmentId; }
+        uint32 GetCurrentEquipmentId() { return m_equipmentId; }
+        void SetCurrentEquipmentId(uint32 id) { m_equipmentId = id; }
 
         float GetSpellDamageMod(int32 Rank) const;
 
@@ -721,8 +721,8 @@ class Creature : public Unit, public GridObject<Creature>, public MapObject
         void Regenerate(Powers power);
         MovementGeneratorType m_defaultMovementType;
         ObjectGuid::LowType m_spawnId;                               ///< For new or temporary creatures is 0 for saved it is lowguid
-        uint8 m_equipmentId;
-        int8 m_originalEquipmentId; // can be -1
+        uint32 m_equipmentId;
+        int32 m_originalEquipmentId; // can be -1
 
         bool m_AlreadyCallAssistance;
         bool m_AlreadySearchedAssistance;

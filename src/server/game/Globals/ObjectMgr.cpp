@@ -1140,7 +1140,7 @@ CreatureAddon const* ObjectMgr::GetCreatureTemplateAddon(uint32 entry)
     return NULL;
 }
 
-EquipmentInfo const* ObjectMgr::GetEquipmentInfo(uint32 entry, int8& id)
+EquipmentInfo const* ObjectMgr::GetEquipmentInfo(uint32 entry, int32& id)
 {
     EquipmentInfoContainer::const_iterator itr = _equipmentInfoStore.find(entry);
     if (itr == _equipmentInfoStore.end())
@@ -1741,7 +1741,7 @@ void ObjectMgr::LoadCreatures()
         data.id             = entry;
         data.mapid          = fields[2].GetUInt16();
         data.displayid      = fields[3].GetUInt32();
-        data.equipmentId    = fields[4].GetInt8();
+        data.equipmentId    = fields[4].GetInt32();
         data.posX           = fields[5].GetFloat();
         data.posY           = fields[6].GetFloat();
         data.posZ           = fields[7].GetFloat();

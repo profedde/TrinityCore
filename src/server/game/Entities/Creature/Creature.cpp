@@ -1043,7 +1043,7 @@ void Creature::SaveToDB(uint32 mapid, uint32 spawnMask, uint32 phaseMask)
     stmt->setUInt32(index++, data.phaseid);
     stmt->setUInt32(index++, data.phaseGroup);
     stmt->setUInt32(index++, displayId);
-    stmt->setUInt8(index++, GetCurrentEquipmentId());
+    stmt->setUInt32(index++, GetCurrentEquipmentId());
     stmt->setFloat(index++, GetPositionX());
     stmt->setFloat(index++, GetPositionY());
     stmt->setFloat(index++, GetPositionZ());
@@ -1307,7 +1307,7 @@ void Creature::SetCanDualWield(bool value)
     UpdateDamagePhysical(OFF_ATTACK);
 }
 
-void Creature::LoadEquipment(int8 id, bool force /*= true*/)
+void Creature::LoadEquipment(int32 id, bool force /*= true*/)
 {
     if (id == 0)
     {
