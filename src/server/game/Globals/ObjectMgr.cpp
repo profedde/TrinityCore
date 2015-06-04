@@ -1145,8 +1145,7 @@ EquipmentInfo const* ObjectMgr::GetEquipmentInfo(uint32 entry, int32& id)
     EquipmentInfoContainer::const_iterator itr = _equipmentInfoStore.find(entry);
 	if (itr == _equipmentInfoStore.end())
 	{
-		uint32 id2 = itr->first;
-		TC_LOG_INFO("server.loading", ">> ERROR 1 << >> %u << >> %u << >> %u << ", entry , id, id2);
+		TC_LOG_INFO("server.loading", ">> ERROR 1 << >> %u << >> %u << >> %u <<", entry, id, itr->first);
 		return NULL;
 	}
 	if (itr->second.empty())
@@ -1163,7 +1162,7 @@ EquipmentInfo const* ObjectMgr::GetEquipmentInfo(uint32 entry, int32& id)
     }
     else
     {
-		TC_LOG_INFO("server.loading", ">> ERROR 4 << >> %u << >> %u << >> %u << >> %u << >> %u <<", entry, id, itr->first, itr->second);
+		TC_LOG_INFO("server.loading", ">> ERROR 4 << >> %u << >> %u << >> %u <<", entry, id, itr->first);
 		EquipmentInfoContainerInternal::const_iterator itr2 = itr->second.find(id);
         if (itr2 != itr->second.end())
             return &itr2->second;
@@ -1176,7 +1175,7 @@ void ObjectMgr::LoadEquipmentTemplates()
     uint32 oldMSTime = getMSTime();
 
     //                                                 0     1       2           3           4
-    QueryResult result2 = WorldDatabase.Query("SELECT id,equipment_id FROM creature where equipment_id > 0");
+    QueryResult result2 = WorldDatabase.Query("SELECT DISTINCT id,equipment_id FROM creature where equipment_id > 0");
 	
 	if (!result2)
 	{
