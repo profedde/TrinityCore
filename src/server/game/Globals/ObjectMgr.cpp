@@ -1171,34 +1171,46 @@ void ObjectMgr::LoadEquipmentTemplates()
     uint32 oldMSTime = getMSTime();
 
     //                                                 0     1       2           3           4
-    QueryResult result = WorldDatabase.Query("SELECT CreatureID, ID, ItemID1, ItemID2, ItemID3 FROM creature_equip_template");
+    QueryResult result2 = WorldDatabase.Query("SELECT id,equipment_id FROM creature where equipment_id > 0");
+	
+	if (!result2)
+	{
+		TC_LOG_INFO("server.loading", ">> Loaded 0 creature equipment templates. DB table `creature` has no equipment ids!");
+		return;
+	}
 
-    if (!result)
-    {
-        TC_LOG_INFO("server.loading", ">> Loaded 0 creature equipment templates. DB table `creature_equip_template` is empty!");
-        return;
-    }
-
+	
+	
     uint32 count = 0;
     do
     {
-        Field* fields = result->Fetch();
+		Field* fields2 = result2->Fetch();
 
-        uint32 entry = fields[0].GetUInt32();
+		uint32 entry = fields2[0].GetUInt32();
 
-        if (!sObjectMgr->GetCreatureTemplate(entry))
-        {
-            TC_LOG_ERROR("sql.sql", "Creature template (CreatureID: %u) does not exist but has a record in `creature_equip_template`", entry);
-            continue;
-        }
+		if (!sObjectMgr->GetCreatureTemplate(entry))
+		{
+			TC_LOG_ERROR("sql.sql", "Creature template (CreatureID: %u) does not exist but has a record in `creature_equip_template`", entry);
+			continue;
+		}
 
-        uint8 id = fields[1].GetUInt8();
-        if (!id)
-        {
-            TC_LOG_ERROR("sql.sql", "Creature equipment template with id 0 found for creature %u, skipped.", entry);
-            continue;
-        }
+		uint32 id = fields2[1].GetUInt32();
+		if (!id)
+		{
+			TC_LOG_ERROR("sql.sql", "Creature equipment template with id 0 found for creature %u, skipped.", entry);
+			continue;
+		}
 
+		QueryResult result = WorldDatabase.Query("SELECT CreatureID, ID, ItemID1, ItemID2, ItemID3 FROM creature_equip_template where ID =" + id );
+
+		if (!result)
+		{
+			TC_LOG_INFO("server.loading", ">> Loaded 0 creature equipment templates. DB table `creature_equip_template` is empty!");
+			return;
+		}
+
+		Field* fields = result->Fetch();
+		
         EquipmentInfo& equipmentInfo = _equipmentInfoStore[entry][id];
 
         equipmentInfo.ItemEntry[0] = fields[2].GetUInt32();
@@ -1238,7 +1250,7 @@ void ObjectMgr::LoadEquipmentTemplates()
 
         ++count;
     }
-    while (result->NextRow());
+    while (result2->NextRow());
 
     TC_LOG_INFO("server.loading", ">> Loaded %u equipment templates in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
 }
