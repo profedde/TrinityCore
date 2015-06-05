@@ -881,7 +881,8 @@ void Aura::RefreshTimers()
 
 void Aura::SetCharges(uint8 charges)
 {
-    if (m_procCharges == charges)
+	TC_LOG_INFO("server.loading", ">> SET CHARGES AMOUNT TO: %u ", charges);
+	if (m_procCharges == charges)
         return;
 
     m_procCharges = charges;
@@ -891,8 +892,9 @@ void Aura::SetCharges(uint8 charges)
 
 uint8 Aura::CalcMaxCharges(Unit* caster) const
 {
-    uint32 maxProcCharges = m_spellInfo->ProcCharges;
-    if (SpellProcEntry const* procEntry = sSpellMgr->GetSpellProcEntry(GetId()))
+	uint32 maxProcCharges = m_spellInfo->ProcCharges;
+	TC_LOG_INFO("server.loading", ">> MAX PROC CHARGES AMOUNT TO: %u ", maxProcCharges);
+	if (SpellProcEntry const* procEntry = sSpellMgr->GetSpellProcEntry(GetId()))
         maxProcCharges = procEntry->charges;
 
     if (caster)
@@ -904,7 +906,8 @@ uint8 Aura::CalcMaxCharges(Unit* caster) const
 
 bool Aura::ModCharges(int32 num, AuraRemoveMode removeMode)
 {
-    if (IsUsingCharges())
+	TC_LOG_INFO("server.loading", ">> MOD CHARGES AMOUNT TO: %u ", num);
+	if (IsUsingCharges())
     {
         int32 charges = m_procCharges + num;
         int32 maxCharges = CalcMaxCharges();
@@ -927,13 +930,15 @@ bool Aura::ModCharges(int32 num, AuraRemoveMode removeMode)
 
 void Aura::ModChargesDelayed(int32 num, AuraRemoveMode removeMode)
 {
-    m_dropEvent = nullptr;
+	TC_LOG_INFO("server.loading", ">> MOD CHARGES DELAYED AMOUNT TO: %u ", num);
+	m_dropEvent = nullptr;
     ModCharges(num, removeMode);
 }
 
 void Aura::DropChargeDelayed(uint32 delay, AuraRemoveMode removeMode)
 {
-    // aura is already during delayed charge drop
+	TC_LOG_INFO("server.loading", ">> DROP CHARGE DELAY TO: %u ", delay);
+	// aura is already during delayed charge drop
     if (m_dropEvent)
         return;
     // only units have events
