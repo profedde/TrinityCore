@@ -12506,12 +12506,20 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
             }
 			else
 			{
-				
+
+				Unit* actor = isVictim ? target : this;
+				Unit* actionTarget = !isVictim ? target : this;
+
+				DamageInfo damageInfo = DamageInfo(actor, actionTarget, damage, procSpell, procSpell ? SpellSchoolMask(procSpell->SchoolMask) : SPELL_SCHOOL_MASK_NORMAL, SPELL_DIRECT_DAMAGE);
+				HealInfo healInfo = HealInfo(damage);
+				ProcEventInfo eventInfo = ProcEventInfo(actor, actionTarget, target, procFlag, 0, 0, procExtra, NULL, &damageInfo, &healInfo);
+
 				uint32 thisspellid = i->aura->GetId();
 				uint8 a = i->aura->GetStackAmount();
-				uint32 otherid = i->aura->GetEffect(EFFECT_0)->GetBase()->GetId();
+				uint32 otherid = eventInfo.GetSpellInfo()->Id;
+				
 				TC_LOG_INFO("server.loading", ">> ERROR26 << >> %u << >> %u << >> %u << ", a, thisspellid, otherid);
-				if (i->aura->GetStackAmount() > 0)
+				if (i->aura->GetStackAmount() > 0 && thisspellid != 36032)
 				{
 					
 					i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
