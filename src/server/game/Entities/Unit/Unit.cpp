@@ -12531,7 +12531,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 					if (otherid == 7268 && eventInfo.GetSpellInfo()->IsChanneled())
 					{
 						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid);
-						return;
+						break;
 					}
 					TC_LOG_INFO("server.loading", ">> left while loop << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid);
 					if (i->aura->GetStackAmount() > 0)
@@ -12546,7 +12546,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 					break;
 				default:
 					TC_LOG_INFO("server.loading", ">> Unhandled stack removal: << >> %u << Aura: >> %u << Removed by spell: >> %u << ", a, thisspellid, otherid);
-					return;
+					break;
 				}
 				
 				
