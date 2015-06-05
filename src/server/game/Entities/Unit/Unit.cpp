@@ -12506,8 +12506,14 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
             }
 			else
 			{
-				TC_LOG_INFO("server.loading", ">> ERROR26 << ");
-				i->aura->DropCharge();
+				uint8 a = i->aura->GetStackAmount();
+				TC_LOG_INFO("server.loading", ">> ERROR26 << >> %u << ", a);
+				if (i->aura->GetStackAmount() > 0)
+				{
+					i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
+				}
+				else
+					i->aura->DropCharge();
 			}
         }
 
