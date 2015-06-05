@@ -232,6 +232,13 @@ namespace WorldPackets
             SpellCastRequest Cast;
         };
 
+		class PetSetAction final : public ClientPacket
+		{
+		public:
+			PetSetAction(WorldPacket&& packet) : ClientPacket(CMSG_PET_SET_ACTION, std::move(packet)) { }
+
+		};
+
         class PetCastSpell final : public ClientPacket
         {
         public:
