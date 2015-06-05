@@ -12526,8 +12526,9 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 					pass = true;
 				case 79683: // Arcane Missiles
 					TC_LOG_INFO("server.loading", ">> Unhandled stack removal: << >> %u << Aura: >> %u << Arcane Missiles: >> %u << ", a, thisspellid, otherid);
-					if (otherid != 7268 && !pass)
+					if (otherid != 7268 && !pass && !eventInfo.GetSpellInfo()->IsChanneled())
 						break;
+
 					if (i->aura->GetStackAmount() > 0)
 						i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
 					else
@@ -12612,6 +12613,8 @@ void Unit::TriggerAurasProcOnEvent(std::list<AuraApplication*>* myProcAuras, std
     if (typeMaskActionTarget)
         TriggerAurasProcOnEvent(targetProcEventInfo, targetAurasTriggeringProc);
 }
+
+
 
 void Unit::TriggerAurasProcOnEvent(ProcEventInfo& eventInfo, std::list<AuraApplication*>& aurasTriggeringProc)
 {
