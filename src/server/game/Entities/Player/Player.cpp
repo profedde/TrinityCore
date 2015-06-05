@@ -9762,8 +9762,6 @@ uint8 Player::FindEquipSlot(ItemTemplate const* proto, uint32 slot, bool swap) c
 					break;
 				}
 			}
-			if (CanDualWield() && CanTitanGrip() && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_POLEARM && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_STAFF && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_BOW && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_GUN && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_CROSSBOW)
-				slots[1] = EQUIPMENT_SLOT_OFFHAND;
 			break;
         case INVTYPE_2HWEAPON:
             slots[0] = EQUIPMENT_SLOT_MAINHAND;
@@ -9787,7 +9785,7 @@ uint8 Player::FindEquipSlot(ItemTemplate const* proto, uint32 slot, bool swap) c
                     break;
                 }
             }
-			if (CanDualWield() && CanTitanGrip() && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_POLEARM && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_STAFF && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_STAFF && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_BOW && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_GUN && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_CROSSBOW)
+			if (CanDualWield() && CanTitanGrip() && ( proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_POLEARM ) && (proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_STAFF) && (proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_BOW) && (proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_GUN) && (proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_CROSSBOW))
                 slots[1] = EQUIPMENT_SLOT_OFFHAND;
             break;
         case INVTYPE_TABARD:
@@ -9880,7 +9878,6 @@ uint8 Player::FindEquipSlot(ItemTemplate const* proto, uint32 slot, bool swap) c
             slots[2] = INVENTORY_SLOT_BAG_START + 2;
             slots[3] = INVENTORY_SLOT_BAG_START + 3;
             break;
-        case INVTYPE_RELIC:
         default:
             return NULL_SLOT;
     }

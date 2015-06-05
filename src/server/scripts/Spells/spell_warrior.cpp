@@ -68,6 +68,8 @@ enum WarriorSpells
     SPELL_WARRIOR_GLYPH_OF_HEROIC_LEAP              = 159708,
     SPELL_WARRIOR_GLYPH_OF_HEROIC_LEAP_BUFF         = 133278,
     SPELL_WARRIOR_IMPROVED_HEROIC_LEAP              = 157449,
+	SPELL_WARRIOR_MASTERY_UNSHACKLED_FURY			= 76856,
+	SPELL_WARRIOR_RAGING_BLOW_TRIGGER				= 131116,
 };
 
 enum WarriorSpellIcons
@@ -209,17 +211,25 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 		
+		void AfterApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				caster->CastSpell(caster,SPELL_WARRIOR_RAGING_BLOW_TRIGGER);
+			}
+		}
+
 		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
-				caster->RemoveAura(76856);
+				caster->RemoveAura(SPELL_WARRIOR_MASTERY_UNSHACKLED_FURY);
 			}
 		}
 
 		void Register() override
 		{
-
+			AfterEffectApply += AuraEffectApplyFn(spell_warr_enrage_AuraScript::AfterApply, EFFECT_2, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 			AfterEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_AuraScript::AfterRemove, EFFECT_2, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 			AfterEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_AuraScript::AfterRemove, EFFECT_3, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 		}

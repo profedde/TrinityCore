@@ -1499,7 +1499,6 @@ uint32 Item::GetSellPrice(ItemTemplate const* proto, bool& normalSellPrice)
                 break;
             case INVTYPE_RANGED:
             case INVTYPE_RANGEDRIGHT:
-            case INVTYPE_RELIC:
                 weapType = 4;
                 break;
             default:
