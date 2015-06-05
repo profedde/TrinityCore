@@ -554,7 +554,7 @@ public:
 
 		void Register() override
 		{
-			OnEffectRemove += AuraEffectRemoveFn(spell_warr_raging_blow_proc_AuraScript::HandleRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			AfterEffectRemove += AuraEffectRemoveFn(spell_warr_raging_blow_proc_AuraScript::HandleRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 		}
 	};
 
