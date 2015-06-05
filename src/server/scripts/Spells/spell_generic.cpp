@@ -214,7 +214,7 @@ class spell_gen_alchemist_stone : public SpellScriptLoader
                 else if (eventInfo.GetDamageInfo()->GetSpellInfo()->HasEffect(DIFFICULTY_NONE, SPELL_EFFECT_ENERGIZE))
                     spellId = ALECHEMIST_STONE_MANA;
 
-                if (!spellId)
+				if (!spellId)
                     return;
 
                 GetTarget()->CastCustomSpell(spellId, SPELLVALUE_BASE_POINT0, bp, GetTarget(), true, NULL, aurEff);

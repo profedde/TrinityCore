@@ -1115,12 +1115,14 @@ uint8 AuraScript::GetStackAmount() const
 
 void AuraScript::SetStackAmount(uint8 num)
 {
-    m_aura->SetStackAmount(num);
+	TC_LOG_INFO("server.loading", ">> SET STACK2 AMOUNT TO: %u ", num);
+	m_aura->SetStackAmount(num);
 }
 
 bool AuraScript::ModStackAmount(int32 num, AuraRemoveMode removeMode)
 {
-    return m_aura->ModStackAmount(num, removeMode);
+	TC_LOG_INFO("server.loading", ">> MOD STACK AMOUNT2 TO: %u ", num);
+	return m_aura->ModStackAmount(num, removeMode);
 }
 
 bool AuraScript::IsPassive() const

@@ -1145,7 +1145,7 @@ EquipmentInfo const* ObjectMgr::GetEquipmentInfo(uint32 entry, int32& id)
     EquipmentInfoContainer::const_iterator itr = _equipmentInfoStore.find(entry);
 	if (itr == _equipmentInfoStore.end())
 	{
-		TC_LOG_INFO("server.loading", ">> ERROR 1 << >> %u << >> %u <<", entry, id); 
+		//TC_LOG_INFO("server.loading", ">> ERROR 1 << >> %u << >> %u <<", entry, id); 
 		return NULL;
 	}
 	if (itr->second.empty())
@@ -1162,7 +1162,7 @@ EquipmentInfo const* ObjectMgr::GetEquipmentInfo(uint32 entry, int32& id)
     }
     else
     {
-		TC_LOG_INFO("server.loading", ">> ERROR 4 << >> %u << >> %u <<", entry, id);
+		//TC_LOG_INFO("server.loading", ">> ERROR 4 << >> %u << >> %u <<", entry, id);
 		EquipmentInfoContainerInternal::const_iterator itr2 = itr->second.find(id);
         if (itr2 != itr->second.end())
             return &itr2->second;

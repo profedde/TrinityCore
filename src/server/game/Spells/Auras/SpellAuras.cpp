@@ -947,7 +947,8 @@ void Aura::DropChargeDelayed(uint32 delay, AuraRemoveMode removeMode)
 
 void Aura::SetStackAmount(uint8 stackAmount)
 {
-    m_stackAmount = stackAmount;
+	TC_LOG_INFO("server.loading", ">> SET STACK AMOUNT TO: %u ", stackAmount);
+	m_stackAmount = stackAmount;
     Unit* caster = GetCaster();
 
     std::list<AuraApplication*> applications;
@@ -973,7 +974,8 @@ void Aura::SetStackAmount(uint8 stackAmount)
 
 bool Aura::ModStackAmount(int32 num, AuraRemoveMode removeMode)
 {
-    int32 stackAmount = m_stackAmount + num;
+	TC_LOG_INFO("server.loading", ">> MOD STACK AMOUNT TO: %u ", num);
+	int32 stackAmount = m_stackAmount + num;
 
     // limit the stack amount (only on stack increase, stack amount may be changed manually)
     if ((num > 0) && (stackAmount > int32(m_spellInfo->StackAmount)))
