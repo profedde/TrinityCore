@@ -215,7 +215,8 @@ public:
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
-				caster->CastSpell(caster,SPELL_WARRIOR_RAGING_BLOW_TRIGGER);
+				if (caster->GetAuraCount(SPELL_WARRIOR_RAGING_BLOW_TRIGGER) < 2)
+					caster->CastSpell(caster,SPELL_WARRIOR_RAGING_BLOW_TRIGGER);
 			}
 		}
 
