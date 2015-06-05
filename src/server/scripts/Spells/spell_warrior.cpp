@@ -98,7 +98,10 @@ public:
 		void HandleEffect(SpellEffIndex /*effIndex*/)
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
+			{
 				caster->AddAura(12880, caster);
+				caster->CastSpell(caster, SPELL_WARRIOR_RAGING_BLOW_TRIGGER);
+			}
 		}
 
 		void Register() override
