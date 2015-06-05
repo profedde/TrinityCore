@@ -85,7 +85,35 @@ enum MiscSpells
     SPELL_PRIEST_RENEWED_HOPE                       = 63944
 };
 
-/// Updated 4.3.4
+// 18499 - Berserker Rage
+class spell_warr_berserker_rage : public SpellScriptLoader
+{
+public:
+	spell_warr_berserker_rage() : SpellScriptLoader("spell_warr_berserker_rage") { }
+
+	class spell_warr_berserker_rage_SpellScript : public SpellScript
+	{
+		PrepareSpellScript(spell_warr_berserker_rage_SpellScript);
+
+		void HandleEffect(SpellEffIndex /*effIndex*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+				caster->AddAura(12880, caster);
+		}
+
+		void Register() override
+		{
+			OnEffectHitTarget += SpellEffectFn(spell_warr_berserker_rage_SpellScript::HandleEffect, EFFECT_0, SPELL_EFFECT_APPLY_AURA);
+		}
+	};
+
+	SpellScript* GetSpellScript() const override
+	{
+		return new spell_warr_berserker_rage_SpellScript();
+	}
+};
+
+// Updated 4.3.4
 class spell_warr_bloodthirst : public SpellScriptLoader
 {
     public:
@@ -1230,6 +1258,7 @@ public:
 
 void AddSC_warrior_spell_scripts()
 {
+	new spell_warr_berserker_rage();
     new spell_warr_bloodthirst();
     new spell_warr_charge();
     new spell_warr_concussion_blow();
