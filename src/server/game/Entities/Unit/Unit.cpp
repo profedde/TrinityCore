@@ -12506,7 +12506,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
             }
 			else
 			{
-
+				// Fixed Stack System
 				Unit* actor = isVictim ? target : this;
 				Unit* actionTarget = !isVictim ? target : this;
 
@@ -12517,15 +12517,31 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 				uint32 thisspellid = i->aura->GetId();
 				uint8 a = i->aura->GetStackAmount();
 				uint32 otherid = eventInfo.GetSpellInfo()->Id;
-				
-				TC_LOG_INFO("server.loading", ">> ERROR26 << >> %u << >> %u << >> %u << ", a, thisspellid, otherid);
-				if (i->aura->GetStackAmount() > 0 && thisspellid != 36032)
+				bool pass = false;
+				switch (thisspellid)
 				{
-					
-					i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
-				}
-				else
+				case 131116: // Raging blow
+					if (otherid != 85384 && otherid != 96103)
+						break;
+					pass = true;
+				case 79683: // Arcane Missiles
+					if (otherid != 5143 && !pass)
+						break;
+					if (i->aura->GetStackAmount() > 0)
+						i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
+					else
+						i->aura->DropCharge();
+					break;
+				case 36032: // Arcane Charge
+					if (otherid != 44425)
+						break;
 					i->aura->DropCharge();
+					break;
+				default:
+					return;
+				}
+				//TC_LOG_INFO("server.loading", ">> ERROR26 << >> %u << >> %u << >> %u << ", a, thisspellid, otherid);
+				
 			}
         }
 
