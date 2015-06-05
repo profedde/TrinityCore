@@ -525,6 +525,45 @@ class spell_warr_overpower : public SpellScriptLoader
         }
 };
 
+// 131116 - Raging Blow Proc
+class spell_warr_raging_blow_proc : public SpellScriptLoader
+{
+public:
+	spell_warr_raging_blow_proc() : SpellScriptLoader("spell_warr_raging_blow_proc") {}
+
+	class spell_warr_raging_blow_proc_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_warr_raging_blow_proc_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void HandleRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			Player* caster = GetCaster()->ToPlayer();
+			if (GetSpellInfo()->Id != 85288)
+				PreventDefaultAction();
+			if(caster->GetAuraCount(SPELL_WARRIOR_RAGING_BLOW_TRIGGER) == 2)
+			{				
+				PreventDefaultAction();
+				caster->SetAuraStack(SPELL_WARRIOR_RAGING_BLOW_TRIGGER, caster, 1);
+			}
+		}
+
+		void Register() override
+		{
+			OnEffectRemove += AuraEffectRemoveFn(spell_warr_raging_blow_proc_AuraScript::HandleRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_warr_raging_blow_proc_AuraScript();
+	}
+};
+
 // 97462 - Rallying Cry
 class spell_warr_rallying_cry : public SpellScriptLoader
 {
@@ -1198,6 +1237,7 @@ void AddSC_warrior_spell_scripts()
     new spell_warr_intimidating_shout();
     new spell_warr_last_stand();
     new spell_warr_overpower();
+	new spell_warr_raging_blow_proc();
     new spell_warr_rallying_cry();
     new spell_warr_rend();
     new spell_warr_retaliation();
