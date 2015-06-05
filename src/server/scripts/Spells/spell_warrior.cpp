@@ -239,14 +239,6 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 		
-		void OnProc(AuraEffect const* /*aurEff*/, ProcEventInfo& /*eventInfo*/)
-		{
-			if (Player* caster = GetCaster()->ToPlayer())
-			{
-				caster->CastSpell(caster,SPELL_WARRIOR_RAGING_BLOW_TRIGGER);
-			}
-		}
-
 		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
@@ -257,7 +249,6 @@ public:
 
 		void Register() override
 		{
-			OnEffectProc += AuraEffectProcFn(spell_warr_enrage_AuraScript::OnProc, EFFECT_2, SPELL_AURA_DUMMY);
 			AfterEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_AuraScript::AfterRemove, EFFECT_2, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 			AfterEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_AuraScript::AfterRemove, EFFECT_3, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 		}
@@ -291,8 +282,17 @@ public:
 			return false;
 		}
 
+		void OnProc(AuraEffect const* /*aurEff*/, ProcEventInfo& /*eventInfo*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				caster->CastSpell(caster, SPELL_WARRIOR_RAGING_BLOW_TRIGGER);
+			}
+		}
+
 		void Register() override
 		{
+			AfterEffectProc += AuraEffectProcFn(spell_warr_enrage_proc_AuraScript::OnProc, EFFECT_0, SPELL_AURA_PROC_TRIGGER_SPELL);
 			DoCheckProc += AuraCheckProcFn(spell_warr_enrage_proc_AuraScript::CheckProc);
 		}
 	};
