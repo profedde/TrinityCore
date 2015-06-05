@@ -12506,10 +12506,14 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
             }
 			else
 			{
+				
+				uint32 thisspellid = i->aura->GetId();
 				uint8 a = i->aura->GetStackAmount();
-				TC_LOG_INFO("server.loading", ">> ERROR26 << >> %u << ", a);
+				uint32 otherid = i->aura->GetEffect(EFFECT_0)->GetBase()->GetId();
+				TC_LOG_INFO("server.loading", ">> ERROR26 << >> %u << >> %u << >> %u << ", a, thisspellid, otherid);
 				if (i->aura->GetStackAmount() > 0)
 				{
+					
 					i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
 				}
 				else
