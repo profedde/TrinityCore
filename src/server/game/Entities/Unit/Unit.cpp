@@ -12525,6 +12525,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 						break;
 					pass = true;
 				case 79683: // Arcane Missiles
+					TC_LOG_INFO("server.loading", ">> Unhandled stack removal: << >> %u << Aura: >> %u << Arcane Missiles: >> %u << ", a, thisspellid, otherid);
 					if (otherid != 5143 && !pass)
 						break;
 					if (i->aura->GetStackAmount() > 0)
@@ -12538,9 +12539,10 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 					i->aura->DropCharge();
 					break;
 				default:
+					TC_LOG_INFO("server.loading", ">> Unhandled stack removal: << >> %u << Aura: >> %u << Removed by spell: >> %u << ", a, thisspellid, otherid);
 					return;
 				}
-				//TC_LOG_INFO("server.loading", ">> ERROR26 << >> %u << >> %u << >> %u << ", a, thisspellid, otherid);
+				
 				
 			}
         }
