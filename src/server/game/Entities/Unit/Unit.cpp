@@ -12526,9 +12526,13 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 					pass = true;
 				case 79683: // Arcane Missiles
 					TC_LOG_INFO("server.loading", ">> Unhandled stack removal: << >> %u << Aura: >> %u << Arcane Missiles: >> %u << ", a, thisspellid, otherid);
-					if ((otherid != 7268 && !pass) || (otherid == 7268 && eventInfo.GetSpellInfo()->IsChanneled()))
+					if (otherid != 7268 && !pass)
 						break;
-
+					while (otherid == 7268 && eventInfo.GetSpellInfo()->IsChanneled())
+					{
+						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << ", a, thisspellid, otherid);
+						break;
+					}
 					if (i->aura->GetStackAmount() > 0)
 						i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
 					else
