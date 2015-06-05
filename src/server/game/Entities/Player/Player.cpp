@@ -20877,8 +20877,12 @@ void Player::RemoveSpellMods(Spell* spell)
             // remove from list
             spell->m_appliedMods.erase(iterMod);
 
-            if (mod->ownerAura->DropCharge(AURA_REMOVE_BY_EXPIRE))
-                itr = m_spellMods[i].begin();
+			if (mod->ownerAura->DropCharge(AURA_REMOVE_BY_EXPIRE))
+			{
+				TC_LOG_INFO("server.loading", ">> ERROR21 << ");
+				itr = m_spellMods[i].begin();
+			}
+			TC_LOG_INFO("server.loading", ">> ERROR23 << ");
         }
     }
 }

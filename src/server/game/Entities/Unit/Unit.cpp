@@ -7918,9 +7918,11 @@ Unit* Unit::GetMagicHitRedirectTarget(Unit* victim, SpellInfo const* spellInfo)
                     // Schedule charge drop
                     (*itr)->GetBase()->DropChargeDelayed(delay,AURA_REMOVE_BY_EXPIRE);
                 }
-                else
-                    (*itr)->GetBase()->DropCharge(AURA_REMOVE_BY_EXPIRE);
-
+				else
+				{
+					TC_LOG_INFO("server.loading", ">> ERROR24 << ");
+					(*itr)->GetBase()->DropCharge(AURA_REMOVE_BY_EXPIRE);
+				}
                 return magnet;
             }
     }
@@ -7938,7 +7940,8 @@ Unit* Unit::GetMeleeHitRedirectTarget(Unit* victim, SpellInfo const* spellInfo)
                 && spellInfo->CheckTarget(this, magnet, false) == SPELL_CAST_OK)))
                 if (roll_chance_i((*i)->GetAmount()))
                 {
-                    (*i)->GetBase()->DropCharge(AURA_REMOVE_BY_EXPIRE);
+					TC_LOG_INFO("server.loading", ">> ERROR25 << ");
+					(*i)->GetBase()->DropCharge(AURA_REMOVE_BY_EXPIRE);
                     return magnet;
                 }
     }
@@ -12499,10 +12502,13 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
                 // Set up missile speed based delay (from Spell.cpp: Spell::AddUnitTarget()::L2237)
                 uint32 delay = uint32(std::floor(std::max<float>(target->GetDistance(this), 5.0f) / procSpell->Speed * 1000.0f));
                 // Schedule charge drop
-                i->aura->DropChargeDelayed(delay);
+				i->aura->DropChargeDelayed(delay);
             }
-            else
-                i->aura->DropCharge();
+			else
+			{
+				TC_LOG_INFO("server.loading", ">> ERROR26 << ");
+				i->aura->DropCharge();
+			}
         }
 
         i->aura->CallScriptAfterProcHandlers(aurApp, eventInfo);

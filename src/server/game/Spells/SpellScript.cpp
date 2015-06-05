@@ -1106,7 +1106,8 @@ bool AuraScript::ModCharges(int8 num, AuraRemoveMode removeMode /*= AURA_REMOVE_
 
 bool AuraScript::DropCharge(AuraRemoveMode removeMode)
 {
-    return m_aura->DropCharge(removeMode);
+	TC_LOG_INFO("server.loading", ">> ERROR22 << ");
+	return m_aura->DropCharge(removeMode);
 }
 
 uint8 AuraScript::GetStackAmount() const

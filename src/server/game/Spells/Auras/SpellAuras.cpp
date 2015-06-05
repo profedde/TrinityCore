@@ -906,7 +906,7 @@ uint8 Aura::CalcMaxCharges(Unit* caster) const
 
 bool Aura::ModCharges(int32 num, AuraRemoveMode removeMode)
 {
-	TC_LOG_INFO("server.loading", ">> MOD CHARGES AMOUNT TO: %u ", num);
+	TC_LOG_INFO("server.loading", ">> MOD CHARGES AMOUNT TO: %i ", num);
 	if (IsUsingCharges())
     {
         int32 charges = m_procCharges + num;
