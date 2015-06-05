@@ -803,8 +803,12 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                 {
                     if (e.action.removeAura.charges)
                     {
-                        if (Aura* aur = (*itr)->ToUnit()->GetAura(e.action.removeAura.spell))
-                            aur->ModCharges(-static_cast<int32>(e.action.removeAura.charges), AURA_REMOVE_BY_EXPIRE);
+						if (Aura* aur = (*itr)->ToUnit()->GetAura(e.action.removeAura.spell))
+						{
+							int32 a = -static_cast<int32>(e.action.removeAura.charges);
+							TC_LOG_INFO("server.loading", ">> ERROR1 << : %u ", a);
+							aur->ModCharges(-static_cast<int32>(e.action.removeAura.charges), AURA_REMOVE_BY_EXPIRE);
+						}
                     }
                     else
                         (*itr)->ToUnit()->RemoveAurasDueToSpell(e.action.removeAura.spell);

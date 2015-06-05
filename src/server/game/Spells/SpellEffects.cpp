@@ -3708,8 +3708,12 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     if (Aura* chargesAura = m_caster->GetAura(59907))
                     {
                         m_caster->CastSpell(unitTarget, spell_heal, true, NULL, NULL, m_caster->ToTempSummon()->GetSummonerGUID());
-                        if (chargesAura->ModCharges(-1))
-                            m_caster->ToTempSummon()->UnSummon();
+						if (chargesAura->ModCharges(-1))
+						{
+							TC_LOG_INFO("server.loading", ">> ERROR3 <<");
+							m_caster->ToTempSummon()->UnSummon();
+						}
+						TC_LOG_INFO("server.loading", ">> ERROR4 <<");
                     }
 
                     return;

@@ -1100,7 +1100,8 @@ uint8 AuraScript::CalcMaxCharges() const
 
 bool AuraScript::ModCharges(int8 num, AuraRemoveMode removeMode /*= AURA_REMOVE_BY_DEFAULT*/)
 {
-    return m_aura->ModCharges(num, removeMode);
+	TC_LOG_INFO("server.loading", ">> ERROR5 << : %u ", num);
+	return m_aura->ModCharges(num, removeMode);
 }
 
 bool AuraScript::DropCharge(AuraRemoveMode removeMode)

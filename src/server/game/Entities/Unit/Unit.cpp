@@ -3588,9 +3588,13 @@ void Unit::RemoveAurasDueToSpellByDispel(uint32 spellId, uint32 dispellerSpellId
             // Call OnDispel hook on AuraScript
             aura->CallScriptDispel(&dispelInfo);
 
-            if (aura->GetSpellInfo()->AttributesEx7 & SPELL_ATTR7_DISPEL_CHARGES)
-                aura->ModCharges(-dispelInfo.GetRemovedCharges(), AURA_REMOVE_BY_ENEMY_SPELL);
-            else
+			if (aura->GetSpellInfo()->AttributesEx7 & SPELL_ATTR7_DISPEL_CHARGES)
+			{
+				uint32 a = -dispelInfo.GetRemovedCharges();
+				TC_LOG_INFO("server.loading", ">> ERROR6 << : %u ", a);
+				aura->ModCharges(-dispelInfo.GetRemovedCharges(), AURA_REMOVE_BY_ENEMY_SPELL);
+			}
+			else
                 aura->ModStackAmount(-dispelInfo.GetRemovedCharges(), AURA_REMOVE_BY_ENEMY_SPELL);
 
             // Call AfterDispel hook on AuraScript
@@ -3639,9 +3643,12 @@ void Unit::RemoveAurasDueToSpellBySteal(uint32 spellId, ObjectGuid casterGUID, U
 
             if (Aura* oldAura = stealer->GetAura(aura->GetId(), aura->GetCasterGUID()))
             {
-                if (stealCharge)
-                    oldAura->ModCharges(1);
-                else
+				if (stealCharge)
+				{
+					TC_LOG_INFO("server.loading", ">> ERROR7 <<");
+					oldAura->ModCharges(1);
+				}
+				else
                     oldAura->ModStackAmount(1);
                 oldAura->SetDuration(int32(dur));
             }
@@ -3667,9 +3674,12 @@ void Unit::RemoveAurasDueToSpellBySteal(uint32 spellId, ObjectGuid casterGUID, U
                 }
             }
 
-            if (stealCharge)
-                aura->ModCharges(-1, AURA_REMOVE_BY_ENEMY_SPELL);
-            else
+			if (stealCharge)
+			{
+				TC_LOG_INFO("server.loading", ">> ERROR8 <<");
+				aura->ModCharges(-1, AURA_REMOVE_BY_ENEMY_SPELL);
+			}
+			else
                 aura->ModStackAmount(-1, AURA_REMOVE_BY_ENEMY_SPELL);
 
             return;
