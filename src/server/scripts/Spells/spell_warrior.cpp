@@ -543,13 +543,18 @@ public:
 		void HandleRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
 			Player* caster = GetCaster()->ToPlayer();
+			AuraRemoveMode removeMode = GetTargetApplication()->GetRemoveMode();
+			if (removeMode != AURA_REMOVE_BY_EXPIRE)
+				return;
+			
+			/*
 			if (GetSpellInfo()->Id != 85288)
 				PreventDefaultAction();
 			if(caster->GetAuraCount(SPELL_WARRIOR_RAGING_BLOW_TRIGGER) == 2)
 			{				
 				PreventDefaultAction();
 				caster->SetAuraStack(SPELL_WARRIOR_RAGING_BLOW_TRIGGER, caster, 1);
-			}
+			}*/
 		}
 
 		void Register() override
