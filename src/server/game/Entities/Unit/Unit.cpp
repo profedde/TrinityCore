@@ -12528,12 +12528,12 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 					TC_LOG_INFO("server.loading", ">> Unhandled stack removal: << >> %u << Aura: >> %u << Arcane Missiles: >> %u << ", a, thisspellid, otherid);
 					if (otherid != 7268 && !pass)
 						break;
-					while (otherid == 7268 && eventInfo.GetSpellInfo()->IsChanneled() && eventInfo.GetSpellInfo()->GetDuration())
+					while (otherid == 7268 && eventInfo.GetSpellInfo()->IsChanneled())
 					{
-						int32 abc = eventInfo.GetSpellInfo()->GetDuration();
-						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, abc);
+						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid);
 						return;
 					}
+					TC_LOG_INFO("server.loading", ">> left while loop << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid);
 					if (i->aura->GetStackAmount() > 0)
 						i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
 					else
