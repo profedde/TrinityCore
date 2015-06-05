@@ -239,12 +239,11 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 		
-		void AfterApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		void OnProc(AuraEffect const* /*aurEff*/, ProcEventInfo& /*eventInfo*/)
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
-				if (caster->GetAuraCount(SPELL_WARRIOR_RAGING_BLOW_TRIGGER) < 2)
-					caster->CastSpell(caster,SPELL_WARRIOR_RAGING_BLOW_TRIGGER);
+				caster->CastSpell(caster,SPELL_WARRIOR_RAGING_BLOW_TRIGGER);
 			}
 		}
 
@@ -258,7 +257,7 @@ public:
 
 		void Register() override
 		{
-			AfterEffectApply += AuraEffectApplyFn(spell_warr_enrage_AuraScript::AfterApply, EFFECT_2, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			OnEffectProc += AuraEffectProcFn(spell_warr_enrage_AuraScript::OnProc, EFFECT_2, SPELL_AURA_DUMMY);
 			AfterEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_AuraScript::AfterRemove, EFFECT_2, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 			AfterEffectRemove += AuraEffectRemoveFn(spell_warr_enrage_AuraScript::AfterRemove, EFFECT_3, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 		}
@@ -552,7 +551,7 @@ class spell_warr_overpower : public SpellScriptLoader
             return new spell_warr_overpower_SpellScript();
         }
 };
-
+/*
 // 131116 - Raging Blow Proc
 class spell_warr_raging_blow_proc : public SpellScriptLoader
 {
@@ -568,7 +567,7 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 
-		void HandleRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		void HandleRemove(AuraEffect const* /*aurEff, AuraEffectHandleModes /*mode)
 		{
 			Player* caster = GetCaster()->ToPlayer();
 			AuraRemoveMode removeMode = GetTargetApplication()->GetRemoveMode();
@@ -582,7 +581,7 @@ public:
 			{				
 				PreventDefaultAction();
 				caster->SetAuraStack(SPELL_WARRIOR_RAGING_BLOW_TRIGGER, caster, 1);
-			}*/
+			}
 		}
 
 		void Register() override
@@ -595,7 +594,7 @@ public:
 	{
 		return new spell_warr_raging_blow_proc_AuraScript();
 	}
-};
+};*/
 
 // 97462 - Rallying Cry
 class spell_warr_rallying_cry : public SpellScriptLoader
@@ -1271,7 +1270,7 @@ void AddSC_warrior_spell_scripts()
     new spell_warr_intimidating_shout();
     new spell_warr_last_stand();
     new spell_warr_overpower();
-	new spell_warr_raging_blow_proc();
+	//new spell_warr_raging_blow_proc();
     new spell_warr_rallying_cry();
     new spell_warr_rend();
     new spell_warr_retaliation();
