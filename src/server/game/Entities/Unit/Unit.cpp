@@ -12530,25 +12530,25 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 						break;
 					if (otherid == 7268)
 					{
-						if (!arcanechargecount || arcanechargecount == 0)
+						if (!arcaneMissilesCount || arcaneMissilesCount == 0)
 						{
-							arcanechargecount = 1;
+							arcaneMissilesCount = 1;
 							break;
 						}
-						else if (arcanechargecount < 5)
+						else if (arcaneMissilesCount < 5)
 						{
-							arcanechargecount += 1;
+							arcaneMissilesCount += 1;
 							break;
 						}
-						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcanechargecount);
-						if (i->aura->GetStackAmount() > 0 && arcanechargecount == 5)
+						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcaneMissilesCount);
+						if (i->aura->GetStackAmount() > 0 && arcaneMissilesCount == 5)
 						{
-							arcanechargecount = 0;
+							arcaneMissilesCount = 0;
 							i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
 						}
 						else
 						{
-							arcanechargecount = 0;
+							arcaneMissilesCount = 0;
 							i->aura->DropCharge();
 						}
 					}
