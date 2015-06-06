@@ -12528,16 +12528,30 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 					TC_LOG_INFO("server.loading", ">> Unhandled stack removal: << >> %u << Aura: >> %u << Arcane Missiles: >> %u << ", a, thisspellid, otherid);
 					if (otherid != 7268 && !pass)
 						break;
-					if (otherid == 7268 && eventInfo.GetSpellInfo()->IsChanneled())
+					if (otherid == 7268)
 					{
-						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid);
-						break;
+						if (!arcanechargecount || arcanechargecount == 0)
+						{
+							arcanechargecount = 1;
+							break;
+						}
+						else if (arcanechargecount < 5)
+						{
+							arcanechargecount += 1;
+							break;
+						}
+						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcanechargecount);
+						if (i->aura->GetStackAmount() > 0 && arcanechargecount == 5)
+						{
+							arcanechargecount = 0;
+							i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
+						}
+						else
+						{
+							arcanechargecount = 0;
+							i->aura->DropCharge();
+						}
 					}
-					TC_LOG_INFO("server.loading", ">> left while loop << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid);
-					if (i->aura->GetStackAmount() > 0)
-						i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
-					else
-						i->aura->DropCharge();
 					break;
 				case 36032: // Arcane Charge
 					if (otherid != 44425)
