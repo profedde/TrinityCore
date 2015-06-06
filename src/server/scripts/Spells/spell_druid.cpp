@@ -20,8 +20,6 @@
  * Ordered alphabetically using scriptname.
  * Scriptnames of files in this file should be prefixed with "spell_dru_".
  */
- 
-//test
 
 #include "Player.h"
 #include "ScriptMgr.h"
