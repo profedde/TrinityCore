@@ -1347,10 +1347,10 @@ void AuraEffect::HandleShapeshiftBoosts(Unit* target, bool apply) const
             spellId2 = 21178;
             break;
         case FORM_BATTLESTANCE:
-            spellId = 21156;
+            spellId = 2457;
             break;
         case FORM_DEFENSIVESTANCE:
-            spellId = 7376;
+            spellId = 71;
             break;
         case FORM_BERSERKERSTANCE:
             spellId = 7381;

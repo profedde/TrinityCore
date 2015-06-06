@@ -12537,7 +12537,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 						uint8 arcaneMissilesCount = GetArcaneMissileCharges();
 						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %u <<", a, thisspellid, otherid, arcaneMissilesCount);
 						
-						if (GetArcaneMissileCharges() == 0 || !GetArcaneMissileCharges())
+						if (GetArcaneMissileCharges() == 0 || !GetArcaneMissileCharges() || GetArcaneMissileCharges() > 5)
 						{
 							TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %u <<", a, thisspellid, otherid, arcaneMissilesCount);
 							SetArcaneMissileCharges(1);
