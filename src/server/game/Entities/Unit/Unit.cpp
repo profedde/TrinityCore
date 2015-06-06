@@ -12530,10 +12530,11 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 						break;
 					if (otherid == 7268)
 					{
-						if (!arcaneMissilesCount || arcaneMissilesCount == 0)
+						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcaneMissilesCount);
+						if (arcaneMissilesCount == NULL || arcaneMissilesCount == 0)
 						{
-							arcaneMissilesCount = 1;
 							TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcaneMissilesCount);
+							arcaneMissilesCount = 1;
 							break;
 						}
 						else if (arcaneMissilesCount < 5)
