@@ -1,5 +1,3 @@
-//test
-
 /*
  * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
  *
@@ -71,8 +69,7 @@ enum DruidSpells
 	SPELL_DRUID_FLIGHT_FORM					= 33943,
 	SPELL_DRUID_SWIFT_FLIGHT_FORM			= 40120,
 	SPELL_DRUID_STAG_FORM					= 165961,
-	SPELL_DRUID_FORM_CONTROLLER				= 98386,
-	SPELL_ABC						= 123
+	SPELL_DRUID_FORM_CONTROLLER				= 98386
 };
 
 // 768 - Cat Form
