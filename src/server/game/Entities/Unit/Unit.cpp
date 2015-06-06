@@ -12525,7 +12525,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 						break;
 					pass = true;
 				case 79683: // Arcane Missiles
-					TC_LOG_INFO("server.loading", ">> Unhandled stack removal: << >> %u << Aura: >> %u << Arcane Missiles: >> %u << ", a, thisspellid, otherid);
+					//TC_LOG_INFO("server.loading", ">> Unhandled stack removal: << >> %u << Aura: >> %u << Arcane Missiles: >> %u << ", a, thisspellid, otherid);
 					if (otherid != 7268 && !pass)
 						break;
 					if (otherid == 7268)
@@ -12533,25 +12533,23 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 						if (!arcaneMissilesCount || arcaneMissilesCount == 0)
 						{
 							arcaneMissilesCount = 1;
+							TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcaneMissilesCount);
 							break;
 						}
 						else if (arcaneMissilesCount < 5)
 						{
 							arcaneMissilesCount += 1;
+							TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcaneMissilesCount);
 							break;
 						}
+						else if (arcaneMissilesCount == 5)
+							arcaneMissilesCount = 0;
 						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcaneMissilesCount);
-						if (i->aura->GetStackAmount() > 0 && arcaneMissilesCount == 5)
-						{
-							arcaneMissilesCount = 0;
-							i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
-						}
-						else
-						{
-							arcaneMissilesCount = 0;
-							i->aura->DropCharge();
-						}
 					}
+					if (i->aura->GetStackAmount() > 0 )
+						i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
+					else
+						i->aura->DropCharge();
 					break;
 				case 36032: // Arcane Charge
 					if (otherid != 44425)
