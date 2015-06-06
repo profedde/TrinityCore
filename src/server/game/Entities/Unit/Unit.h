@@ -1501,7 +1501,9 @@ class Unit : public WorldObject
         void TriggerAurasProcOnEvent(ProcEventInfo& eventInfo, AuraApplicationList& procAuras);
         void HandleEmoteCommand(uint32 anim_id);
         void AttackerStateUpdate (Unit* victim, WeaponAttackType attType = BASE_ATTACK, bool extra = false);
-		int& arcaneMissilesCount;
+
+		uint8 GetArcaneMissileCharges() const { return m_arcanemissilecharges; }
+		void SetArcaneMissileCharges(uint8 num);
 
         void CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* damageInfo, WeaponAttackType attackType = BASE_ATTACK);
         void DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss);
@@ -2307,6 +2309,7 @@ class Unit : public WorldObject
         void SetRooted(bool apply, bool packetOnly = false);
 
         uint32 m_movementCounter;       ///< Incrementing counter used in movement packets
+		uint8 m_arcanemissilecharges;						//Arcane Missile Charges
 
     private:
 

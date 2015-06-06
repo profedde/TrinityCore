@@ -212,7 +212,6 @@ Unit::Unit(bool isWorldObject) :
     m_objectTypeId = TYPEID_UNIT;
 
     m_updateFlag = UPDATEFLAG_LIVING;
-
     m_attackTimer[BASE_ATTACK] = 0;
     m_attackTimer[OFF_ATTACK] = 0;
     m_attackTimer[RANGED_ATTACK] = 0;
@@ -11754,6 +11753,11 @@ CharmInfo* Unit::InitCharmInfo()
     return m_charmInfo;
 }
 
+void Unit::SetArcaneMissileCharges(uint8 stackamount)
+{
+	m_arcanemissilecharges = stackamount;
+}
+
 void Unit::DeleteCharmInfo()
 {
     if (!m_charmInfo)
@@ -12530,22 +12534,24 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
 						break;
 					if (otherid == 7268)
 					{
-						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcaneMissilesCount);
-						if (arcaneMissilesCount == NULL || arcaneMissilesCount == 0)
+						uint8 arcaneMissilesCount = GetArcaneMissileCharges();
+						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %u <<", a, thisspellid, otherid, arcaneMissilesCount);
+						
+						if (GetArcaneMissileCharges() == 0 || !GetArcaneMissileCharges())
 						{
-							TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcaneMissilesCount);
-							arcaneMissilesCount = 1;
+							TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %u <<", a, thisspellid, otherid, arcaneMissilesCount);
+							SetArcaneMissileCharges(1);
 							break;
 						}
-						else if (arcaneMissilesCount < 5)
+						else if (GetArcaneMissileCharges()  < 5)
 						{
-							arcaneMissilesCount += 1;
-							TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcaneMissilesCount);
+							SetArcaneMissileCharges(GetArcaneMissileCharges() +1);
+							TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %u <<", a, thisspellid, otherid, arcaneMissilesCount);
 							break;
 						}
-						else if (arcaneMissilesCount == 5)
-							arcaneMissilesCount = 0;
-						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %i <<", a, thisspellid, otherid, arcaneMissilesCount);
+						else if (GetArcaneMissileCharges() == 5)
+							SetArcaneMissileCharges(0);
+						TC_LOG_INFO("server.loading", ">> 123 << >> %u << Aura: >> %u << Removed by spell: >> %u << >> Duration: %u <<", a, thisspellid, otherid, arcaneMissilesCount);
 					}
 					if (i->aura->GetStackAmount() > 0 )
 						i->aura->SetStackAmount(i->aura->GetStackAmount() - 1);
