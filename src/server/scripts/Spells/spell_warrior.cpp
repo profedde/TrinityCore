@@ -70,6 +70,7 @@ enum WarriorSpells
     SPELL_WARRIOR_IMPROVED_HEROIC_LEAP              = 157449,
 	SPELL_WARRIOR_MASTERY_UNSHACKLED_FURY			= 76856,
 	SPELL_WARRIOR_RAGING_BLOW_TRIGGER				= 131116,
+	SPELL_WARRIOR_INTERVENE							= 147833,
 };
 
 enum WarriorSpellIcons
@@ -449,6 +450,37 @@ class spell_warr_improved_spell_reflection : public SpellScriptLoader
         {
             return new spell_warr_improved_spell_reflection_SpellScript();
         }
+};
+
+// 3411 - Intervene
+class spell_warr_intervene : public SpellScriptLoader
+{
+	public:
+		spell_warr_intervene() : SpellScriptLoader("spell_warr_intervene") {}
+
+		class spell_warr_intervene_SpellScript : public SpellScript
+		{
+			PrepareSpellScript(spell_warr_intervene_SpellScript);
+
+			void HandleEffect(SpellEffIndex /*effIndex*/)
+			{
+				if (Player* caster = GetCaster()->ToPlayer())
+				{
+					if (GetHitUnit())
+						caster->CastSpell(GetHitUnit(), SPELL_WARRIOR_INTERVENE);
+				}
+			}
+			
+			void Register() override
+			{
+				OnEffectHitTarget += SpellEffectFn(spell_warr_intervene_SpellScript::HandleEffect, EFFECT_0, SPELL_EFFECT_DUMMY);
+			}
+		};
+
+		SpellScript* GetSpellScript() const override
+		{
+			return new spell_warr_intervene_SpellScript();
+		}
 };
 
 // 5246 - Intimidating Shout
@@ -1270,6 +1302,7 @@ void AddSC_warrior_spell_scripts()
 	new spell_warr_prot_mastery();
     new spell_warr_execute();
     new spell_warr_improved_spell_reflection();
+	new spell_warr_intervene();
     new spell_warr_intimidating_shout();
     new spell_warr_last_stand();
     new spell_warr_overpower();
