@@ -466,7 +466,7 @@ class spell_warr_intervene : public SpellScriptLoader
 			{
 				if (Player* caster = GetCaster()->ToPlayer())
 				{
-					if (GetHitUnit())
+					if (GetHitUnit()->ToPlayer() && GetHitUnit()->IsFriendlyTo(caster) && caster->IsInRange(GetHitUnit(), 0.0f, 25.0f) && GetHitUnit()->IsWithinLOS(caster->GetPositionX(), caster->GetPositionY(), caster->GetPositionZ()))
 						caster->CastSpell(GetHitUnit(), SPELL_WARRIOR_INTERVENE);
 				}
 			}
