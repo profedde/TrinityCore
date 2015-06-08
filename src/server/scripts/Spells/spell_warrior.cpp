@@ -462,17 +462,35 @@ class spell_warr_intervene : public SpellScriptLoader
 		{
 			PrepareSpellScript(spell_warr_intervene_SpellScript);
 
+			SpellCastResult CheckElevation()
+			{
+				if (WorldLocation const* dest = GetExplTargetDest())
+				{
+
+					if (Player* caster = GetCaster()->ToPlayer())
+					{
+						if (caster->HasUnitMovementFlag(MOVEMENTFLAG_ROOT))
+							return SPELL_FAILED_ROOTED;
+						if (!caster->IsInRange(GetHitUnit(), 0.0f, 25.0f))
+							return SPELL_FAILED_OUT_OF_RANGE;
+						if (!GetHitUnit()->ToPlayer() || !GetHitUnit()->IsFriendlyTo(caster))
+							return SPELL_FAILED_BAD_TARGETS;
+					}
+				}
+				return SPELL_CAST_OK;
+			}
+
 			void HandleEffect(SpellEffIndex /*effIndex*/)
 			{
 				if (Player* caster = GetCaster()->ToPlayer())
 				{
-					if (GetHitUnit()->ToPlayer() && GetHitUnit()->IsFriendlyTo(caster) && caster->IsInRange(GetHitUnit(), 0.0f, 25.0f))
-						caster->CastSpell(GetHitUnit(), SPELL_WARRIOR_INTERVENE);
+					caster->CastSpell(GetHitUnit(), SPELL_WARRIOR_INTERVENE);
 				}
 			}
 			
 			void Register() override
 			{
+				OnCheckCast += SpellCheckCastFn(spell_warr_intervene_SpellScript::CheckElevation);
 				OnEffectHitTarget += SpellEffectFn(spell_warr_intervene_SpellScript::HandleEffect, EFFECT_0, SPELL_EFFECT_DUMMY);
 			}
 		};
