@@ -20208,9 +20208,9 @@ void Player::ResetInstances(uint8 method, bool isRaid, bool isLegacy)
 
 void Player::SendResetInstanceSuccess(uint32 MapId)
 {
-    WorldPacket data(SMSG_INSTANCE_RESET, 4);
-    data << uint32(MapId);
-    GetSession()->SendPacket(&data);
+    WorldPackets::Instance::InstanceReset data;
+    data.MapID = MapId;
+    GetSession()->SendPacket(data.Write());
 }
 
 void Player::SendResetInstanceFailed(uint32 reason, uint32 MapId)
@@ -20220,10 +20220,11 @@ void Player::SendResetInstanceFailed(uint32 reason, uint32 MapId)
     // 1: There are players offline in your party.
     // 2>: There are players in your party attempting to zone into an instance.
     */
-    WorldPacket data(SMSG_INSTANCE_RESET_FAILED, 8);
-    data << uint32(reason);
-    data << uint32(MapId);
-    GetSession()->SendPacket(&data);
+
+    WorldPackets::Instance::InstanceResetFailed data;
+    data.MapID = MapId;
+    data.ResetFailedReason = reason;
+    GetSession()->SendPacket(data.Write());
 }
 
 /*********************************************************/
