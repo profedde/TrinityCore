@@ -8544,6 +8544,13 @@ uint32 Unit::SpellDamageBonusTaken(Unit* caster, SpellInfo const* spellProto, ui
 
 int32 Unit::SpellBaseDamageBonusDone(SpellSchoolMask schoolMask) const
 {
+    if (GetTypeId() == TYPEID_PLAYER)
+    {
+        float overrideSP = GetFloatValue(PLAYER_FIELD_OVERRIDE_SPELL_POWER_BY_AP_PCT);
+        if (overrideSP > 0.0f)
+            return int32(CalculatePct(GetTotalAttackPowerValue(BASE_ATTACK), overrideSP) + 0.5f);
+    }
+
     int32 DoneAdvertisedBenefit = 0;
 
     AuraEffectList const& mDamageDone = GetAuraEffectsByType(SPELL_AURA_MOD_DAMAGE_DONE);
@@ -9114,6 +9121,13 @@ uint32 Unit::SpellHealingBonusTaken(Unit* caster, SpellInfo const* spellProto, u
 
 int32 Unit::SpellBaseHealingBonusDone(SpellSchoolMask schoolMask) const
 {
+    if (GetTypeId() == TYPEID_PLAYER)
+    {
+        float overrideSP = GetFloatValue(PLAYER_FIELD_OVERRIDE_SPELL_POWER_BY_AP_PCT);
+        if (overrideSP > 0.0f)
+            return int32(CalculatePct(GetTotalAttackPowerValue(BASE_ATTACK), overrideSP) + 0.5f);
+    }
+
     int32 advertisedBenefit = 0;
 
     AuraEffectList const& mHealingDone = GetAuraEffectsByType(SPELL_AURA_MOD_HEALING_DONE);
