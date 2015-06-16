@@ -20529,11 +20529,13 @@ void Player::PetSpellInitialize()
     TC_LOG_DEBUG("entities.pet", "Pet Spells Groups");
 
 	CharmInfo* charmInfo = pet->GetCharmInfo();
+
+	/* From skyfire
 	ObjectGuid guid = pet->GetGUID();
 
 	uint32 spellCount = 0;
 	uint32 spellHistoryCount = 0;
-	uint32 cooldownCount = pet->_LoadSpellCooldowns.size();
+	//uint32 cooldownCount = pet->
 	
 	WorldPacket data(SMSG_PET_SPELLS_MESSAGE, 8 + 2 + 4 + 4 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 1);
 
@@ -20619,8 +20621,8 @@ void Player::PetSpellInitialize()
 	data.WriteByteSeq(guid[5]);
 	data << uint32(0);                                  // flags ??
 
-	GetSession()->SendPacket(&data);
-	/*
+	GetSession()->SendPacket(&data);*/
+	
     WorldPacket data(SMSG_PET_SPELLS_MESSAGE, 8 + 2 + 4 + 4 + 4 * MAX_UNIT_ACTION_BAR_INDEX + 1 + 1);
     data << pet->GetGUID();
     data << uint16(pet->GetCreatureTemplate()->family);         // creature family (required for pet talents)
@@ -20656,7 +20658,7 @@ void Player::PetSpellInitialize()
     // Cooldowns
     //pet->GetSpellHistory()->WritePacket(&petSpells);
 
-    GetSession()->SendPacket(&data);*/
+    GetSession()->SendPacket(&data);
 }
 
 void Player::PossessSpellInitialize()
