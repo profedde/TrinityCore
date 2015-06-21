@@ -31,6 +31,7 @@ EndScriptData */
 #include "ReputationMgr.h"
 #include "ScriptMgr.h"
 #include "SpellInfo.h"
+#include <boost/algorithm/string/replace.hpp>
 
 class lookup_commandscript : public CommandScript
 {
@@ -1087,7 +1088,8 @@ public:
 			return false;
 
 		std::string namePart = args;
-		std::replace(namePart.begin(), namePart.end(), "'", "\'");
+		boost::algorithm::replace_all(namePart, "\\", "\\\\");
+		boost::algorithm::replace_all(namePart, "\'", "\\\'");
 		//std::wstring wNamePart;
 		//if (!Utf8toWStr(namePart, wNamePart))
 			//return false;
