@@ -433,9 +433,10 @@ public:
         if (!*args)
             return false;
 
-        char* id = strtok((char*)args, " ");
-        if (!id)
-            return false;
+		char* id = handler->extractKeyFromLink((char*)args, "Harea");
+		if (!id)
+			return NULL;
+
 
         int32 areaTriggerId = atoi(id);
 

@@ -310,12 +310,13 @@ public:
             handler->SetSentErrorMessage(true);
             return false;
         }
-
+		
         if (me->IsInCombat())
         {
-            handler->SendSysMessage(LANG_YOU_IN_COMBAT);
+			me->CombatStop();
+			/*handler->SendSysMessage(LANG_YOU_IN_COMBAT);
             handler->SetSentErrorMessage(true);
-            return false;
+            return false;*/
         }
 
         MapEntry const* map = sMapStore.LookupEntry(tele->mapId);
