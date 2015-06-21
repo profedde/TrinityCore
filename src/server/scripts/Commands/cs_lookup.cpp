@@ -1090,6 +1090,7 @@ public:
 		std::string namePart = args;
 		boost::algorithm::replace_all(namePart, "\\", "\\\\");
 		boost::algorithm::replace_all(namePart, "\'", "\\\'");
+		boost::algorithm::replace_all(namePart, '\"', '\\\"');
 		//std::wstring wNamePart;
 		//if (!Utf8toWStr(namePart, wNamePart))
 			//return false;
