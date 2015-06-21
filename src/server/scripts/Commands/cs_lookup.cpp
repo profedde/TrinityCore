@@ -1087,8 +1087,8 @@ public:
 			return false;
 
 		std::string namePart = args;
+		std::replace(namePart.begin(), namePart.end(), "'", "\'");
 		//std::wstring wNamePart;
-
 		//if (!Utf8toWStr(namePart, wNamePart))
 			//return false;
 		
