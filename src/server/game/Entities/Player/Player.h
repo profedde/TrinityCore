@@ -1072,7 +1072,7 @@ enum PlayerCommandStates
     CHEAT_COOLDOWN  = 0x04,
     CHEAT_POWER     = 0x08,
     CHEAT_WATERWALK = 0x16,
-	CHEAT_ALL		= 0x32
+	CHEAT_ALL		= 0x31
 };
 
 enum PlayerLogXPReason
