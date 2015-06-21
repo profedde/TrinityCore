@@ -38,6 +38,8 @@ public:
 
         static ChatCommand cheatCommandTable[] =
         {
+            
+			{ "all",            rbac::RBAC_PERM_COMMAND_CHEAT_ALL,       false, &HandleAllModeCheatCommand,   "", NULL },
             { "god",            rbac::RBAC_PERM_COMMAND_CHEAT_GOD,       false, &HandleGodModeCheatCommand,   "", NULL },
             { "casttime",       rbac::RBAC_PERM_COMMAND_CHEAT_CASTTIME,  false, &HandleCasttimeCheatCommand,  "", NULL },
             { "cooldown",       rbac::RBAC_PERM_COMMAND_CHEAT_COOLDOWN,  false, &HandleCoolDownCheatCommand,  "", NULL },
@@ -57,6 +59,42 @@ public:
         };
         return commandTable;
     }
+
+	static bool HandleAllModeCheatCommand(ChatHandler* handler, const char* args)
+	{
+		if (!handler->GetSession() && !handler->GetSession()->GetPlayer())
+			return false;
+
+		std::string argstr = (char*)args;
+
+		if (!*args)
+			argstr = (handler->GetSession()->GetPlayer()->GetCommandStatus(CHEAT_ALL)) ? "off" : "on";
+
+		if (argstr == "off")
+		{
+			handler->GetSession()->GetPlayer()->SetCommandStatusOff(CHEAT_ALL);
+			handler->GetSession()->GetPlayer()->SetCommandStatusOff(CHEAT_CASTTIME);
+			handler->GetSession()->GetPlayer()->SetCommandStatusOff(CHEAT_COOLDOWN);
+			handler->GetSession()->GetPlayer()->SetCommandStatusOff(CHEAT_GOD);
+			handler->GetSession()->GetPlayer()->SetCommandStatusOff(CHEAT_POWER);
+			handler->GetSession()->GetPlayer()->SetCommandStatusOff(CHEAT_WATERWALK);
+			handler->SendSysMessage("All cheats are now OFF.");
+			return true;
+		}
+		else if (argstr == "on")
+		{
+			handler->GetSession()->GetPlayer()->SetCommandStatusOn(CHEAT_ALL);
+			handler->GetSession()->GetPlayer()->SetCommandStatusOn(CHEAT_CASTTIME);
+			handler->GetSession()->GetPlayer()->SetCommandStatusOn(CHEAT_COOLDOWN);
+			handler->GetSession()->GetPlayer()->SetCommandStatusOn(CHEAT_GOD);
+			handler->GetSession()->GetPlayer()->SetCommandStatusOn(CHEAT_POWER);
+			handler->GetSession()->GetPlayer()->SetCommandStatusOn(CHEAT_WATERWALK);
+			handler->SendSysMessage("All cheats are now ON.");
+			return true;
+		}
+
+		return false;
+	}
 
     static bool HandleGodModeCheatCommand(ChatHandler* handler, const char* args)
     {
@@ -170,7 +208,8 @@ public:
         const char* disabled = "disabled";
 
         handler->SendSysMessage(LANG_COMMAND_CHEAT_STATUS);
-        handler->PSendSysMessage(LANG_COMMAND_CHEAT_GOD, player->GetCommandStatus(CHEAT_GOD) ? enabled : disabled);
+		handler->PSendSysMessage(LANG_COMMAND_CHEAT_ALL, player->GetCommandStatus(CHEAT_ALL) ? enabled : disabled);
+		handler->PSendSysMessage(LANG_COMMAND_CHEAT_GOD, player->GetCommandStatus(CHEAT_GOD) ? enabled : disabled);
         handler->PSendSysMessage(LANG_COMMAND_CHEAT_CD, player->GetCommandStatus(CHEAT_COOLDOWN) ? enabled : disabled);
         handler->PSendSysMessage(LANG_COMMAND_CHEAT_CT, player->GetCommandStatus(CHEAT_CASTTIME) ? enabled : disabled);
         handler->PSendSysMessage(LANG_COMMAND_CHEAT_POWER, player->GetCommandStatus(CHEAT_POWER) ? enabled : disabled);
