@@ -1968,7 +1968,7 @@ class Player : public Unit, public GridObject<Player>
             if (!IsResurrectRequested())
                 return false;
 
-            return _resurrectionData->GUID == guid;
+            return !_resurrectionData->GUID.IsEmpty() && _resurrectionData->GUID == guid;
         }
 
         bool IsResurrectRequested() const { return _resurrectionData != NULL; }
