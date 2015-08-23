@@ -100,6 +100,13 @@ void BlackMarketMgr::LoadAuctions()
             continue;
         }
 
+        if (auction->IsCompleted())
+        {
+            auction->DeleteFromDB(trans);
+            delete auction;
+            continue;
+        }
+
         AddAuction(auction);
         ++count;
     } while (result->NextRow());
@@ -335,12 +342,24 @@ bool BlackMarketTemplate::LoadFromDB(Field* fields)
         Item.ItemBonus->BonusListIDs = bonusListIDs;
     }
 
+    if (!sObjectMgr->GetCreatureTemplate(SellerNPC))
+    {
+        TC_LOG_ERROR("misc", "Black market template %i does not have a valid seller. (Entry: %u)", MarketID, SellerNPC);
+        return false;
+    }
+
+    if (!sObjectMgr->GetItemTemplate(Item.ItemID))
+    {
+        TC_LOG_ERROR("misc", "Black market template %i does not have a valid item. (Entry: %u)", MarketID, Item.ItemID);
+        return false;
+    }
+
     return true;
 }
 
 void BlackMarketEntry::Update(time_t newTimeOfUpdate)
 {
-    SetSecondsRemaining(m_secondsRemaining - (newTimeOfUpdate - sBlackMarketMgr->GetLastUpdate()));
+    m_secondsRemaining = m_secondsRemaining - (newTimeOfUpdate - sBlackMarketMgr->GetLastUpdate());
 }
 
 BlackMarketTemplate* BlackMarketEntry::GetTemplate() const
@@ -356,11 +375,6 @@ time_t BlackMarketEntry::GetSecondsRemaining() const
 time_t BlackMarketEntry::GetExpirationTime() const
 {
     return time(nullptr) + GetSecondsRemaining();
-}
-
-void BlackMarketEntry::SetSecondsRemaining(time_t seconds)
-{
-    m_secondsRemaining = seconds;
 }
 
 bool BlackMarketEntry::IsCompleted() const
@@ -381,7 +395,7 @@ bool BlackMarketEntry::LoadFromDB(Field* fields)
     }
 
     CurrentBid = fields[1].GetUInt64();
-    SetSecondsRemaining(static_cast<time_t>(fields[2].GetInt32()) - sBlackMarketMgr->GetLastUpdate());
+    m_secondsRemaining =  static_cast<time_t>(fields[2].GetInt32()) - sBlackMarketMgr->GetLastUpdate();
     NumBids = fields[3].GetInt32();
     Bidder = fields[4].GetUInt64();
 
@@ -438,7 +452,7 @@ void BlackMarketEntry::PlaceBid(uint64 bid, Player* player, SQLTransaction& tran
     ++NumBids;
 
     if (GetSecondsRemaining() < 30 * MINUTE)
-        SetSecondsRemaining(GetSecondsRemaining() + (time(nullptr) - sBlackMarketMgr->GetLastUpdate()) + 30);
+        m_secondsRemaining += 30 * MINUTE;
 
     Bidder = player->GetGUID().GetCounter();
 

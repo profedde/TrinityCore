@@ -78,19 +78,18 @@ public:
 
     time_t GetSecondsRemaining() const; // Get seconds remaining relative to now
     time_t GetExpirationTime() const;
-    void SetSecondsRemaining(time_t seconds); // Set seconds remaining relative to sBlackMarketManager()->GetLastUpdate()
     bool IsCompleted() const;
 
     void DeleteFromDB(SQLTransaction& trans) const;
     void SaveToDB(SQLTransaction& trans) const;
     bool LoadFromDB(Field* fields);
 
-    uint64 GetMinIncrement() const { return (CurrentBid / 20) - ((CurrentBid / 20) % 10000)  ; } //5% increase every bid (has to be round gold value)
+    uint64 GetMinIncrement() const { return (CurrentBid / 20) - ((CurrentBid / 20) % GOLD)  ; } //5% increase every bid (has to be round gold value)
     bool ValidateBid(uint64 bid) const;
     void PlaceBid(uint64 bid, Player* player, SQLTransaction& trans);
 
     std::string BuildAuctionMailSubject(BMAHMailAuctionAnswers response) const;
-    std::string BuildAuctionMailBody(); // ToDo: FIX
+    std::string BuildAuctionMailBody();
 
     void MailSent() { m_mailSent = true; } // Set when mail has been sent
     bool GetMailSent() { return m_mailSent; }
