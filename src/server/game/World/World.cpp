@@ -1950,6 +1950,8 @@ void World::SetInitialWorldSettings()
 
     m_timers[WUPDATE_GUILDSAVE].SetInterval(getIntConfig(CONFIG_GUILD_SAVE_INTERVAL) * MINUTE * IN_MILLISECONDS);
 
+    m_timers[WUPDATE_BLACKMARKET].SetInterval(10 * IN_MILLISECONDS);
+
     blackmarket_timer = 0;
 
     //to set mailtimer to return mails every day between 4 and 5 am
@@ -2181,22 +2183,27 @@ void World::Update(uint32 diff)
             sObjectMgr->ReturnOrDeleteOldMails(true);
         }
 
+        ///- Handle expired auctions
+        sAuctionMgr->Update();
+    }
+
+    if (m_timers[WUPDATE_BLACKMARKET].Passed())
+    {
+        m_timers[WUPDATE_BLACKMARKET].Reset();
+
         ///- Update blackmarket, refresh auctions if necessary
-        if (blackmarket_timer *  m_timers[WUPDATE_AUCTIONS].GetInterval() >=
-            getIntConfig(CONFIG_BLACKMARKET_UPDATE_PERIOD) * HOUR * IN_MILLISECONDS
+        if ((blackmarket_timer *  m_timers[WUPDATE_BLACKMARKET].GetInterval() >=
+            getIntConfig(CONFIG_BLACKMARKET_UPDATE_PERIOD) * HOUR * IN_MILLISECONDS)
             || !blackmarket_timer)
         {
-            sBlackMarketMgr->Update(true);
+            sBlackMarketMgr->RefreshAuctions();
             blackmarket_timer = 1; // timer is 0 on startup
         }
         else
         {
-            sBlackMarketMgr->Update();
             ++blackmarket_timer;
+            sBlackMarketMgr->Update();
         }
-
-        ///- Handle expired auctions
-        sAuctionMgr->Update();
     }
 
     /// <li> Handle AHBot operations

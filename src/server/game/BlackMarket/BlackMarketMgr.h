@@ -66,7 +66,7 @@ public:
     int32 NumBids = 0;
     ObjectGuid::LowType Bidder = 0;
 
-    bool Update();
+    void Update(time_t newTimeOfUpdate);
     void Initialize(int32 marketId)
     {
         MarketId = marketId;
@@ -85,7 +85,7 @@ public:
     void SaveToDB(SQLTransaction& trans) const;
     bool LoadFromDB(Field* fields);
 
-    uint64 GetMinIncrement() const { return CurrentBid / 20; } //5% increase every bid
+    uint64 GetMinIncrement() const { return (CurrentBid / 20) - ((CurrentBid / 20) % 10000)  ; } //5% increase every bid (has to be round gold value)
     bool ValidateBid(uint64 bid) const;
     void PlaceBid(uint64 bid, Player* player, SQLTransaction& trans);
 
@@ -129,7 +129,7 @@ class BlackMarketMgr
     void LoadAuctions();
 
     void Update(bool updateTime = false);
-    void RefreshAuctions(SQLTransaction& trans);
+    void RefreshAuctions();
     time_t GetLastUpdate() { return mLastUpdate; }
         
     bool IsEnabled() const;

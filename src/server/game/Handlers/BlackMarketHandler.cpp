@@ -113,10 +113,12 @@ void WorldSession::HandleBlackMarketBidOnItem(WorldPackets::BlackMarket::BlackMa
     }
 
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
+
     sBlackMarketMgr->SendAuctionOutbidMail(entry, trans);
+    entry->PlaceBid(packet.bidAmount, player, trans);
+
     CharacterDatabase.CommitTransaction(trans);
 
-    entry->PlaceBid(packet.bidAmount, player);
     SendBlackMarketBidOnItemResult(ERR_BMAH_OK, packet.MarketID, &packet.Item);
 }
 
