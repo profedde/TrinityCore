@@ -596,7 +596,7 @@ static_assert((PLAYER_FIELD_BYTES_2_OFFSET_OVERRIDE_SPELLS_ID & 1) == 0, "PLAYER
 
 #define PLAYER_BYTES_2_OVERRIDE_SPELLS_UINT16_OFFSET (PLAYER_FIELD_BYTES_2_OFFSET_OVERRIDE_SPELLS_ID / 2)
 
-#define KNOWN_TITLES_SIZE   4
+#define KNOWN_TITLES_SIZE   6
 #define MAX_TITLE_INDEX     (KNOWN_TITLES_SIZE * 64)        // 4 uint64 fields
 
 // used in PLAYER_FIELD_BYTES2 values
@@ -664,7 +664,7 @@ enum QuestSaveType
 typedef std::map<uint32, QuestSaveType> QuestStatusSaveMap;
 
 // Size of client completed quests bit map
-#define QUESTS_COMPLETED_BITS_SIZE 625
+#define QUESTS_COMPLETED_BITS_SIZE 875
 
 enum QuestSlotOffsets
 {
@@ -1163,28 +1163,23 @@ struct BGData
 
 struct VoidStorageItem
 {
-    VoidStorageItem()
+    VoidStorageItem() : ItemId(0), ItemEntry(0), ItemRandomPropertyId(0), ItemSuffixFactor(0), ItemUpgradeId(0) { }
+    VoidStorageItem(uint64 id, uint32 entry, ObjectGuid const& creator, uint32 randomPropertyId, uint32 suffixFactor, uint32 upgradeId, std::vector<uint32> const& bonuses)
+        : ItemId(id), ItemEntry(entry), CreatorGuid(creator), ItemRandomPropertyId(randomPropertyId),
+        ItemSuffixFactor(suffixFactor), ItemUpgradeId(upgradeId)
     {
-        ItemId = 0;
-        ItemEntry = 0;
-        ItemRandomPropertyId = 0;
-        ItemSuffixFactor = 0;
+        BonusListIDs.insert(BonusListIDs.end(), bonuses.begin(), bonuses.end());
     }
-
-    VoidStorageItem(uint64 id, uint32 entry, ObjectGuid creator, uint32 randomPropertyId, uint32 suffixFactor)
-    {
-        ItemId = id;
-        ItemEntry = entry;
-        CreatorGuid = creator;
-        ItemRandomPropertyId = randomPropertyId;
-        ItemSuffixFactor = suffixFactor;
-    }
+    VoidStorageItem(VoidStorageItem&& vsi) : ItemId(vsi.ItemId), ItemEntry(vsi.ItemEntry), CreatorGuid(vsi.CreatorGuid), ItemRandomPropertyId(vsi.ItemRandomPropertyId),
+        ItemSuffixFactor(vsi.ItemSuffixFactor), ItemUpgradeId(vsi.ItemUpgradeId), BonusListIDs(std::move(vsi.BonusListIDs)) { }
 
     uint64 ItemId;
     uint32 ItemEntry;
     ObjectGuid CreatorGuid;
     uint32 ItemRandomPropertyId;
     uint32 ItemSuffixFactor;
+    uint32 ItemUpgradeId;
+    std::vector<int32> BonusListIDs;
 };
 
 class TradeData
@@ -1368,7 +1363,7 @@ class Player : public Unit, public GridObject<Player>
         void SendInitialPacketsAfterAddToMap();
         void SendSupercededSpell(uint32 oldSpell, uint32 newSpell);
         void SendTransferAborted(uint32 mapid, TransferAbortReason reason, uint8 arg = 0);
-        void SendInstanceResetWarning(uint32 mapid, Difficulty difficulty, uint32 time);
+        void SendInstanceResetWarning(uint32 mapid, Difficulty difficulty, uint32 time, bool welcome);
 
         bool CanInteractWithQuestGiver(Object* questGiver);
         Creature* GetNPCIfCanInteractWith(ObjectGuid guid, uint64 npcflagmask);
@@ -1419,8 +1414,8 @@ class Player : public Unit, public GridObject<Player>
         time_t m_logintime;
         time_t m_Last_tick;
         uint32 m_Played_time[MAX_PLAYED_TIME_INDEX];
-        uint32 GetTotalPlayedTime() { return m_Played_time[PLAYED_TIME_TOTAL]; }
-        uint32 GetLevelPlayedTime() { return m_Played_time[PLAYED_TIME_LEVEL]; }
+        uint32 GetTotalPlayedTime() const { return m_Played_time[PLAYED_TIME_TOTAL]; }
+        uint32 GetLevelPlayedTime() const { return m_Played_time[PLAYED_TIME_LEVEL]; }
 
         void setDeathState(DeathState s) override;                   // overwrite Unit::setDeathState
 
@@ -1649,6 +1644,7 @@ class Player : public Unit, public GridObject<Player>
         void AddQuest(Quest const* quest, Object* questGiver);
         void CompleteQuest(uint32 quest_id);
         void IncompleteQuest(uint32 quest_id);
+        uint32 GetQuestMoneyReward(Quest const* quest);
         uint32 GetQuestXPReward(Quest const* quest);
         void RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, bool announce = true);
         void FailQuest(uint32 quest_id);
@@ -1722,11 +1718,11 @@ class Player : public Unit, public GridObject<Player>
         void SetQuestObjectiveData(Quest const* quest, int8 storageIndex, int32 data);
         void SendQuestComplete(Quest const* quest);
         void SendQuestReward(Quest const* quest, uint32 XP);
-        void SendQuestFailed(uint32 questId, InventoryResult reason = EQUIP_ERR_OK);
-        void SendQuestTimerFailed(uint32 questId);
-        void SendCanTakeQuestResponse(QuestFailedReason msg) const;
+        void SendQuestFailed(uint32 questID, InventoryResult reason = EQUIP_ERR_OK);
+        void SendQuestTimerFailed(uint32 questID);
+        void SendCanTakeQuestResponse(QuestFailedReason reason, bool sendErrorMessage = true, std::string reasonText = "") const;
         void SendQuestConfirmAccept(Quest const* quest, Player* receiver);
-        void SendPushToPartyResponse(Player* player, uint8 msg);
+        void SendPushToPartyResponse(Player* player, QuestPushReason reason);
         void SendQuestUpdateAddCredit(Quest const* quest, ObjectGuid guid, QuestObjective const& obj, uint16 count);
         void SendQuestUpdateAddPlayer(Quest const* quest, uint16 newCount, uint32 required);
 
@@ -1835,7 +1831,7 @@ class Player : public Unit, public GridObject<Player>
         void RemoveMail(uint32 id);
 
         void AddMail(Mail* mail) { m_mail.push_front(mail);}// for call from WorldSession::SendMailTo
-        uint32 GetMailSize() { return uint32(m_mail.size()); }
+        uint32 GetMailSize() const { return uint32(m_mail.size()); }
         Mail* GetMail(uint32 id);
 
         PlayerMails const& GetMails() const { return m_mail; }
@@ -1895,6 +1891,10 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetReputation(uint32 factionentry) const;
         std::string GetGuildName();
 
+        // Loot Spec
+        void SetLootSpecId(uint32 id) { SetUInt32Value(PLAYER_FIELD_LOOT_SPEC_ID, id); }
+        uint32 GetLootSpecId() const { return GetUInt32Value(PLAYER_FIELD_LOOT_SPEC_ID); }
+
         // Talents
         uint32 GetTalentResetCost() const { return _talentMgr->ResetTalentsCost; }
         void SetTalentResetCost(uint32 cost)  { _talentMgr->ResetTalentsCost = cost; }
@@ -1952,7 +1952,7 @@ class Player : public Unit, public GridObject<Player>
         void SetSpellModTakingSpell(Spell* spell, bool apply);
 
         void RemoveArenaSpellCooldowns(bool removeActivePetCooldowns = false);
-        uint32 GetLastPotionId() { return m_lastPotionId; }
+        uint32 GetLastPotionId() const { return m_lastPotionId; }
         void SetLastPotionId(uint32 item_id) { m_lastPotionId = item_id; }
         void UpdatePotionCooldown(Spell* spell = NULL);
 
@@ -2017,14 +2017,14 @@ class Player : public Unit, public GridObject<Player>
         void SetRank(uint8 rankId) { SetUInt32Value(PLAYER_GUILDRANK, rankId); }
         uint8 GetRank() const { return uint8(GetUInt32Value(PLAYER_GUILDRANK)); }
         void SetGuildLevel(uint32 level) { SetUInt32Value(PLAYER_GUILDLEVEL, level); }
-        uint32 GetGuildLevel() { return GetUInt32Value(PLAYER_GUILDLEVEL); }
+        uint32 GetGuildLevel() const { return GetUInt32Value(PLAYER_GUILDLEVEL); }
         void SetGuildIdInvited(ObjectGuid::LowType GuildId) { m_GuildIdInvited = GuildId; }
         ObjectGuid::LowType GetGuildId() const { return GetUInt64Value(OBJECT_FIELD_DATA); /* return only lower part */ }
         Guild* GetGuild();
         Guild const* GetGuild() const;
         static ObjectGuid::LowType GetGuildIdFromDB(ObjectGuid guid);
         static uint8 GetRankFromDB(ObjectGuid guid);
-        ObjectGuid::LowType GetGuildIdInvited() { return m_GuildIdInvited; }
+        ObjectGuid::LowType GetGuildIdInvited() const { return m_GuildIdInvited; }
         static void RemovePetitionsAndSigns(ObjectGuid guid);
 
         // Arena Team
@@ -2035,7 +2035,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetArenaTeamId(uint8 slot) const { return GetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (slot * ARENA_TEAM_END) + ARENA_TEAM_ID); }
         uint32 GetArenaPersonalRating(uint8 slot) const { return GetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (slot * ARENA_TEAM_END) + ARENA_TEAM_PERSONAL_RATING); }
         void SetArenaTeamIdInvited(uint32 ArenaTeamId) { m_ArenaTeamIdInvited = ArenaTeamId; }
-        uint32 GetArenaTeamIdInvited() { return m_ArenaTeamIdInvited; }
+        uint32 GetArenaTeamIdInvited() const { return m_ArenaTeamIdInvited; }
         uint32 GetRBGPersonalRating() const { return 0; }
 
         Difficulty GetDifficultyID(MapEntry const* mapEntry) const;
@@ -2048,6 +2048,7 @@ class Player : public Unit, public GridObject<Player>
         static Difficulty CheckLoadedDungeonDifficultyID(Difficulty difficulty);
         static Difficulty CheckLoadedRaidDifficultyID(Difficulty difficulty);
         static Difficulty CheckLoadedLegacyRaidDifficultyID(Difficulty difficulty);
+        void SendRaidGroupOnlyMessage(RaidGroupReason reason, int32 delay);
 
         bool UpdateSkill(uint32 skill_id, uint32 step);
         bool UpdateSkillPro(uint16 skillId, int32 chance, uint32 step);
@@ -2143,7 +2144,7 @@ class Player : public Unit, public GridObject<Player>
         void SendRaidDifficulty(bool legacy, int32 forcedDifficulty = -1);
         void ResetInstances(uint8 method, bool isRaid, bool isLegacy);
         void SendResetInstanceSuccess(uint32 MapId);
-        void SendResetInstanceFailed(uint32 reason, uint32 MapId);
+        void SendResetInstanceFailed(ResetFailedReason reason, uint32 mapID);
         void SendResetFailedNotify(uint32 mapid);
 
         virtual bool UpdatePosition(float x, float y, float z, float orientation, bool teleport = false) override;
@@ -2159,7 +2160,7 @@ class Player : public Unit, public GridObject<Player>
         void SpawnCorpseBones();
         void CreateCorpse();
         void KillPlayer();
-        uint32 GetResurrectionSpellId();
+        uint32 GetResurrectionSpellId() const;
         void ResurrectPlayer(float restore_percent, bool applySickness = false);
         void BuildPlayerRepop();
         void RepopAtGraveyard();
@@ -2222,7 +2223,7 @@ class Player : public Unit, public GridObject<Player>
         bool isHonorOrXPTarget(Unit const* victim) const;
 
         bool GetsRecruitAFriendBonus(bool forXP);
-        uint8 GetGrantableLevels() { return m_grantableLevels; }
+        uint8 GetGrantableLevels() const { return m_grantableLevels; }
         void SetGrantableLevels(uint8 val) { m_grantableLevels = val; }
 
         ReputationMgr&       GetReputationMgr()       { return *m_reputationMgr; }
@@ -2298,7 +2299,7 @@ class Player : public Unit, public GridObject<Player>
         void UpdateItemSetAuras(bool formChange = false);
 
         void CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 procVictim, uint32 procEx);
-        void CastItemUseSpell(Item* item, SpellCastTargets const& targets, uint8 castCount, uint32 misc);
+        void CastItemUseSpell(Item* item, SpellCastTargets const& targets, uint8 castCount, int32* misc);
         void CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 procVictim, uint32 procEx, Item* item, ItemTemplate const* proto);
 
         void SendEquipmentSetList();
@@ -2363,7 +2364,7 @@ class Player : public Unit, public GridObject<Player>
         bool isTotalImmune();
         bool CanCaptureTowerPoint();
 
-        bool GetRandomWinner() { return m_IsBGRandomWinner; }
+        bool GetRandomWinner() const { return m_IsBGRandomWinner; }
         void SetRandomWinner(bool isWinner);
 
         /*********************************************************/
@@ -2396,7 +2397,6 @@ class Player : public Unit, public GridObject<Player>
 
         void UpdateSpeakTime();
         bool CanSpeak() const;
-        void ChangeSpeakTime(int utime);
 
         /*********************************************************/
         /***                 VARIOUS SYSTEMS                   ***/
@@ -2560,7 +2560,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetRuneBaseCooldown(uint8 index) const { return GetRuneTypeBaseCooldown(GetBaseRune(index)); }
         uint32 GetRuneTypeBaseCooldown(RuneType runeType) const;
         bool IsBaseRuneSlotsOnCooldown(RuneType runeType) const;
-        RuneType GetLastUsedRune() { return m_runes->lastUsedRune; }
+        RuneType GetLastUsedRune() const { return m_runes->lastUsedRune; }
         void SetLastUsedRune(RuneType type) { m_runes->lastUsedRune = type; }
         void SetBaseRune(uint8 index, RuneType baseRune) { m_runes->runes[index].BaseRune = baseRune; }
         void SetCurrentRune(uint8 index, RuneType currentRune) { m_runes->runes[index].CurrentRune = currentRune; }
@@ -2578,7 +2578,6 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetAchievementPoints() const;
         bool HasAchieved(uint32 achievementId) const;
         void ResetAchievements();
-        void CheckAllAchievementCriteria();
         void ResetAchievementCriteria(AchievementCriteriaTypes type, uint64 miscValue1 = 0, uint64 miscValue2 = 0, bool evenIfCriteriaComplete = false);
         void UpdateAchievementCriteria(AchievementCriteriaTypes type, uint64 miscValue1 = 0, uint64 miscValue2 = 0, uint64 miscValue3 = 0, Unit* unit = NULL);
         void StartTimedAchievement(AchievementCriteriaTimedTypes type, uint32 entry, uint32 timeLost = 0);
@@ -2626,18 +2625,22 @@ class Player : public Unit, public GridObject<Player>
         void LockVoidStorage() { RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_VOID_UNLOCKED); }
         uint8 GetNextVoidStorageFreeSlot() const;
         uint8 GetNumOfVoidStorageFreeSlots() const;
-        uint8 AddVoidStorageItem(VoidStorageItem const& item);
-        void AddVoidStorageItemAtSlot(uint8 slot, const VoidStorageItem& item);
+        uint8 AddVoidStorageItem(VoidStorageItem&& item);
         void DeleteVoidStorageItem(uint8 slot);
         bool SwapVoidStorageItem(uint8 oldSlot, uint8 newSlot);
         VoidStorageItem* GetVoidStorageItem(uint8 slot) const;
         VoidStorageItem* GetVoidStorageItem(uint64 id, uint8& slot) const;
+
+        bool AddToy(uint32 itemId, bool isFavourite /*= false*/);
 
         void OnCombatExit();
 
         void CreateGarrison(uint32 garrSiteId);
         void DeleteGarrison();
         Garrison* GetGarrison() { return _garrison.get(); }
+
+        bool IsAdvancedCombatLoggingEnabled() const { return _advancedCombatLoggingEnabled; }
+        void SetAdvancedCombatLogging(bool enabled) { _advancedCombatLoggingEnabled = enabled; }
 
     protected:
         // Gamemaster whisper whitelist
@@ -2707,6 +2710,7 @@ class Player : public Unit, public GridObject<Player>
         void _LoadGroup(PreparedQueryResult result);
         void _LoadSkills(PreparedQueryResult result);
         void _LoadSpells(PreparedQueryResult result);
+        void _LoadToys(ToyBoxContainer const& toys);
         void _LoadFriendList(PreparedQueryResult result);
         bool _LoadHomeBind(PreparedQueryResult result);
         void _LoadDeclinedNames(PreparedQueryResult result);
@@ -2918,7 +2922,7 @@ class Player : public Unit, public GridObject<Player>
 
         uint8 m_grantableLevels;
 
-        std::array<std::unique_ptr<CUFProfile>, MAX_CUF_PROFILES> _CUFProfiles = {};
+        std::array<std::unique_ptr<CUFProfile>, MAX_CUF_PROFILES> _CUFProfiles;
 
     private:
         // internal common parts for CanStore/StoreItem functions
@@ -2944,7 +2948,6 @@ class Player : public Unit, public GridObject<Player>
         MapReference m_mapRef;
 
         void UpdateCharmedAI();
-
         uint32 m_lastFallTime;
         float  m_lastFallZ;
 
@@ -2989,6 +2992,8 @@ class Player : public Unit, public GridObject<Player>
         uint32 _maxPersonalArenaRate;
 
         std::unique_ptr<Garrison> _garrison;
+
+        bool _advancedCombatLoggingEnabled;
 };
 
 void AddItemsSetItem(Player* player, Item* item);

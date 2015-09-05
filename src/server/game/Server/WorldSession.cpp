@@ -21,7 +21,6 @@
 */
 
 #include "WorldSocket.h"
-#include <zlib.h>
 #include "Config.h"
 #include "Common.h"
 #include "DatabaseEnv.h"
@@ -40,19 +39,18 @@
 #include "ObjectAccessor.h"
 #include "BattlegroundMgr.h"
 #include "OutdoorPvPMgr.h"
-#include "MapManager.h"
 #include "SocialMgr.h"
-#include "zlib.h"
 #include "ScriptMgr.h"
-#include "Transport.h"
 #include "WardenWin.h"
-#include "WardenMac.h"
 #include "BattlenetServerManager.h"
 #include "AuthenticationPackets.h"
 #include "CharacterPackets.h"
 #include "ClientConfigPackets.h"
 #include "MiscPackets.h"
 #include "ChatPackets.h"
+#include "PacketUtilities.h"
+
+#include <zlib.h>
 
 namespace {
 
@@ -430,6 +428,11 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
                     break;
             }
         }
+        catch (WorldPackets::PacketArrayMaxCapacityException const& pamce)
+        {
+            TC_LOG_ERROR("network", "PacketArrayMaxCapacityException: %s while parsing %s from %s.",
+                pamce.what(), GetOpcodeNameForLogging(static_cast<OpcodeClient>(packet->GetOpcode())).c_str(), GetPlayerInfo().c_str());
+        }
         catch (ByteBufferException const&)
         {
             TC_LOG_ERROR("network", "WorldSession::Update ByteBufferException occured while parsing a packet (opcode: %u) from client %s, accountid=%i. Skipped packet.",
@@ -770,6 +773,40 @@ void WorldSession::LoadAccountData(PreparedQueryResult result, uint32 mask)
         _accountData[type].Data = fields[2].GetString();
     }
     while (result->NextRow());
+}
+
+void WorldSession::LoadAccountToys(PreparedQueryResult result)
+{
+    if (!result)
+        return;
+
+    do
+    {
+        Field* fields = result->Fetch();
+        uint32 itemId = fields[0].GetUInt32();
+        bool isFavourite = fields[1].GetBool();
+
+        _toys[itemId] = isFavourite;
+    }
+    while (result->NextRow());
+}
+
+void WorldSession::SaveAccountToys(SQLTransaction& trans)
+{
+    PreparedStatement* stmt = NULL;
+    for (ToyBoxContainer::const_iterator itr = _toys.begin(); itr != _toys.end(); ++itr)
+    {
+        stmt = LoginDatabase.GetPreparedStatement(LOGIN_REP_ACCOUNT_TOYS);
+        stmt->setUInt32(0, GetBattlenetAccountId());
+        stmt->setUInt32(1, itr->first);
+        stmt->setBool(2, itr->second);
+        trans->Append(stmt);
+    }
+}
+
+bool WorldSession::UpdateAccountToys(uint32 itemId, bool isFavourite /*= false*/)
+{
+    return _toys.insert(ToyBoxContainer::value_type(itemId, isFavourite)).second;
 }
 
 void WorldSession::SetAccountData(AccountDataType type, uint32 time, std::string const& data)
@@ -1180,14 +1217,20 @@ class AccountInfoQueryHolder : public SQLQueryHolder
 public:
     enum
     {
+        GLOBAL_ACCOUNT_TOYS = 0,
+
         MAX_QUERIES
     };
 
     AccountInfoQueryHolder() { SetSize(MAX_QUERIES); }
 
-    bool Initialize(uint32 /*accountId*/, uint32 /*battlenetAccountId*/)
+    bool Initialize(uint32 /*accountId*/, uint32 battlenetAccountId)
     {
         bool ok = true;
+
+        PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_TOYS);
+        stmt->setUInt32(0, battlenetAccountId);
+        ok = SetPreparedQuery(GLOBAL_ACCOUNT_TOYS, stmt) && ok;
 
         return ok;
     }
@@ -1220,6 +1263,7 @@ void WorldSession::InitializeSessionCallback(SQLQueryHolder* realmHolder, SQLQue
 {
     LoadAccountData(realmHolder->GetPreparedResult(AccountInfoQueryHolderPerRealm::GLOBAL_ACCOUNT_DATA), GLOBAL_CACHE_MASK);
     LoadTutorialsData(realmHolder->GetPreparedResult(AccountInfoQueryHolderPerRealm::TUTORIALS));
+    LoadAccountToys(holder->GetPreparedResult(AccountInfoQueryHolder::GLOBAL_ACCOUNT_TOYS));
 
     if (!m_inQueue)
         SendAuthResponse(AUTH_OK, false);
@@ -1448,7 +1492,6 @@ uint32 WorldSession::DosProtection::GetMaxPacketCounterAllowed(uint16 opcode) co
             break;
         }
 
-        case CMSG_GM_LAG_REPORT:                        //   1               3         1 async db query
         case CMSG_SPELL_CLICK:                          // not profiled
         case CMSG_MOVE_DISMISS_VEHICLE:                 // not profiled
         {
@@ -1466,7 +1509,6 @@ uint32 WorldSession::DosProtection::GetMaxPacketCounterAllowed(uint16 opcode) co
         case CMSG_DEL_FRIEND:                           //   7               5         1 async db query
         case CMSG_ADD_FRIEND:                           //   6               4         1 async db query
         case CMSG_CHARACTER_RENAME_REQUEST:             //   5               3         1 async db query
-        case CMSG_GM_SURVEY_SUBMIT:                     //   2               3         1 async db query
         case CMSG_BUG_REPORT:                           //   1               1         1 async db query
         case CMSG_SET_PARTY_LEADER:                     //   1               2         1 async db query
         case CMSG_CONVERT_RAID:                         //   1               5         1 async db query
@@ -1491,10 +1533,6 @@ uint32 WorldSession::DosProtection::GetMaxPacketCounterAllowed(uint16 opcode) co
         case CMSG_CREATE_CHARACTER:                     //   7               5         3 async db queries
         case CMSG_ENUM_CHARACTERS:                      //  22               3         2 async db queries
         case CMSG_ENUM_CHARACTERS_DELETED_BY_CLIENT:    //  22               3         2 async db queries
-        case CMSG_GM_TICKET_CREATE:                     //   1              25         1 async db query
-        case CMSG_GM_TICKET_UPDATE_TEXT:                //   0              15         1 async db query
-        case CMSG_GM_TICKET_DELETE_TICKET:              //   1              25         1 async db query
-        case CMSG_GM_TICKET_RESPONSE_RESOLVE:           //   1              25         1 async db query
         case CMSG_SUPPORT_TICKET_SUBMIT_BUG:            // not profiled                1 async db query
         case CMSG_SUPPORT_TICKET_SUBMIT_SUGGESTION:     // not profiled                1 async db query
         case CMSG_SUPPORT_TICKET_SUBMIT_COMPLAINT:      // not profiled                1 async db query

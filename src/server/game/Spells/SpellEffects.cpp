@@ -34,9 +34,6 @@
 #include "SpellAuraEffects.h"
 #include "SpellHistory.h"
 #include "Group.h"
-#include "UpdateData.h"
-#include "MapManager.h"
-#include "ObjectAccessor.h"
 #include "SharedDefines.h"
 #include "Pet.h"
 #include "GameObject.h"
@@ -50,21 +47,13 @@
 #include "Language.h"
 #include "SocialMgr.h"
 #include "Util.h"
-#include "VMapFactory.h"
 #include "TemporarySummon.h"
-#include "CellImpl.h"
-#include "GridNotifiers.h"
-#include "GridNotifiersImpl.h"
-#include "SkillDiscovery.h"
-#include "Formulas.h"
-#include "Vehicle.h"
 #include "ScriptMgr.h"
 #include "GameObjectAI.h"
 #include "AccountMgr.h"
 #include "InstanceScript.h"
 #include "PathGenerator.h"
 #include "Guild.h"
-#include "GuildMgr.h"
 #include "ReputationMgr.h"
 #include "AreaTrigger.h"
 #include "Garrison.h"
@@ -326,6 +315,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS]=
     &Spell::EffectNULL,                                     //248 SPELL_EFFECT_FINISH_SHIPMENT
     &Spell::EffectNULL,                                     //249 SPELL_EFFECT_249
     &Spell::EffectNULL,                                     //250 SPELL_EFFECT_TAKE_SCREENSHOT
+    &Spell::EffectNULL,                                     //251 SPELL_EFFECT_SET_GARRISON_CACHE_SIZE
 };
 
 void Spell::EffectNULL(SpellEffIndex /*effIndex*/)
@@ -401,10 +391,14 @@ void Spell::EffectEnvironmentalDMG(SpellEffIndex /*effIndex*/)
     uint32 resist = 0;
 
     m_caster->CalcAbsorbResist(unitTarget, m_spellInfo->GetSchoolMask(), SPELL_DIRECT_DAMAGE, damage, &absorb, &resist, m_spellInfo);
-
-    m_caster->SendSpellNonMeleeDamageLog(unitTarget, m_spellInfo->Id, damage, m_spellInfo->GetSchoolMask(), absorb, resist, false, 0, false);
+    SpellNonMeleeDamage log(m_caster, unitTarget, m_spellInfo->Id, m_spellInfo->GetSchoolMask());
+    log.damage = damage - absorb - resist;
+    log.absorb = absorb;
+    log.resist = resist;
     if (unitTarget->GetTypeId() == TYPEID_PLAYER)
         unitTarget->ToPlayer()->EnvironmentalDamage(DAMAGE_FIRE, damage);
+
+    m_caster->SendSpellNonMeleeDamageLog(&log);
 }
 
 void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
@@ -499,7 +493,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
             case SPELLFAMILY_DRUID:
             {
                 // Ferocious Bite
-                if (m_caster->GetTypeId() == TYPEID_PLAYER && (m_spellInfo->SpellFamilyFlags[0] & 0x000800000) && m_spellInfo->SpellVisual[0] == 6587)
+                if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->SpellFamilyFlags[3] & 0x1000)
                 {
                     // converts each extra point of energy ( up to 25 energy ) into additional damage
                     int32 energy = -(m_caster->ModifyPower(POWER_ENERGY, -25));
@@ -2485,7 +2479,7 @@ void Spell::EffectLearnSkill(SpellEffIndex /*effIndex*/)
     if (!rcEntry)
         return;
 
-    SkillTiersEntry const* tier = sSkillTiersStore.LookupEntry(rcEntry->SkillTierID);
+    SkillTiersEntry const* tier = sObjectMgr->GetSkillTier(rcEntry->SkillTierID);
     if (!tier)
         return;
 
@@ -2686,16 +2680,13 @@ void Spell::EffectEnchantItemTmp(SpellEffIndex effIndex)
         duration = 3600;                                    // 1 hour
     // shaman family enchantments
     else if (m_spellInfo->SpellFamilyName == SPELLFAMILY_SHAMAN)
-        duration = 1800;                                    // 30 mins
+        duration = 3600;                                    // 30 mins
     // other cases with this SpellVisual already selected
-    else if (m_spellInfo->SpellVisual[0] == 215)
+    else if (m_spellInfo->GetSpellVisual(DIFFICULTY_NONE) == 215)
         duration = 1800;                                    // 30 mins
     // some fishing pole bonuses except Glow Worm which lasts full hour
-    else if (m_spellInfo->SpellVisual[0] == 563 && m_spellInfo->Id != 64401)
+    else if (m_spellInfo->GetSpellVisual(DIFFICULTY_NONE) == 563 && m_spellInfo->Id != 64401)
         duration = 600;                                     // 10 mins
-    // shaman rockbiter enchantments
-    else if (m_spellInfo->SpellVisual[0] == 0)
-        duration = 1800;                                    // 30 mins
     else if (m_spellInfo->Id == 29702)
         duration = 300;                                     // 5 mins
     else if (m_spellInfo->Id == 37360)
@@ -2907,19 +2898,18 @@ void Spell::EffectTaunt(SpellEffIndex /*effIndex*/)
         return;
     }
 
-    // Also use this effect to set the taunter's threat to the taunted creature's highest value
-    if (unitTarget->getThreatManager().getCurrentVictim())
-    {
-        float myThreat = unitTarget->getThreatManager().getThreat(m_caster);
-        float itsThreat = unitTarget->getThreatManager().getCurrentVictim()->getThreat();
-        if (itsThreat > myThreat)
-            unitTarget->getThreatManager().addThreat(m_caster, itsThreat - myThreat);
-    }
-
-    //Set aggro victim to caster
     if (!unitTarget->getThreatManager().getOnlineContainer().empty())
+    {
+        // Also use this effect to set the taunter's threat to the taunted creature's highest value
+        float myThreat = unitTarget->getThreatManager().getThreat(m_caster);
+        float topThreat = unitTarget->getThreatManager().getOnlineContainer().getMostHated()->getThreat();
+        if (topThreat > myThreat)
+            unitTarget->getThreatManager().doAddThreat(m_caster, topThreat - myThreat);
+
+        //Set aggro victim to caster
         if (HostileReference* forcedVictim = unitTarget->getThreatManager().getOnlineContainer().getReferenceByTarget(m_caster))
             unitTarget->getThreatManager().setCurrentVictim(forcedVictim);
+    }
 
     if (unitTarget->ToCreature()->IsAIEnabled && !unitTarget->ToCreature()->HasReactState(REACT_PASSIVE))
         unitTarget->ToCreature()->AI()->AttackStart(m_caster);
@@ -2927,210 +2917,204 @@ void Spell::EffectTaunt(SpellEffIndex /*effIndex*/)
 
 void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
 {
-	if (effectHandleMode != SPELL_EFFECT_HANDLE_LAUNCH_TARGET)
-		return;
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_LAUNCH_TARGET)
+        return;
 
-	if (!unitTarget || !unitTarget->IsAlive())
-		return;
+    if (!unitTarget || !unitTarget->IsAlive())
+        return;
 
-	// multiple weapon dmg effect workaround
-	// execute only the last weapon damage
-	// and handle all effects at once
-	for (SpellEffectInfo const* effect : GetEffects())
-	{
-		if (effectHandleMode != SPELL_EFFECT_HANDLE_LAUNCH_TARGET)
-			return;
+    // multiple weapon dmg effect workaround
+    // execute only the last weapon damage
+    // and handle all effects at once
+    for (uint8 index = effIndex + 1; index < MAX_SPELL_EFFECTS; ++index)
+    {
+        SpellEffectInfo const* effect = GetEffect(index);
+        if (!effect)
+            continue;
+        switch (effect->Effect)
+        {
+            case SPELL_EFFECT_WEAPON_DAMAGE:
+            case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
+            case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
+            case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
+                return;     // we must calculate only at last weapon effect
+            break;
+        }
+    }
 
-		if (!unitTarget || !unitTarget->IsAlive())
-			return;
+    // some spell specific modifiers
+    float totalDamagePercentMod  = 1.0f;                    // applied to final bonus+weapon damage
+    int32 fixed_bonus = 0;
+    int32 spell_bonus = 0;                                  // bonus specific for spell
 
-		// multiple weapon dmg effect workaround
-		// execute only the last weapon damage
-		// and handle all effects at once
-		for (uint32 j = effIndex + 1; j < MAX_SPELL_EFFECTS; ++j)
-		{
-			switch (m_spellInfo->Effects[j].Effect)
-			{
-			case SPELL_EFFECT_WEAPON_DAMAGE:
-			case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
-			case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
-			case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
-				return;     // we must calculate only at last weapon effect
-				break;
-			}
-		}
+    switch (m_spellInfo->SpellFamilyName)
+    {
+        case SPELLFAMILY_WARRIOR:
+        {
+            // Devastate (player ones)
+            if (m_spellInfo->SpellFamilyFlags[1] & 0x40)
+            {
+                // Player can apply only 58567 Sunder Armor effect.
+                bool needCast = !unitTarget->HasAura(58567, m_caster->GetGUID());
+                if (needCast)
+                    m_caster->CastSpell(unitTarget, 58567, true);
 
+                if (Aura* aur = unitTarget->GetAura(58567, m_caster->GetGUID()))
+                {
+                    if (int32 num = (needCast ? 0 : 1))
+                        aur->ModStackAmount(num);
+                    fixed_bonus += (aur->GetStackAmount() - 1) * CalculateDamage(2, unitTarget);
+                }
+            }
+            break;
+        }
+        case SPELLFAMILY_ROGUE:
+        {
+            // Hemorrhage
+            if (m_spellInfo->SpellFamilyFlags[0] & 0x2000000)
+            {
+                if (m_caster->GetTypeId() == TYPEID_PLAYER)
+                    m_caster->ToPlayer()->AddComboPoints(unitTarget, 1, this);
+                // 50% more damage with daggers
+                if (m_caster->GetTypeId() == TYPEID_PLAYER)
+                    if (Item* item = m_caster->ToPlayer()->GetWeaponForAttack(m_attackType, true))
+                        if (item->GetTemplate()->GetSubClass() == ITEM_SUBCLASS_WEAPON_DAGGER)
+                            totalDamagePercentMod *= 1.5f;
+            }
+            break;
+        }
+        case SPELLFAMILY_SHAMAN:
+        {
+            // Skyshatter Harness item set bonus
+            // Stormstrike
+            if (AuraEffect* aurEff = m_caster->IsScriptOverriden(m_spellInfo, 5634))
+                m_caster->CastSpell(m_caster, 38430, true, NULL, aurEff);
+            break;
+        }
+        case SPELLFAMILY_DRUID:
+        {
+            // Mangle (Cat): CP
+            if (m_spellInfo->SpellFamilyFlags[1] & 0x400)
+            {
+                if (m_caster->GetTypeId() == TYPEID_PLAYER)
+                    m_caster->ToPlayer()->AddComboPoints(unitTarget, 1, this);
+            }
+            // Shred, Maul - Rend and Tear
+            else if (m_spellInfo->SpellFamilyFlags[0] & 0x00008800 && unitTarget->HasAuraState(AURA_STATE_BLEEDING))
+            {
+                if (AuraEffect const* rendAndTear = m_caster->GetDummyAuraEffect(SPELLFAMILY_DRUID, 2859, 0))
+                    AddPct(totalDamagePercentMod, rendAndTear->GetAmount());
+            }
+            break;
+        }
+        case SPELLFAMILY_HUNTER:
+        {
+            // Kill Shot - bonus damage from Ranged Attack Power
+            if (m_spellInfo->SpellFamilyFlags[1] & 0x800000)
+                spell_bonus += int32(0.45f * m_caster->GetTotalAttackPowerValue(RANGED_ATTACK));
+            break;
+        }
+        case SPELLFAMILY_DEATHKNIGHT:
+        {
+            // Blood Strike
+            if (m_spellInfo->SpellFamilyFlags[0] & 0x400000)
+            {
+                if (SpellEffectInfo const* effect = GetEffect(EFFECT_2))
+                {
+                    float bonusPct = effect->CalcValue(m_caster) * unitTarget->GetDiseasesByCaster(m_caster->GetGUID()) / 2.0f;
+                    // Death Knight T8 Melee 4P Bonus
+                    if (AuraEffect const* aurEff = m_caster->GetAuraEffect(64736, EFFECT_0))
+                        AddPct(bonusPct, aurEff->GetAmount());
+                    AddPct(totalDamagePercentMod, bonusPct);
+                }
+                break;
+            }
+            break;
+        }
+    }
 
-		// some spell specific modifiers
-		float totalDamagePercentMod = 1.0f;                    // applied to final bonus+weapon damage
-		int32 fixed_bonus = 0;
-		int32 spell_bonus = 0;                                  // bonus specific for spell
+    bool normalized = false;
+    float weaponDamagePercentMod = 1.0f;
+    for (SpellEffectInfo const* effect : GetEffects())
+    {
+        if (!effect)
+            continue;
+        switch (effect->Effect)
+        {
+            case SPELL_EFFECT_WEAPON_DAMAGE:
+            case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
+                fixed_bonus += CalculateDamage(effect->EffectIndex, unitTarget);
+                break;
+            case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
+                fixed_bonus += CalculateDamage(effect->EffectIndex, unitTarget);
+                normalized = true;
+                break;
+            case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
+                ApplyPct(weaponDamagePercentMod, CalculateDamage(effect->EffectIndex, unitTarget));
+                break;
+            default:
+                break;                                      // not weapon damage effect, just skip
+        }
+    }
 
-		switch (m_spellInfo->SpellFamilyName)
-		{
-		case SPELLFAMILY_WARRIOR:
-		{
-			// Devastate (player ones)
-			if (m_spellInfo->SpellFamilyFlags[1] & 0x40)
-			{
-				// Player can apply only 58567 Sunder Armor effect.
-				bool needCast = !unitTarget->HasAura(58567, m_caster->GetGUID());
-				if (needCast)
-					m_caster->CastSpell(unitTarget, 58567, true);
+    // apply to non-weapon bonus weapon total pct effect, weapon total flat effect included in weapon damage
+    if (fixed_bonus || spell_bonus)
+    {
+        UnitMods unitMod;
+        switch (m_attackType)
+        {
+            default:
+            case BASE_ATTACK:   unitMod = UNIT_MOD_DAMAGE_MAINHAND; break;
+            case OFF_ATTACK:    unitMod = UNIT_MOD_DAMAGE_OFFHAND;  break;
+            case RANGED_ATTACK: unitMod = UNIT_MOD_DAMAGE_RANGED;   break;
+        }
 
-				if (Aura* aur = unitTarget->GetAura(58567, m_caster->GetGUID()))
-				{
-					if (int32 num = (needCast ? 0 : 1))
-						aur->ModStackAmount(num);
-					fixed_bonus += (aur->GetStackAmount() - 1) * CalculateDamage(2, unitTarget);
-				}
-			}
-			break;
-		}
-		case SPELLFAMILY_ROGUE:
-		{
-			// Hemorrhage
-			if (m_spellInfo->SpellFamilyFlags[0] & 0x2000000)
-			{
-				if (m_caster->GetTypeId() == TYPEID_PLAYER)
-					m_caster->ToPlayer()->AddComboPoints(unitTarget, 1, this);
-				// 50% more damage with daggers
-				if (m_caster->GetTypeId() == TYPEID_PLAYER)
-					if (Item* item = m_caster->ToPlayer()->GetWeaponForAttack(m_attackType, true))
-						if (item->GetTemplate()->GetSubClass() == ITEM_SUBCLASS_WEAPON_DAGGER)
-							totalDamagePercentMod *= 1.5f;
-			}
-			break;
-		}
-		case SPELLFAMILY_SHAMAN:
-		{
-			// Skyshatter Harness item set bonus
-			// Stormstrike
-			if (AuraEffect* aurEff = m_caster->IsScriptOverriden(m_spellInfo, 5634))
-				m_caster->CastSpell(m_caster, 38430, true, NULL, aurEff);
-			break;
-		}
-		case SPELLFAMILY_DRUID:
-		{
-			// Mangle (Cat): CP
-			if (m_spellInfo->SpellFamilyFlags[1] & 0x400)
-			{
-				if (m_caster->GetTypeId() == TYPEID_PLAYER)
-					m_caster->ToPlayer()->AddComboPoints(unitTarget, 1, this);
-			}
-			// Shred, Maul - Rend and Tear
-			else if (m_spellInfo->SpellFamilyFlags[0] & 0x00008800 && unitTarget->HasAuraState(AURA_STATE_BLEEDING))
-			{
-				if (AuraEffect const* rendAndTear = m_caster->GetDummyAuraEffect(SPELLFAMILY_DRUID, 2859, 0))
-					AddPct(totalDamagePercentMod, rendAndTear->GetAmount());
-			}
-			break;
-		}
-		case SPELLFAMILY_HUNTER:
-		{
-			// Kill Shot - bonus damage from Ranged Attack Power
-			if (m_spellInfo->SpellFamilyFlags[1] & 0x800000)
-				spell_bonus += int32(0.45f * m_caster->GetTotalAttackPowerValue(RANGED_ATTACK));
-			break;
-		}
-		case SPELLFAMILY_DEATHKNIGHT:
-		{
-			// Blood Strike
-			if (m_spellInfo->SpellFamilyFlags[0] & 0x400000)
-			{
-				if (SpellEffectInfo const* effect = GetEffect(EFFECT_2))
-				{
-					float bonusPct = effect->CalcValue(m_caster) * unitTarget->GetDiseasesByCaster(m_caster->GetGUID()) / 2.0f;
-					// Death Knight T8 Melee 4P Bonus
-					if (AuraEffect const* aurEff = m_caster->GetAuraEffect(64736, EFFECT_0))
-						AddPct(bonusPct, aurEff->GetAmount());
-					AddPct(totalDamagePercentMod, bonusPct);
-				}
-				break;
-			}
-			break;
-		}
-		}
+        float weapon_total_pct = 1.0f;
+        if (m_spellInfo->SchoolMask & SPELL_SCHOOL_MASK_NORMAL)
+             weapon_total_pct = m_caster->GetModifierValue(unitMod, TOTAL_PCT);
 
-		bool normalized = false;
-		float weaponDamagePercentMod = 1.0f;
-		for (int j = 0; j < MAX_SPELL_EFFECTS; ++j)
-		{
-			switch (m_spellInfo->Effects[j].Effect)
-			{
-			case SPELL_EFFECT_WEAPON_DAMAGE:
-			case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
-				fixed_bonus += CalculateDamage(j, unitTarget);
-				break;
-			case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
-				fixed_bonus += CalculateDamage(j, unitTarget);
-				normalized = true;
-				break;
-			case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
-				ApplyPct(weaponDamagePercentMod, CalculateDamage(j, unitTarget));
-				break;
-			default:
-				break;                                      // not weapon damage effect, just skip
-			}
-		}
+        if (fixed_bonus)
+            fixed_bonus = int32(fixed_bonus * weapon_total_pct);
+        if (spell_bonus)
+            spell_bonus = int32(spell_bonus * weapon_total_pct);
+    }
 
-		// apply to non-weapon bonus weapon total pct effect, weapon total flat effect included in weapon damage
-		if (fixed_bonus || spell_bonus)
-		{
-			UnitMods unitMod;
-			switch (m_attackType)
-			{
-			default:
-			case BASE_ATTACK:   unitMod = UNIT_MOD_DAMAGE_MAINHAND; break;
-			case OFF_ATTACK:    unitMod = UNIT_MOD_DAMAGE_OFFHAND;  break;
-			case RANGED_ATTACK: unitMod = UNIT_MOD_DAMAGE_RANGED;   break;
-			}
+    int32 weaponDamage = m_caster->CalculateDamage(m_attackType, normalized, true);
 
-			float weapon_total_pct = 1.0f;
-			if (m_spellInfo->SchoolMask & SPELL_SCHOOL_MASK_NORMAL)
-				weapon_total_pct = m_caster->GetModifierValue(unitMod, TOTAL_PCT);
+    // Sequence is important
+    for (SpellEffectInfo const* effect : GetEffects())
+    {
+        if (!effect)
+            continue;
+        // We assume that a spell have at most one fixed_bonus
+        // and at most one weaponDamagePercentMod
+        switch (effect->Effect)
+        {
+            case SPELL_EFFECT_WEAPON_DAMAGE:
+            case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
+            case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
+                weaponDamage += fixed_bonus;
+                break;
+            case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
+                weaponDamage = int32(weaponDamage* weaponDamagePercentMod);
+            default:
+                break;                                      // not weapon damage effect, just skip
+        }
+    }
 
-			if (fixed_bonus)
-				fixed_bonus = int32(fixed_bonus * weapon_total_pct);
-			if (spell_bonus)
-				spell_bonus = int32(spell_bonus * weapon_total_pct);
-		}
+    if (spell_bonus)
+        weaponDamage += spell_bonus;
 
-		int32 weaponDamage = m_caster->CalculateDamage(m_attackType, normalized, true);
+    if (totalDamagePercentMod != 1.0f)
+        weaponDamage = int32(weaponDamage* totalDamagePercentMod);
 
-		// Sequence is important
-		for (int j = 0; j < MAX_SPELL_EFFECTS; ++j)
-		{
-			// We assume that a spell have at most one fixed_bonus
-			// and at most one weaponDamagePercentMod
-			switch (m_spellInfo->Effects[j].Effect)
-			{
-			case SPELL_EFFECT_WEAPON_DAMAGE:
-			case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
-			case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
-				weaponDamage += fixed_bonus;
-				break;
-			case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
-				weaponDamage = int32(weaponDamage* weaponDamagePercentMod);
-			default:
-				break;                                      // not weapon damage effect, just skip
-			}
-		}
+    // prevent negative damage
+    uint32 eff_damage(std::max(weaponDamage, 0));
 
-		if (spell_bonus)
-			weaponDamage += spell_bonus;
+    // Add melee damage bonuses (also check for negative)
+    uint32 damageBonusDone = m_caster->MeleeDamageBonusDone(unitTarget, eff_damage, m_attackType, m_spellInfo);
 
-		if (totalDamagePercentMod != 1.0f)
-			weaponDamage = int32(weaponDamage* totalDamagePercentMod);
-
-		// prevent negative damage
-		uint32 eff_damage(std::max(weaponDamage, 0));
-
-		// Add melee damage bonuses (also check for negative)
-		uint32 damage = m_caster->MeleeDamageBonusDone(unitTarget, eff_damage, m_attackType, m_spellInfo);
-
-		m_damage += unitTarget->MeleeDamageBonusTaken(m_caster, damage, m_attackType, m_spellInfo);
-	}
+    m_damage += unitTarget->MeleeDamageBonusTaken(m_caster, damageBonusDone, m_attackType, m_spellInfo);
 }
 
 void Spell::EffectThreat(SpellEffIndex /*effIndex*/)
@@ -3388,9 +3372,9 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                 case 54426:
                     if (unitTarget)
                     {
-                        int32 damage = int32(unitTarget->GetHealth()) - int32(unitTarget->CountPctFromMaxHealth(5));
-                        if (damage > 0)
-                            m_caster->CastCustomSpell(28375, SPELLVALUE_BASE_POINT0, damage, unitTarget);
+                        int32 decimateDamage = int32(unitTarget->GetHealth()) - int32(unitTarget->CountPctFromMaxHealth(5));
+                        if (decimateDamage > 0)
+                            m_caster->CastCustomSpell(28375, SPELLVALUE_BASE_POINT0, decimateDamage, unitTarget);
                     }
                     return;
                 // Mirren's Drinking Hat
@@ -5475,10 +5459,10 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const* 
 
         if (summon->GetEntry() == 27893)
         {
-            if (uint32 weapon = m_caster->GetUInt32Value(PLAYER_VISIBLE_ITEM + VISIBLE_ITEM_ENTRY_OFFSET + (EQUIPMENT_SLOT_MAINHAND * 3)))
+            if (uint32 weapon = m_caster->GetUInt32Value(PLAYER_VISIBLE_ITEM + VISIBLE_ITEM_ENTRY_OFFSET + (EQUIPMENT_SLOT_MAINHAND * 2)))
             {
                 summon->SetDisplayId(11686); // modelid2
-                summon->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, weapon);
+                summon->SetVirtualItem(0, weapon);
             }
             else
                 summon->SetDisplayId(1126); // modelid1

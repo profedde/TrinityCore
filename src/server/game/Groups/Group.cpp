@@ -32,11 +32,11 @@
 #include "BattlegroundMgr.h"
 #include "MapManager.h"
 #include "InstanceSaveMgr.h"
-#include "MapInstanced.h"
 #include "Util.h"
 #include "LFGMgr.h"
 #include "UpdateFieldFlags.h"
 #include "PartyPackets.h"
+#include "LootPackets.h"
 
 Roll::Roll(ObjectGuid _guid, LootItem const& li) : itemGUID(_guid), itemid(li.itemid),
 itemRandomPropId(li.randomPropertyId), itemRandomSuffix(li.randomSuffix), itemCount(li.count),
@@ -488,24 +488,24 @@ bool Group::AddMember(Player* player)
             if (itr->GetSource() == player)
                 continue;
 
-            if (Player* member = itr->GetSource())
+            if (Player* existingMember = itr->GetSource())
             {
-                if (player->HaveAtClient(member))
+                if (player->HaveAtClient(existingMember))
                 {
-                    member->SetFieldNotifyFlag(UF_FLAG_PARTY_MEMBER);
-                    member->BuildValuesUpdateBlockForPlayer(&groupData, player);
-                    member->RemoveFieldNotifyFlag(UF_FLAG_PARTY_MEMBER);
+                    existingMember->SetFieldNotifyFlag(UF_FLAG_PARTY_MEMBER);
+                    existingMember->BuildValuesUpdateBlockForPlayer(&groupData, player);
+                    existingMember->RemoveFieldNotifyFlag(UF_FLAG_PARTY_MEMBER);
                 }
 
-                if (member->HaveAtClient(player))
+                if (existingMember->HaveAtClient(player))
                 {
                     UpdateData newData(player->GetMapId());
                     WorldPacket newDataPacket;
-                    player->BuildValuesUpdateBlockForPlayer(&newData, member);
+                    player->BuildValuesUpdateBlockForPlayer(&newData, existingMember);
                     if (newData.HasData())
                     {
                         newData.BuildPacket(&newDataPacket);
-                        member->SendDirectMessage(&newDataPacket);
+                        existingMember->SendDirectMessage(&newDataPacket);
                     }
                 }
             }
@@ -931,20 +931,17 @@ void Group::SendLooter(Creature* creature, Player* groupLooter)
 {
     ASSERT(creature);
 
-    WorldPacket data(SMSG_LOOT_LIST, (8+8));
-    data << creature->GetGUID();
+    WorldPackets::Loot::LootList lootList;
+
+    lootList.Owner = creature->GetGUID();
 
     if (GetLootMethod() == MASTER_LOOT && creature->loot.hasOverThresholdItem())
-        data << GetMasterLooterGuid().WriteAsPacked();
-    else
-        data << uint8(0);
+        lootList.Master = GetMasterLooterGuid();
 
     if (groupLooter)
-        data << groupLooter->GetPackGUID();
-    else
-        data << uint8(0);
+        lootList.RoundRobinWinner = groupLooter->GetGUID();
 
-    BroadcastPacket(&data, false);
+    BroadcastPacket(lootList.Write(), false);
 }
 
 void Group::GroupLoot(Loot* loot, WorldObject* pLootedObject)
@@ -1562,7 +1559,7 @@ void Group::SendUpdateToPlayer(ObjectGuid playerGUID, MemberSlot* slot)
     partyUpdate.PartyType = m_groupType;
     partyUpdate.PartyIndex = 0;
     partyUpdate.PartyFlags = uint8(IsCreated());
- 
+
     partyUpdate.PartyGUID = m_guid;
     partyUpdate.LeaderGUID = m_leaderGuid;
 
@@ -2113,13 +2110,13 @@ void Group::ResetInstances(uint8 method, bool isRaid, bool isLegacy, Player* Sen
         if (SendMsgTo)
         {
             if (!isEmpty)
-                SendMsgTo->SendResetInstanceFailed(0, instanceSave->GetMapId());
+                SendMsgTo->SendResetInstanceFailed(INSTANCE_RESET_FAILED, instanceSave->GetMapId());
             else if (sWorld->getBoolConfig(CONFIG_INSTANCES_RESET_ANNOUNCE))
             {
                 if (Group* group = SendMsgTo->GetGroup())
                 {
-                    for (GroupReference* itr = group->GetFirstMember(); itr != NULL; itr = itr->next())
-                        if (Player* player = itr->GetSource())
+                    for (GroupReference* groupRef = group->GetFirstMember(); groupRef != NULL; groupRef = groupRef->next())
+                        if (Player* player = groupRef->GetSource())
                             player->SendResetInstanceSuccess(instanceSave->GetMapId());
                 }
 
