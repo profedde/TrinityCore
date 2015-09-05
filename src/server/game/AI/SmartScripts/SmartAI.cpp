@@ -21,11 +21,7 @@
 #include "GridDefines.h"
 #include "GridNotifiers.h"
 #include "SpellMgr.h"
-#include "GridNotifiersImpl.h"
 #include "Cell.h"
-#include "CellImpl.h"
-#include "InstanceScript.h"
-#include "ScriptedCreature.h"
 #include "Group.h"
 #include "SmartAI.h"
 #include "ScriptMgr.h"
@@ -473,7 +469,13 @@ void SmartAI::MoveInLineOfSight(Unit* who)
         {
             if (!me->GetVictim())
             {
-                who->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
+                // Clear distracted state on combat
+                if (me->HasUnitState(UNIT_STATE_DISTRACTED))
+                {
+                   me->ClearUnitState(UNIT_STATE_DISTRACTED);
+                   me->GetMotionMaster()->Clear();
+                }
+
                 AttackStart(who);
             }
             else/* if (me->GetMap()->IsDungeon())*/
@@ -767,6 +769,9 @@ void SmartAI::SetCombatMove(bool on)
         }
         else
         {
+            if (me->HasUnitState(UNIT_STATE_CONFUSED_MOVE | UNIT_STATE_FLEEING_MOVE))
+                return;
+
             me->GetMotionMaster()->MovementExpired();
             me->GetMotionMaster()->Clear(true);
             me->StopMoving();

@@ -46,6 +46,9 @@ void GarrisonMgr::Initialize()
     {
         if (GarrAbilityEntry const* ability = sGarrAbilityStore.LookupEntry(followerAbility->GarrAbilityID))
         {
+            if (ability->FollowerTypeID != FOLLOWER_TYPE_GARRISON)
+                continue;
+
             if (!(ability->Flags & GARRISON_ABILITY_CANNOT_ROLL) && ability->Flags & GARRISON_ABILITY_FLAG_TRAIT)
                 _garrisonFollowerRandomTraits.insert(ability);
 
@@ -161,7 +164,7 @@ std::list<GarrAbilityEntry const*> GarrisonMgr::RollFollowerAbilities(GarrFollow
 
     bool hasForcedExclusiveTrait = false;
     std::list<GarrAbilityEntry const*> result;
-    int32 slots[2] = { AbilitiesForQuality[quality][0], AbilitiesForQuality[quality][1] };
+    uint32 slots[2] = { AbilitiesForQuality[quality][0], AbilitiesForQuality[quality][1] };
 
     GarrAbilities const* abilities = nullptr;
     auto itr = _garrisonFollowerAbilities[faction].find(follower->ID);
@@ -266,21 +269,21 @@ std::list<GarrAbilityEntry const*> GarrisonMgr::RollFollowerAbilities(GarrFollow
         genericTraits.unique();
 
         std::size_t firstExclusive = 0, total = genericTraits.size();
-        for (auto itr = genericTraits.begin(); itr != genericTraits.end(); ++itr, ++firstExclusive)
-            if ((*itr)->Flags & GARRISON_ABILITY_FLAG_EXCLUSIVE)
+        for (auto genericTraitItr = genericTraits.begin(); genericTraitItr != genericTraits.end(); ++genericTraitItr, ++firstExclusive)
+            if ((*genericTraitItr)->Flags & GARRISON_ABILITY_FLAG_EXCLUSIVE)
                 break;
 
-        while (traitList.size() < std::max<int32>(0, slots[1] - forcedTraits.size()) && total)
+        while (traitList.size() < size_t(std::max<int32>(0, slots[1] - forcedTraits.size())) && total)
         {
-            auto itr = genericTraits.begin();
-            std::advance(itr, urand(0, total-- - 1));
-            if ((*itr)->Flags & GARRISON_ABILITY_FLAG_EXCLUSIVE)
+            auto genericTraitItr = genericTraits.begin();
+            std::advance(genericTraitItr, urand(0, total-- - 1));
+            if ((*genericTraitItr)->Flags & GARRISON_ABILITY_FLAG_EXCLUSIVE)
                 total = firstExclusive; // selected exclusive trait - no other can be selected now
             else
                 --firstExclusive;
 
-            traitList.push_back(*itr);
-            genericTraits.erase(itr);
+            traitList.push_back(*genericTraitItr);
+            genericTraits.erase(genericTraitItr);
         }
     }
 

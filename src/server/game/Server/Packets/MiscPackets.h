@@ -242,6 +242,7 @@ namespace WorldPackets
             Optional<uint32> RestrictedAccountMaxLevel;
             Optional<uint32> RestrictedAccountMaxMoney;
             uint32 DifficultyID     = 0;
+            bool XRealmPvpAlert     = false;
         };
 
         class AreaTrigger final : public ClientPacket
@@ -422,11 +423,11 @@ namespace WorldPackets
         {
         public:
             StandStateUpdate() : ServerPacket(SMSG_STAND_STATE_UPDATE, 4 + 1) { }
-            StandStateUpdate(UnitStandStateType state) : ServerPacket(SMSG_STAND_STATE_UPDATE, 4 + 1), State(state) { }
+            StandStateUpdate(UnitStandStateType state, uint32 animKitID) : ServerPacket(SMSG_STAND_STATE_UPDATE, 4 + 1), AnimKitID(animKitID), State(state) { }
 
             WorldPacket const* Write() override;
 
-            uint32 UnkWoD1 = 0; /// @todo 6.1.0 resarch new value
+            uint32 AnimKitID = 0;
             UnitStandStateType State = UNIT_STAND_STATE_STAND;
         };
 
@@ -684,6 +685,45 @@ namespace WorldPackets
 
             ObjectGuid UnitGUID;
             bool PlayHoverAnim = false;
+        };
+
+        class OpeningCinematic final : public ClientPacket
+        {
+        public:
+            OpeningCinematic(WorldPacket&& packet) : ClientPacket(CMSG_OPENING_CINEMATIC, std::move(packet)) { }
+
+            void Read() override { }
+        };
+
+        class TogglePvP final : public ClientPacket
+        {
+        public:
+            TogglePvP(WorldPacket&& packet) : ClientPacket(CMSG_TOGGLE_PVP, std::move(packet)) { }
+
+            void Read() override { }
+        };
+
+        class SetPvP final : public ClientPacket
+        {
+        public:
+            SetPvP(WorldPacket&& packet) : ClientPacket(CMSG_SET_PVP, std::move(packet)) { }
+
+            void Read() override;
+
+            bool EnablePVP = false;
+        };
+
+        class WorldTeleport final : public ClientPacket
+        {
+        public:
+            WorldTeleport(WorldPacket&& packet) : ClientPacket(CMSG_WORLD_TELEPORT, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 MapID = 0;
+            ObjectGuid TransportGUID;
+            G3D::Vector3 Pos;
+            float Facing = 0.0f;
         };
     }
 }

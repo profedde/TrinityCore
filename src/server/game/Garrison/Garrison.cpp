@@ -85,7 +85,7 @@ bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blue
     {
         do
         {
-            Field* fields = followers->Fetch();
+            fields = followers->Fetch();
 
             uint64 dbId = fields[0].GetUInt64();
             uint32 followerId = fields[1].GetUInt32();
@@ -116,7 +116,7 @@ bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blue
         {
             do
             {
-                Field* fields = abilities->Fetch();
+                fields = abilities->Fetch();
                 uint64 dbId = fields[0].GetUInt64();
                 GarrAbilityEntry const* ability = sGarrAbilityStore.LookupEntry(fields[1].GetUInt32());
 
@@ -277,18 +277,27 @@ void Garrison::Upgrade()
 
 void Garrison::Enter() const
 {
-    WorldLocation loc(_siteLevel->MapID);
-    loc.Relocate(_owner);
-    _owner->TeleportTo(loc, TELE_TO_SEAMLESS);
+    if (MapEntry const* map = sMapStore.LookupEntry(_siteLevel->MapID))
+    {
+        if (int32(_owner->GetMapId()) == map->ParentMapID)
+        {
+            WorldLocation loc(_siteLevel->MapID);
+            loc.Relocate(_owner);
+            _owner->TeleportTo(loc, TELE_TO_SEAMLESS);
+        }
+    }
 }
 
 void Garrison::Leave() const
 {
     if (MapEntry const* map = sMapStore.LookupEntry(_siteLevel->MapID))
     {
-        WorldLocation loc(map->ParentMapID);
-        loc.Relocate(_owner);
-        _owner->TeleportTo(loc, TELE_TO_SEAMLESS);
+        if (_owner->GetMapId() == _siteLevel->MapID)
+        {
+            WorldLocation loc(map->ParentMapID);
+            loc.Relocate(_owner);
+            _owner->TeleportTo(loc, TELE_TO_SEAMLESS);
+        }
     }
 }
 
