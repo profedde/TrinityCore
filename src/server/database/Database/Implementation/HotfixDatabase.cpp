@@ -27,6 +27,11 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     if (!m_reconnecting)
         m_stmts.resize(MAX_HOTFIXDATABASE_STATEMENTS);
 
+    // Achievement.db2
+    PrepareStatement(HOTFIX_SEL_ACHIEVEMENT, "SELECT ID, Faction, MapID, Supercedes, Title, Description, Category, Points, UIOrder, Flags, IconID, "
+        "Reward, MinimumCriteria, SharesCriteria, CriteriaTree FROM achievement ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_ACHIEVEMENT, "SELECT ID, Title_lang, Description_lang, Reward_lang FROM achievement_locale WHERE locale = ?", CONNECTION_SYNCH);
+
     // AreaGroup.db2
     PrepareStatement(HOTFIX_SEL_AREA_GROUP, "SELECT ID FROM area_group ORDER BY ID DESC", CONNECTION_SYNCH);
 
@@ -41,6 +46,20 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_BARBER_SHOP_STYLE, "SELECT ID, Type, DisplayName, Description, CostModifier, Race, Sex, Data FROM barber_shop_style"
         " ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_BARBER_SHOP_STYLE, "SELECT ID, DisplayName_lang, Description_lang FROM barber_shop_style_locale WHERE locale = ?", CONNECTION_SYNCH);
+
+    // BattlePetBreedQuality.db2
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_BREED_QUALITY, "SELECT ID, Quality, Modifier FROM battle_pet_breed_quality ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // BattlePetBreedState.db2
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_BREED_STATE, "SELECT ID, BreedID, State, Value FROM battle_pet_breed_state ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // BattlePetSpecies.db2
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_SPECIES, "SELECT ID, CreatureID, IconFileID, SummonSpellID, PetType, Source, Flags, "
+        "SourceText, Description FROM battle_pet_species ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_BATTLE_PET_SPECIES, "SELECT ID, SourceText, Description FROM battle_pet_species_locale WHERE locale = ?", CONNECTION_SYNCH);
+
+    // BattlePetSpeciesState.db2
+    PrepareStatement(HOTFIX_SEL_BATTLE_PET_SPECIES_STATE, "SELECT ID, SpeciesID, State, Value FROM battle_pet_species_state ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // BroadcastText.db2
     PrepareStatement(HOTFIX_SEL_BROADCAST_TEXT, "SELECT ID, Language, MaleText, FemaleText, EmoteID1, EmoteID2, EmoteID3, EmoteDelay1, EmoteDelay2, "
@@ -70,6 +89,15 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     // CreatureType.db2
     PrepareStatement(HOTFIX_SEL_CREATURE_TYPE, "SELECT ID, Name, Flags FROM creature_type ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_CREATURE_TYPE, "SELECT ID, Name_lang FROM creature_type_locale WHERE locale = ?", CONNECTION_SYNCH);
+
+    // Criteria.db2
+    PrepareStatement(HOTFIX_SEL_CRITERIA, "SELECT ID, Type, Asset, StartEvent, StartAsset, StartTimer, FailEvent, FailAsset, ModifierTreeId, Flags, "
+        "EligibilityWorldStateID, EligibilityWorldStateValue FROM criteria ORDER BY ID DESC", CONNECTION_SYNCH);
+
+    // CriteriaTree.db2
+    PrepareStatement(HOTFIX_SEL_CRITERIA_TREE, "SELECT ID, CriteriaID, Operator, Parent, Flags, Description, OrderIndex FROM criteria_tree"
+        " ORDER BY ID DESC", CONNECTION_SYNCH);
+    PREPARE_LOCALE_STMT(HOTFIX_SEL_CRITERIA_TREE, "SELECT ID, Description_lang FROM criteria_tree_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // CurrencyTypes.db2
     PrepareStatement(HOTFIX_SEL_CURRENCY_TYPES, "SELECT ID, CategoryID, Name, InventoryIcon1, InventoryIcon2, SpellWeight, SpellCategory, MaxQty, "
@@ -263,6 +291,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     // ItemSpecOverride.db2
     PrepareStatement(HOTFIX_SEL_ITEM_SPEC_OVERRIDE, "SELECT ID, ItemID, SpecID FROM item_spec_override ORDER BY ID DESC", CONNECTION_SYNCH);
 
+    // ItemToBattlePetSpecies.db2
+    PrepareStatement(HOTFIX_SEL_ITEM_TO_BATTLE_PET_SPECIES, "SELECT ID, BattlePetSpeciesID FROM item_to_battle_pet_species ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // ItemXBonusTree.db2
     PrepareStatement(HOTFIX_SEL_ITEM_X_BONUS_TREE, "SELECT ID, ItemID, BonusTreeID FROM item_x_bonus_tree ORDER BY ID DESC", CONNECTION_SYNCH);
 
@@ -275,6 +306,9 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_MAIL_TEMPLATE, "SELECT ID, Body FROM mail_template ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_MAIL_TEMPLATE, "SELECT ID, Body_lang FROM mail_template_locale WHERE locale = ?", CONNECTION_SYNCH);
 
+    // ModifierTree.db2
+    PrepareStatement(HOTFIX_SEL_MODIFIER_TREE, "SELECT ID, Type, Asset1, Asset2, Operator, Amount, Parent FROM modifier_tree ORDER BY ID DESC", CONNECTION_SYNCH);
+
     // Mount.db2
     PrepareStatement(HOTFIX_SEL_MOUNT, "SELECT Id, SpellId, MountTypeId, DisplayId, Flags, Name, Description, SourceDescription, Source, "
         "PlayerConditionId FROM mount ORDER BY Id DESC", CONNECTION_SYNCH);
@@ -284,7 +318,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PrepareStatement(HOTFIX_SEL_MOUNT_CAPABILITY, "SELECT ID, Flags, RequiredRidingSkill, RequiredArea, RequiredAura, RequiredSpell, SpeedModSpell, "
         "RequiredMap FROM mount_capability ORDER BY ID DESC", CONNECTION_SYNCH);
 
-    // MountType.db2
+    // MountTypeXCapability.db2
     PrepareStatement(HOTFIX_SEL_MOUNT_TYPE_X_CAPABILITY, "SELECT ID, MountTypeID, OrderIndex, MountCapabilityID FROM mount_type_x_capability ORDER BY ID DESC", CONNECTION_SYNCH);
 
     // NameGen.db2
@@ -427,7 +461,7 @@ void HotfixDatabaseConnection::DoPrepareStatements()
     PREPARE_LOCALE_STMT(HOTFIX_SEL_TOTEM_CATEGORY, "SELECT ID, Name_lang FROM totem_category_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // Toy.db2
-    PrepareStatement(HOTFIX_SEL_TOY, "SELECT ID, ItemID, Flags, Description, CategoryFilter  FROM toy ORDER BY ID DESC", CONNECTION_SYNCH);
+    PrepareStatement(HOTFIX_SEL_TOY, "SELECT ID, ItemID, Flags, Description, CategoryFilter FROM toy ORDER BY ID DESC", CONNECTION_SYNCH);
     PREPARE_LOCALE_STMT(HOTFIX_SEL_TOY, "SELECT ID, Description_lang FROM toy_locale WHERE locale = ?", CONNECTION_SYNCH);
 
     // TransportAnimation.db2

@@ -24,13 +24,20 @@
 #include <boost/regex.hpp>
 #include <array>
 
+extern DB2Storage<AchievementEntry>                     sAchievementStore;
 extern DB2Storage<AuctionHouseEntry>                    sAuctionHouseStore;
 extern DB2Storage<BarberShopStyleEntry>                 sBarberShopStyleStore;
+extern DB2Storage<BattlePetBreedQualityEntry>           sBattlePetBreedQualityStore;
+extern DB2Storage<BattlePetBreedStateEntry>             sBattlePetBreedStateStore;
+extern DB2Storage<BattlePetSpeciesEntry>                sBattlePetSpeciesStore;
+extern DB2Storage<BattlePetSpeciesStateEntry>           sBattlePetSpeciesStateStore;
 extern DB2Storage<BroadcastTextEntry>                   sBroadcastTextStore;
 extern DB2Storage<CharStartOutfitEntry>                 sCharStartOutfitStore;
 extern DB2Storage<CinematicSequencesEntry>              sCinematicSequencesStore;
 extern DB2Storage<CreatureDisplayInfoEntry>             sCreatureDisplayInfoStore;
 extern DB2Storage<CreatureTypeEntry>                    sCreatureTypeStore;
+extern DB2Storage<CriteriaEntry>                        sCriteriaStore;
+extern DB2Storage<CriteriaTreeEntry>                    sCriteriaTreeStore;
 extern DB2Storage<CurrencyTypesEntry>                   sCurrencyTypesStore;
 extern DB2Storage<DestructibleModelDataEntry>           sDestructibleModelDataStore;
 extern DB2Storage<DurabilityQualityEntry>               sDurabilityQualityStore;
@@ -67,7 +74,9 @@ extern DB2Storage<ItemRandomSuffixEntry>                sItemRandomSuffixStore;
 extern DB2Storage<ItemSparseEntry>                      sItemSparseStore;
 extern DB2Storage<ItemSpecEntry>                        sItemSpecStore;
 extern DB2Storage<ItemSpecOverrideEntry>                sItemSpecOverrideStore;
+extern DB2Storage<ItemToBattlePetSpeciesEntry>          sItemToBattlePetSpeciesStore;
 extern DB2Storage<MailTemplateEntry>                    sMailTemplateStore;
+extern DB2Storage<ModifierTreeEntry>                    sModifierTreeStore;
 extern DB2Storage<MountCapabilityEntry>                 sMountCapabilityStore;
 extern DB2Storage<OverrideSpellDataEntry>               sOverrideSpellDataStore;
 extern DB2Storage<QuestMoneyRewardEntry>                sQuestMoneyRewardStore;

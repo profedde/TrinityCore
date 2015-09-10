@@ -18,16 +18,23 @@
 #ifndef TRINITY_DB2SFRM_H
 #define TRINITY_DB2SFRM_H
 
+char const AchievementFormat[] = "niiissiiiiisiii";
 char const AreaGroupFormat[] = "n";
 char const AreaGroupMemberFormat[] = "nii";
 char const AuctionHouseFormat[] = "niiis";
 char const BarberShopStyleFormat[] = "nissfiii";
+char const BattlePetBreedQualityFormat[] = "nif";
+char const BattlePetBreedStateFormat[] = "niii";
+char const BattlePetSpeciesFormat[] = "niiiiiiss";
+char const BattlePetSpeciesStateFormat[] = "niii";
 char const BroadcastTextFormat[] = "nissiiiiiiiii";
 char const CharStartOutfitFormat[] = "nbbbbiiiiiiiiiiiiiiiiiiiiiiiiii";
 char const ChrClassesXPowerTypesFormat[] = "iii";
 char const CinematicSequencesFormat[] = "niiiiiiiii";
 char const CreatureDisplayInfoFormat[] = "niiiffissssiiiiiiiiiii";
 char const CreatureTypeFormat[] = "nsi";
+char const CriteriaFormat[] = "niiiiiiiiiii";
+char const CriteriaTreeFormat[] = "niliiisi";
 char const CurrencyTypesFormat[] = "nisssiiiiiis";
 char const CurvePointFormat[] = "niiff";
 char const DestructibleModelDataFormat[] = "niiiiiiiiiiiiiiiiiiiiiii";
@@ -69,9 +76,11 @@ char const ItemRandomSuffixFormat[] = "nssiiiiiiiiii";
 char const ItemSparseFormat[] = "niiiiffiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiffffffffffiiifisssssiiiiiiiiiiiiiiiiiiifiiifiii";
 char const ItemSpecFormat[] = "niiiiii";
 char const ItemSpecOverrideFormat[] = "nii";
+char const ItemToBattlePetSpeciesFormat[] = "ni";
 char const ItemXBonusTreeFormat[] = "nii";
 char const KeyChainFormat[] = "nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 char const MailTemplateFormat[] = "ns";
+char const ModifierTreeFormat[] = "niiiiii";
 char const MountCapabilityFormat[] = "niiiiiii";
 char const MountFormat[] = "niiiisssii";
 char const MountTypeXCapabilityFormat[] = "niii";
