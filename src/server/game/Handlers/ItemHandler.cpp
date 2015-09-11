@@ -1199,13 +1199,6 @@ void WorldSession::HandleTransmogrifyItems(WorldPackets::Item::TransmogrifyItems
         cost += itemTransmogrified->GetSpecialPrice();
     }
 
-	if (transmogrified.size() != packet.ItemCount)
-	{
-		TC_LOG_DEBUG("network", "WORLD: SIZEBUG!");
-		return;
-	}
-
-
     if (cost) // 0 cost if reverting look
     {
         if (!player->HasEnoughMoney(cost))
