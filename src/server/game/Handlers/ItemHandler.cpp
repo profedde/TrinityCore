@@ -1168,18 +1168,6 @@ void WorldSession::HandleTransmogrifyItems(WorldPackets::Item::TransmogrifyItems
                 TC_LOG_DEBUG("network", "WORLD: HandleTransmogrifyItems - Player (%s, name: %s) tried to transmogrify with an invalid void storage item (%s).", player->GetGUID().ToString().c_str(), player->GetName().c_str(), transmogItem.SrcVoidItemGUID->ToString().c_str());
                 return;
             }
-			if (!info.SrcVoidItemGUID.IsEmpty())
-			{
-				SrcGUID = info.SrcVoidItemGUID;
-				uint8 slot;
-				VoidStorageItem* VoidItem = player->GetVoidStorageItem(SrcGUID.GetCounter(), slot);
-				itemTransmogrifier = itemTransmogrifier->CreateItem(VoidItem->ItemEntry, 1);
-			}
-			if (!itemTransmogrifier)
-			{
-				TC_LOG_DEBUG("network", "WORLD: HandleTransmogrifyItems - Player (%s, name: %s) tried to transmogrify with an invalid item (%s).", player->GetGUID().ToString().c_str(), player->GetName().c_str(), SrcGUID.ToString().c_str());
-				return;
-			}
 
             itemInstance.Initialize(itemTransmogrifier);
             std::pair<VoidStorageItem*, BonusData>& transmogData = transmogVoidItems[itemTransmogrified];
