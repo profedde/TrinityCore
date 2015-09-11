@@ -410,29 +410,6 @@ void WorldPackets::Item::WrapItem::Read()
     _worldPacket >> Inv;
 }
 
-void WorldPackets::Item::TransmogrifyItems::Read()
-{
-	_worldPacket >> ItemCount;
-	_worldPacket >> NpcGUID;
-
-	for (int i = 0; i < ItemCount; i++)
-	{
-		TransmogrifyInfo info;
-		bool HasSrcItemGUID = _worldPacket.ReadBit();
-		bool HasSrcVoidItemGUID = _worldPacket.ReadBit();
-		_worldPacket >> info.Item;
-		_worldPacket >> info.Slot;
-
-		if (HasSrcItemGUID)
-			_worldPacket >> info.SrcItemGUID;
-
-		if (HasSrcVoidItemGUID)
-			_worldPacket >> info.SrcVoidItemGUID;
-
-		Info.push_back(info);
-	}
-}
-
 void WorldPackets::Item::CancelTempEnchantment::Read()
 {
     _worldPacket >> Slot;
