@@ -60,7 +60,7 @@ void WorldSession::HandleBlackMarketRequestItems(WorldPackets::BlackMarket::Blac
 
     WorldPackets::BlackMarket::BlackMarketRequestItemsResult result;
     sBlackMarketMgr->BuildItemsResponse(result, GetPlayer());
-    return SendPacket(result.Write());
+    SendPacket(result.Write());
 }
 
 void WorldSession::HandleBlackMarketBidOnItem(WorldPackets::BlackMarket::BlackMarketBidOnItem& packet)
@@ -80,35 +80,35 @@ void WorldSession::HandleBlackMarketBidOnItem(WorldPackets::BlackMarket::BlackMa
     if (!entry)
     {
         TC_LOG_DEBUG("network", "WORLD: HandleBlackMarketBidOnItem - Player (%s, name: %s) tried to bid on a nonexistent auction (MarketId: %i).", player->GetGUID().ToString().c_str(), player->GetName().c_str(), packet.MarketID);
-        SendBlackMarketBidOnItemResult(ERR_BMAH_ITEM_NOT_FOUND, packet.MarketID, &packet.Item);
+        SendBlackMarketBidOnItemResult(ERR_BMAH_ITEM_NOT_FOUND, packet.MarketID, packet.Item);
         return;
     }
 
-    if (entry->Bidder == player->GetGUID().GetCounter())
+    if (entry->GetBidder() == player->GetGUID().GetCounter())
     {
         TC_LOG_DEBUG("network", "WORLD: HandleBlackMarketBidOnItem - Player (%s, name: %s) tried to place a bid on an item he already bid on. (MarketId: %i).", player->GetGUID().ToString().c_str(), player->GetName().c_str(), packet.MarketID);
-        SendBlackMarketBidOnItemResult(ERR_BMAH_ALREADY_BID, packet.MarketID, &packet.Item);
+        SendBlackMarketBidOnItemResult(ERR_BMAH_ALREADY_BID, packet.MarketID, packet.Item);
         return;
     }
 
     if (!entry->ValidateBid(packet.bidAmount))
     {
-        TC_LOG_DEBUG("network", "WORLD: HandleBlackMarketBidOnItem - Player (%s, name: %s) tried to place an invalid bid. Amount: %i (MarketId: %i).", player->GetGUID().ToString().c_str(), player->GetName().c_str(), packet.bidAmount, packet.MarketID);
-        SendBlackMarketBidOnItemResult(ERR_BMAH_HIGHER_BID, packet.MarketID, &packet.Item);
+        TC_LOG_DEBUG("network", "WORLD: HandleBlackMarketBidOnItem - Player (%s, name: %s) tried to place an invalid bid. Amount: %lu (MarketId: %i).", player->GetGUID().ToString().c_str(), player->GetName().c_str(), packet.bidAmount, packet.MarketID);
+        SendBlackMarketBidOnItemResult(ERR_BMAH_HIGHER_BID, packet.MarketID, packet.Item);
         return;
     }
 
     if (!player->HasEnoughMoney(packet.bidAmount))
     {
         TC_LOG_DEBUG("network", "WORLD: HandleBlackMarketBidOnItem - Player (%s, name: %s) does not have enough money to place bid. (MarketId: %i).", player->GetGUID().ToString().c_str(), player->GetName().c_str(), packet.MarketID);
-        SendBlackMarketBidOnItemResult(ERR_BMAH_NOT_ENOUGH_MONEY, packet.MarketID, &packet.Item);
+        SendBlackMarketBidOnItemResult(ERR_BMAH_NOT_ENOUGH_MONEY, packet.MarketID, packet.Item);
         return;
     }
 
     if (entry->GetSecondsRemaining() <= 0)
     {
         TC_LOG_DEBUG("network", "WORLD: HandleBlackMarketBidOnItem - Player (%s, name: %s) tried to bid on a completed auction. (MarketId: %i).", player->GetGUID().ToString().c_str(), player->GetName().c_str(), packet.MarketID);
-        SendBlackMarketBidOnItemResult(ERR_BMAH_DATABASE_ERROR, packet.MarketID, &packet.Item);
+        SendBlackMarketBidOnItemResult(ERR_BMAH_DATABASE_ERROR, packet.MarketID, packet.Item);
         return;
     }
 
@@ -119,15 +119,15 @@ void WorldSession::HandleBlackMarketBidOnItem(WorldPackets::BlackMarket::BlackMa
 
     CharacterDatabase.CommitTransaction(trans);
 
-    SendBlackMarketBidOnItemResult(ERR_BMAH_OK, packet.MarketID, &packet.Item);
+    SendBlackMarketBidOnItemResult(ERR_BMAH_OK, packet.MarketID, packet.Item);
 }
 
-void WorldSession::SendBlackMarketBidOnItemResult(int32 result, int32 marketId, WorldPackets::Item::ItemInstance* item)
+void WorldSession::SendBlackMarketBidOnItemResult(int32 result, int32 marketId, WorldPackets::Item::ItemInstance& item)
 {
     WorldPackets::BlackMarket::BlackMarketBidOnItemResult packet;
 
     packet.MarketID = marketId;
-    packet.Item = *item;
+    packet.Item = item;
     packet.Result = result;
 
     SendPacket(packet.Write());

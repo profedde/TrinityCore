@@ -947,7 +947,7 @@ class WorldSession
 
         // Black Market
         void SendBlackMarketOpenResult(ObjectGuid guid, Creature* auctioneer);
-        void SendBlackMarketBidOnItemResult(int32 result, int32 marketId, WorldPackets::Item::ItemInstance* item);
+        void SendBlackMarketBidOnItemResult(int32 result, int32 marketId, WorldPackets::Item::ItemInstance& item);
         void SendBlackMarketWonNotification(BlackMarketEntry const* entry, Item const* item);
         void SendBlackMarketOutbidNotification(BlackMarketTemplate const* templ);
 

@@ -29,7 +29,7 @@ void WorldPackets::BlackMarket::BlackMarketItem::Initialize(BlackMarketEntry *co
     Quantity = templ->Quantity;
 
     // No bids yet
-    if (!entry->NumBids)
+    if (!entry->GetNumBids())
     {
         MinBid = templ->MinBid;
         MinIncrement = 1;
@@ -37,13 +37,13 @@ void WorldPackets::BlackMarket::BlackMarketItem::Initialize(BlackMarketEntry *co
     else
     {
         MinIncrement = entry->GetMinIncrement(); // 5% increment minimum
-        MinBid = entry->CurrentBid + MinIncrement;
+        MinBid = entry->GetCurrentBid() + MinIncrement;
     }
 
-    CurrentBid = entry->CurrentBid;
+    CurrentBid = entry->GetCurrentBid();
     SecondsRemaining = entry->GetSecondsRemaining();
-    HighBid = (entry->Bidder == player->GetGUID().GetCounter());
-    NumBids = entry->NumBids;
+    HighBid = (entry->GetBidder() == player->GetGUID().GetCounter());
+    NumBids = entry->GetNumBids();
 }
 
 void WorldPackets::BlackMarket::BlackMarketOpen::Read()

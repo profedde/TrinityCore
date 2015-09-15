@@ -1,6 +1,5 @@
 /*
 * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
-* Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
 *
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the
@@ -85,7 +84,7 @@ void BlackMarketMgr::LoadAuctions()
     }
 
     uint32 count = 0;
-    mLastUpdate = time(nullptr); //Set update time before loading
+    _LastUpdate = time(nullptr); //Set update time before loading
 
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
     do
@@ -124,7 +123,7 @@ void BlackMarketMgr::Update(bool updateTime)
     {
         BlackMarketEntry* entry = itr->second;
 
-        if (entry->IsCompleted() && entry->Bidder)
+        if (entry->IsCompleted() && entry->GetBidder())
             SendAuctionWonMail(entry, trans);
 
         if (updateTime)
@@ -132,7 +131,7 @@ void BlackMarketMgr::Update(bool updateTime)
     }
 
     if (updateTime)
-        mLastUpdate = now;
+        _LastUpdate = now;
 
     CharacterDatabase.CommitTransaction(trans);
 }
@@ -192,7 +191,7 @@ bool BlackMarketMgr::IsEnabled() const
 
 void BlackMarketMgr::BuildItemsResponse(WorldPackets::BlackMarket::BlackMarketRequestItemsResult &packet, Player *player)
 {
-    packet.LastUpdateID = mLastUpdate;
+    packet.LastUpdateID = _LastUpdate;
 
     for (BlackMarketEntryMap::iterator itr = mAuctions.begin(); itr != mAuctions.end(); ++itr)
     {
@@ -220,7 +219,7 @@ void BlackMarketMgr::SendAuctionWonMail(BlackMarketEntry* entry, SQLTransaction&
         return;
 
     uint32 bidderAccId = 0;
-    ObjectGuid bidderGuid = ObjectGuid::Create<HighGuid::Player>(entry->Bidder);
+    ObjectGuid bidderGuid = ObjectGuid::Create<HighGuid::Player>(entry->GetBidder());
     Player* bidder = ObjectAccessor::FindConnectedPlayer(bidderGuid);
     // data for gm.log
     std::string bidderName;
@@ -264,7 +263,7 @@ void BlackMarketMgr::SendAuctionWonMail(BlackMarketEntry* entry, SQLTransaction&
     if (logGmTrade)
     {
         sLog->outCommand(bidderAccId, "GM %s (Account: %u) won item in blackmarket auction: %s (Entry: %u Count: %u) and payed gold : %u.",
-            bidderName.c_str(), bidderAccId, item->GetTemplate()->GetDefaultLocaleName(), item->GetEntry(), item->GetCount(), entry->CurrentBid / GOLD);
+            bidderName.c_str(), bidderAccId, item->GetTemplate()->GetDefaultLocaleName(), item->GetEntry(), item->GetCount(), entry->GetCurrentBid() / GOLD);
     }
 
     if (bidder)
@@ -274,14 +273,14 @@ void BlackMarketMgr::SendAuctionWonMail(BlackMarketEntry* entry, SQLTransaction&
 
     MailDraft(entry->BuildAuctionMailSubject(BMAH_AUCTION_WON), entry->BuildAuctionMailBody())
         .AddItem(item)
-        .SendMailTo(trans, MailReceiver(bidder, entry->Bidder), entry, MAIL_CHECK_MASK_COPIED);
+        .SendMailTo(trans, MailReceiver(bidder, entry->GetBidder()), entry, MAIL_CHECK_MASK_COPIED);
 
     entry->MailSent();
 }
 
 void BlackMarketMgr::SendAuctionOutbidMail(BlackMarketEntry* entry, SQLTransaction& trans)
 {
-    ObjectGuid oldBidder_guid = ObjectGuid::Create<HighGuid::Player>(entry->Bidder);
+    ObjectGuid oldBidder_guid = ObjectGuid::Create<HighGuid::Player>(entry->GetBidder());
     Player* oldBidder = ObjectAccessor::FindConnectedPlayer(oldBidder_guid);
 
     uint32 oldBidder_accId = 0;
@@ -296,8 +295,8 @@ void BlackMarketMgr::SendAuctionOutbidMail(BlackMarketEntry* entry, SQLTransacti
         oldBidder->GetSession()->SendBlackMarketOutbidNotification(entry->GetTemplate());
 
     MailDraft(entry->BuildAuctionMailSubject(BMAH_AUCTION_OUTBID), entry->BuildAuctionMailBody())
-        .AddMoney(entry->CurrentBid)
-        .SendMailTo(trans, MailReceiver(oldBidder, entry->Bidder), entry, MAIL_CHECK_MASK_COPIED);
+        .AddMoney(entry->GetCurrentBid())
+        .SendMailTo(trans, MailReceiver(oldBidder, entry->GetBidder()), entry, MAIL_CHECK_MASK_COPIED);
 }
 
 BlackMarketEntry* BlackMarketMgr::GetAuctionByID(int32 marketId) const
@@ -338,7 +337,7 @@ bool BlackMarketTemplate::LoadFromDB(Field* fields)
 
     if (!bonusListIDs.empty())
     {
-        Item.ItemBonus.emplace();
+        Item.ItemBonus = boost::in_place();
         Item.ItemBonus->BonusListIDs = bonusListIDs;
     }
 
@@ -359,17 +358,17 @@ bool BlackMarketTemplate::LoadFromDB(Field* fields)
 
 void BlackMarketEntry::Update(time_t newTimeOfUpdate)
 {
-    m_secondsRemaining = m_secondsRemaining - (newTimeOfUpdate - sBlackMarketMgr->GetLastUpdate());
+    _secondsRemaining = _secondsRemaining - (newTimeOfUpdate - sBlackMarketMgr->GetLastUpdate());
 }
 
 BlackMarketTemplate* BlackMarketEntry::GetTemplate() const
 {
-    return sBlackMarketMgr->GetTemplateByID(MarketId);
+    return sBlackMarketMgr->GetTemplateByID(_marketId);
 }
 
 time_t BlackMarketEntry::GetSecondsRemaining() const
 {
-    return m_secondsRemaining - (time(nullptr) - sBlackMarketMgr->GetLastUpdate());
+    return _secondsRemaining - (time(nullptr) - sBlackMarketMgr->GetLastUpdate());
 }
 
 time_t BlackMarketEntry::GetExpirationTime() const
@@ -384,25 +383,25 @@ bool BlackMarketEntry::IsCompleted() const
 
 bool BlackMarketEntry::LoadFromDB(Field* fields)
 {
-    MarketId = fields[0].GetInt32();
+    _marketId = fields[0].GetInt32();
 
     // Invalid MarketID
-    BlackMarketTemplate* templ = sBlackMarketMgr->GetTemplateByID(MarketId);
+    BlackMarketTemplate* templ = sBlackMarketMgr->GetTemplateByID(_marketId);
     if (!templ)
     {
-        TC_LOG_ERROR("misc", "Black market auction %i does not have a valid id.", MarketId);
+        TC_LOG_ERROR("misc", "Black market auction %i does not have a valid id.", _marketId);
         return false;
     }
 
-    CurrentBid = fields[1].GetUInt64();
-    m_secondsRemaining =  static_cast<time_t>(fields[2].GetInt32()) - sBlackMarketMgr->GetLastUpdate();
-    NumBids = fields[3].GetInt32();
-    Bidder = fields[4].GetUInt64();
+    _currentBid = fields[1].GetUInt64();
+    _secondsRemaining =  static_cast<time_t>(fields[2].GetInt32()) - sBlackMarketMgr->GetLastUpdate();
+    _numBids = fields[3].GetInt32();
+    _bidder = fields[4].GetUInt64();
 
     // Either no bidder or existing player
-    if (Bidder && !sObjectMgr->GetPlayerAccountIdByGUID(ObjectGuid::Create<HighGuid::Player>(Bidder))) // Probably a better way to check if player exists
+    if (_bidder && !sObjectMgr->GetPlayerAccountIdByGUID(ObjectGuid::Create<HighGuid::Player>(_bidder))) // Probably a better way to check if player exists
     {
-        TC_LOG_ERROR("misc", "Black market auction %i does not have a valid bidder (GUID: " UI64FMTD " ).", MarketId, Bidder);
+        TC_LOG_ERROR("misc", "Black market auction %i does not have a valid bidder (GUID: " UI64FMTD " ).", _marketId, _bidder);
         return false;
     }
 
@@ -413,11 +412,11 @@ void BlackMarketEntry::SaveToDB(SQLTransaction& trans) const
 {
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_BLACKMARKET_AUCTIONS);
 
-    stmt->setInt32(0, MarketId);
-    stmt->setUInt64(1, CurrentBid);
+    stmt->setInt32(0, _marketId);
+    stmt->setUInt64(1, _currentBid);
     stmt->setInt32(2, GetExpirationTime());
-    stmt->setInt32(3, NumBids);
-    stmt->setUInt64(4, Bidder);
+    stmt->setInt32(3, _numBids);
+    stmt->setUInt64(4, _bidder);
 
     trans->Append(stmt);
 }
@@ -425,16 +424,16 @@ void BlackMarketEntry::SaveToDB(SQLTransaction& trans) const
 void BlackMarketEntry::DeleteFromDB(SQLTransaction& trans) const
 {
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_BLACKMARKET_AUCTIONS);
-    stmt->setInt32(0, MarketId);
+    stmt->setInt32(0, _marketId);
     trans->Append(stmt);
 }
 
 bool BlackMarketEntry::ValidateBid(uint64 bid) const
 {
-    if (bid <= CurrentBid)
+    if (bid <= _currentBid)
         return false;
 
-    if (bid < CurrentBid + GetMinIncrement())
+    if (bid < _currentBid + GetMinIncrement())
         return false;
 
     if (bid >= BMAH_MAX_BID)
@@ -445,27 +444,27 @@ bool BlackMarketEntry::ValidateBid(uint64 bid) const
 
 void BlackMarketEntry::PlaceBid(uint64 bid, Player* player, SQLTransaction& trans)   //Updated
 {
-    if (bid < CurrentBid)
+    if (bid < _currentBid)
         return;
 
-    CurrentBid = bid;
-    ++NumBids;
+    _currentBid = bid;
+    ++_numBids;
 
     if (GetSecondsRemaining() < 30 * MINUTE)
-        m_secondsRemaining += 30 * MINUTE;
+        _secondsRemaining += 30 * MINUTE;
 
-    Bidder = player->GetGUID().GetCounter();
+    _bidder = player->GetGUID().GetCounter();
 
     player->ModifyMoney(-static_cast<int64>(bid));
 
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_BLACKMARKET_AUCTIONS);
 
-    stmt->setUInt64(0, CurrentBid);
+    stmt->setUInt64(0, _currentBid);
     stmt->setInt32(1, GetExpirationTime());
-    stmt->setInt32(2, NumBids);
-    stmt->setUInt64(3, Bidder);
-    stmt->setInt32(4, MarketId);
+    stmt->setInt32(2, _numBids);
+    stmt->setUInt64(3, _bidder);
+    stmt->setInt32(4, _marketId);
 
     trans->Append(stmt);
 
@@ -482,7 +481,8 @@ std::string BlackMarketEntry::BuildAuctionMailSubject(BMAHMailAuctionAnswers res
 std::string BlackMarketEntry::BuildAuctionMailBody()
 {
     std::ostringstream strm;
-    strm << GetTemplate()->SellerNPC << ':' << CurrentBid;
+    strm << GetTemplate()->SellerNPC << ':' << _currentBid;
 
     return strm.str();
 }
+

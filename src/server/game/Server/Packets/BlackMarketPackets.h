@@ -144,3 +144,4 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BlackMarket::BlackMarketI
 ByteBuffer& operator>>(ByteBuffer& data, WorldPackets::BlackMarket::BlackMarketItem& blackMarketItem);
 
 #endif // BlackMarketPackets_h__
+
