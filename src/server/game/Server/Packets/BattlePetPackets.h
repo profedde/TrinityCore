@@ -20,6 +20,7 @@
 
 #include "Packet.h"
 #include "ObjectGuid.h"
+#include "Unit.h"
 
 namespace WorldPackets
 {
@@ -62,6 +63,7 @@ namespace WorldPackets
             uint16 Trap = 0;
             std::vector<BattlePetSlot> Slots;
             std::vector<BattlePet> Pets;
+            bool HasJournalLock = true;
         };
 
         class BattlePetJournalLockAcquired final : public ServerPacket
