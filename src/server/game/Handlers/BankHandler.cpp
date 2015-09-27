@@ -24,7 +24,7 @@
 
 void WorldSession::HandleAutoBankItemOpcode(WorldPackets::Bank::AutoBankItem& packet)
 {
-    TC_LOG_DEBUG("network", "STORAGE: receive bag = %u, slot = %u", packet.Bag, packet.Slot);
+    TC_LOG_DEBUG("network", "STORAGE: receive b ag = %u, slot = %u", packet.Bag, packet.Slot);
 
     if (!CanUseBank())
     {
