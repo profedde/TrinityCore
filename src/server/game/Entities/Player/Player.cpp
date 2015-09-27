@@ -8024,7 +8024,6 @@ void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 
 							case RANGED_ATTACK:
 							case BASE_ATTACK:   slot = EQUIPMENT_SLOT_MAINHAND; break;
                             case OFF_ATTACK:    slot = EQUIPMENT_SLOT_OFFHAND;  break;
-                            case RANGED_ATTACK: slot = EQUIPMENT_SLOT_MAINHAND; break;
                             default: slot = EQUIPMENT_SLOT_END; break;
                         }
                         if (slot != i)
