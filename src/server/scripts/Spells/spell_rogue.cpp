@@ -52,6 +52,7 @@ enum RogueSpells
     SPELL_ROGUE_TRICKS_OF_THE_TRADE_PROC            = 59628,
     SPELL_ROGUE_SERRATED_BLADES_R1                  = 14171,
     SPELL_ROGUE_RUPTURE                             = 1943,
+	SPELL_ROGUE_BURST_OF_SPEED						= 137573,
 };
 
 enum RogueSpellIcons
@@ -116,6 +117,40 @@ class spell_rog_blade_flurry : public SpellScriptLoader
         {
             return new spell_rog_blade_flurry_AuraScript();
         }
+};
+
+// 108212 - Burst of Speed
+class spell_rog_burst_of_speed : public SpellScriptLoader
+{
+public:
+	spell_rog_burst_of_speed() : SpellScriptLoader("spell_rog_burst_of_speed") { }
+
+	class spell_rog_burst_of_speed_SpellScript : public SpellScript
+	{
+		PrepareSpellScript(spell_rog_burst_of_speed_SpellScript);
+
+		bool Validate(SpellInfo const* /*spellInfo*/) override
+		{
+			if (!sSpellMgr->GetSpellInfo(SPELL_ROGUE_BURST_OF_SPEED))
+				return false;
+			return true;
+		}
+
+		void HandleScriptEffect(SpellEffIndex /*effIndex*/)
+		{
+			Unit* caster = GetCaster();
+			caster->CastSpell(caster, SPELL_ROGUE_BURST_OF_SPEED, true);
+		}
+		void Register() override
+		{
+			OnEffectHitTarget += SpellEffectFn(spell_rog_burst_of_speed_SpellScript::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_APPLY_AURA);
+		}
+	};
+
+	SpellScript* GetSpellScript() const override
+	{
+		return new spell_rog_burst_of_speed_SpellScript();
+	}
 };
 
 // 31228 - Cheat Death
@@ -917,6 +952,7 @@ public:
 
 void AddSC_rogue_spell_scripts()
 {
+	new spell_rog_burst_of_speed();
     new spell_rog_blade_flurry();
     new spell_rog_cheat_death();
     new spell_rog_crippling_poison();
