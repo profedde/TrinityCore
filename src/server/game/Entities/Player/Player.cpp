@@ -7511,7 +7511,7 @@ void Player::_ApplyItemMods(Item* item, uint8 slot, bool apply)
 
     TC_LOG_DEBUG("entities.player.items", "applying mods for item %s", item->GetGUID().ToString().c_str());
 
-    uint8 attacktype = Player::GetAttackBySlot(slot);
+    uint8 attacktype = Player::GetAttackBySlot(slot, item->GetTemplate()->GetInventoryType());
 
     if (item->GetSocketColor(0))                              //only (un)equipping of items with sockets can influence metagems, so no need to waste time with normal items
         CorrectMetaGemEnchants(slot, apply);
@@ -7774,9 +7774,7 @@ void Player::_ApplyItemBonuses(Item* item, uint8 slot, bool apply)
 
     WeaponAttackType attType = BASE_ATTACK;
 
-    if (slot == EQUIPMENT_SLOT_MAINHAND && (
-        proto->GetInventoryType() == INVTYPE_RANGED || proto->GetInventoryType() == INVTYPE_THROWN ||
-        proto->GetInventoryType() == INVTYPE_RANGEDRIGHT))
+    if (slot == EQUIPMENT_SLOT_MAINHAND && (proto->GetInventoryType() == INVTYPE_RANGED || proto->GetInventoryType() == INVTYPE_RANGEDRIGHT))
     {
         attType = RANGED_ATTACK;
     }
@@ -7795,16 +7793,10 @@ void Player::_ApplyWeaponDamage(uint8 slot, Item* item, bool apply)
     WeaponAttackType attType = BASE_ATTACK;
     float damage = 0.0f;
 
-    if (slot == EQUIPMENT_SLOT_MAINHAND && (
-        proto->GetInventoryType() == INVTYPE_RANGED || proto->GetInventoryType() == INVTYPE_THROWN ||
-        proto->GetInventoryType() == INVTYPE_RANGEDRIGHT))
-    {
+    if (slot == EQUIPMENT_SLOT_MAINHAND && (proto->GetInventoryType() == INVTYPE_RANGED || proto->GetInventoryType() == INVTYPE_RANGEDRIGHT))
         attType = RANGED_ATTACK;
-    }
     else if (slot == EQUIPMENT_SLOT_OFFHAND)
-    {
         attType = OFF_ATTACK;
-    }
 
     float minDamage, maxDamage;
     item->GetDamage(this, minDamage, maxDamage);
@@ -7822,15 +7814,7 @@ void Player::_ApplyWeaponDamage(uint8 slot, Item* item, bool apply)
     }
 
     if (proto->GetDelay() && !IsInFeralForm())
-    {
-		SetAttackTime(BASE_ATTACK, apply ? proto->GetDelay() : BASE_ATTACK_TIME);
-		if (slot == EQUIPMENT_SLOT_MAINHAND && (
-			proto->GetInventoryType() == INVTYPE_RANGED || proto->GetInventoryType() == INVTYPE_THROWN ||
-			proto->GetInventoryType() == INVTYPE_RANGEDRIGHT))
-            SetAttackTime(RANGED_ATTACK, apply ? proto->GetDelay() : BASE_ATTACK_TIME);
-		else if (slot == EQUIPMENT_SLOT_OFFHAND)
-            SetAttackTime(OFF_ATTACK, apply ? proto->GetDelay() : BASE_ATTACK_TIME);
-    }
+        SetAttackTime(attType, apply ? proto->GetDelay() : BASE_ATTACK_TIME);
 
     if (CanModifyStats() && (damage || proto->GetDelay()))
         UpdateDamagePhysical(attType);
@@ -7984,7 +7968,7 @@ void Player::UpdateEquipSpellsAtFormChange()
 {
     for (uint8 i = 0; i < INVENTORY_SLOT_BAG_END; ++i)
     {
-        if (m_items[i] && !m_items[i]->IsBroken() && CanUseAttackType(GetAttackBySlot(i)))
+        if (m_items[i] && !m_items[i]->IsBroken() && CanUseAttackType(Player::GetAttackBySlot(i, m_items[i]->GetTemplate()->GetInventoryType())))
         {
             ApplyItemEquipSpell(m_items[i], false, true);     // remove spells that not fit to form
             ApplyItemEquipSpell(m_items[i], true, true);      // add spells that fit form but not active
@@ -8040,6 +8024,7 @@ void Player::CastItemCombatSpell(Unit* target, WeaponAttackType attType, uint32 
 							case RANGED_ATTACK:
 							case BASE_ATTACK:   slot = EQUIPMENT_SLOT_MAINHAND; break;
                             case OFF_ATTACK:    slot = EQUIPMENT_SLOT_OFFHAND;  break;
+                            case RANGED_ATTACK: slot = EQUIPMENT_SLOT_MAINHAND; break;
                             default: slot = EQUIPMENT_SLOT_END; break;
                         }
                         if (slot != i)
@@ -8258,7 +8243,7 @@ void Player::_RemoveAllItemMods()
             if (proto->GetItemSet())
                 RemoveItemsSetItem(this, proto);
 
-            if (m_items[i]->IsBroken() || !CanUseAttackType(GetAttackBySlot(i)))
+            if (m_items[i]->IsBroken() || !CanUseAttackType(Player::GetAttackBySlot(i, m_items[i]->GetTemplate()->GetInventoryType())))
                 continue;
 
             ApplyItemEquipSpell(m_items[i], false);
@@ -8270,10 +8255,10 @@ void Player::_RemoveAllItemMods()
     {
         if (m_items[i])
         {
-            if (m_items[i]->IsBroken() || !CanUseAttackType(GetAttackBySlot(i)))
+            if (m_items[i]->IsBroken() || !CanUseAttackType(Player::GetAttackBySlot(i, m_items[i]->GetTemplate()->GetInventoryType())))
                 continue;
 
-            uint32 attacktype = Player::GetAttackBySlot(i);
+            uint32 attacktype = Player::GetAttackBySlot(i, m_items[i]->GetTemplate()->GetInventoryType());
             if (attacktype < MAX_ATTACK)
                 _ApplyWeaponDependentAuraMods(m_items[i], WeaponAttackType(attacktype), false);
 
@@ -8292,10 +8277,10 @@ void Player::_ApplyAllItemMods()
     {
         if (m_items[i])
         {
-            if (m_items[i]->IsBroken() || !CanUseAttackType(GetAttackBySlot(i)))
+            if (m_items[i]->IsBroken() || !CanUseAttackType(Player::GetAttackBySlot(i, m_items[i]->GetTemplate()->GetInventoryType())))
                 continue;
 
-            uint32 attacktype = Player::GetAttackBySlot(i);
+            uint32 attacktype = Player::GetAttackBySlot(i, m_items[i]->GetTemplate()->GetInventoryType());
             if (attacktype < MAX_ATTACK)
                 _ApplyWeaponDependentAuraMods(m_items[i], WeaponAttackType(attacktype), true);
 
@@ -8315,7 +8300,7 @@ void Player::_ApplyAllItemMods()
             if (proto->GetItemSet())
                 AddItemsSetItem(this, m_items[i]);
 
-            if (m_items[i]->IsBroken() || !CanUseAttackType(GetAttackBySlot(i)))
+            if (m_items[i]->IsBroken() || !CanUseAttackType(Player::GetAttackBySlot(i, m_items[i]->GetTemplate()->GetInventoryType())))
                 continue;
 
             ApplyItemEquipSpell(m_items[i], true);
@@ -8332,7 +8317,7 @@ void Player::_ApplyAllLevelScaleItemMods(bool apply)
     {
         if (m_items[i])
         {
-            if (m_items[i]->IsBroken() || !CanUseAttackType(GetAttackBySlot(i)))
+            if (m_items[i]->IsBroken() || !CanUseAttackType(Player::GetAttackBySlot(i, m_items[i]->GetTemplate()->GetInventoryType())))
                 continue;
 
             _ApplyItemBonuses(m_items[i], i, apply);
@@ -9494,8 +9479,6 @@ void Player::SetSheath(SheathState sheathed)
 
 uint8 Player::FindEquipSlot(ItemTemplate const* proto, uint32 slot, bool swap) const
 {
-    uint8 playerClass = getClass();
-
     uint8 slots[4];
     slots[0] = NULL_SLOT;
     slots[1] = NULL_SLOT;
@@ -9561,51 +9544,11 @@ uint8 Player::FindEquipSlot(ItemTemplate const* proto, uint32 slot, bool swap) c
             slots[0] = EQUIPMENT_SLOT_OFFHAND;
             break;
         case INVTYPE_RANGED:
-			slots[0] = EQUIPMENT_SLOT_MAINHAND;
-			if (Item* mhWeapon = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
-			{
-				if (ItemTemplate const* mhWeaponProto = mhWeapon->GetTemplate())
-				{
-					if (mhWeaponProto->GetSubClass() == ITEM_SUBCLASS_WEAPON_BOW || mhWeaponProto->GetSubClass() == ITEM_SUBCLASS_WEAPON_GUN || mhWeaponProto->GetSubClass() == ITEM_SUBCLASS_WEAPON_CROSSBOW)
-					{
-						const_cast<Player*>(this)->AutoUnequipOffhandIfNeed(true);
-						break;
-					}
-				}
-			}
-
-			if (GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND))
-			{
-				if (proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_BOW || proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_GUN || proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_CROSSBOW)
-				{
-					const_cast<Player*>(this)->AutoUnequipOffhandIfNeed(true);
-					break;
-				}
-			}
-			break;
+            slots[0] = EQUIPMENT_SLOT_MAINHAND;
+            break;
         case INVTYPE_2HWEAPON:
             slots[0] = EQUIPMENT_SLOT_MAINHAND;
-            if (Item* mhWeapon = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
-            {
-                if (ItemTemplate const* mhWeaponProto = mhWeapon->GetTemplate())
-                {
-                    if (mhWeaponProto->GetSubClass() == ITEM_SUBCLASS_WEAPON_POLEARM || mhWeaponProto->GetSubClass() == ITEM_SUBCLASS_WEAPON_STAFF)
-                    {
-                        const_cast<Player*>(this)->AutoUnequipOffhandIfNeed(true);
-                        break;
-                    }
-                }
-            }
-
-            if (GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND))
-            {
-                if (proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_POLEARM || proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_STAFF)
-                {
-                    const_cast<Player*>(this)->AutoUnequipOffhandIfNeed(true);
-                    break;
-                }
-            }
-			if (CanDualWield() && CanTitanGrip() && ( proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_POLEARM ) && (proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_STAFF) && (proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_BOW) && (proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_GUN) && (proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_CROSSBOW))
+            if (CanDualWield() && CanTitanGrip())
                 slots[1] = EQUIPMENT_SLOT_OFFHAND;
             break;
         case INVTYPE_TABARD:
@@ -9642,56 +9585,9 @@ uint8 Player::FindEquipSlot(ItemTemplate const* proto, uint32 slot, bool swap) c
         case INVTYPE_HOLDABLE:
             slots[0] = EQUIPMENT_SLOT_OFFHAND;
             break;
-        case INVTYPE_THROWN:
-			slots[0] = EQUIPMENT_SLOT_MAINHAND;
-			if (Item* mhWeapon = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
-			{
-				if (ItemTemplate const* mhWeaponProto = mhWeapon->GetTemplate())
-				{
-					if (mhWeaponProto->GetSubClass() == ITEM_SUBCLASS_WEAPON_BOW || mhWeaponProto->GetSubClass() == ITEM_SUBCLASS_WEAPON_GUN || mhWeaponProto->GetSubClass() == ITEM_SUBCLASS_WEAPON_CROSSBOW)
-					{
-						const_cast<Player*>(this)->AutoUnequipOffhandIfNeed(true);
-						break;
-					}
-				}
-			}
-
-			if (GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND))
-			{
-				if (proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_BOW || proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_GUN || proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_CROSSBOW)
-				{
-					const_cast<Player*>(this)->AutoUnequipOffhandIfNeed(true);
-					break;
-				}
-			}
-			if (CanDualWield() && CanTitanGrip() && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_POLEARM && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_STAFF && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_BOW && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_GUN && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_CROSSBOW)
-				slots[1] = EQUIPMENT_SLOT_OFFHAND;
-			break;
         case INVTYPE_RANGEDRIGHT:
-			slots[0] = EQUIPMENT_SLOT_MAINHAND;
-			if (Item* mhWeapon = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
-			{
-				if (ItemTemplate const* mhWeaponProto = mhWeapon->GetTemplate())
-				{
-					if (mhWeaponProto->GetSubClass() == ITEM_SUBCLASS_WEAPON_BOW || mhWeaponProto->GetSubClass() == ITEM_SUBCLASS_WEAPON_GUN || mhWeaponProto->GetSubClass() == ITEM_SUBCLASS_WEAPON_CROSSBOW)
-					{
-						const_cast<Player*>(this)->AutoUnequipOffhandIfNeed(true);
-						break;
-					}
-				}
-			}
-
-			if (GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND))
-			{
-				if (proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_BOW || proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_GUN || proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_CROSSBOW)
-				{
-					const_cast<Player*>(this)->AutoUnequipOffhandIfNeed(true);
-					break;
-				}
-			}
-			if (CanDualWield() && CanTitanGrip() && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_POLEARM && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_STAFF && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_BOW && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_GUN && proto->GetSubClass() != ITEM_SUBCLASS_WEAPON_CROSSBOW)
-				slots[1] = EQUIPMENT_SLOT_OFFHAND;
-			break;
+            slots[0] = EQUIPMENT_SLOT_MAINHAND;
+            break;
         case INVTYPE_BAG:
             slots[0] = INVENTORY_SLOT_BAG_START + 0;
             slots[1] = INVENTORY_SLOT_BAG_START + 1;
@@ -9890,9 +9786,14 @@ Item* Player::GetItemByPos(uint8 bag, uint8 slot) const
 //Does additional check for disarmed weapons
 Item* Player::GetUseableItemByPos(uint8 bag, uint8 slot) const
 {
-    if (!CanUseAttackType(GetAttackBySlot(slot)))
-        return NULL;
-    return GetItemByPos(bag, slot);
+    Item* item = GetItemByPos(bag, slot);
+    if (!item)
+        return nullptr;
+
+    if (!CanUseAttackType(GetAttackBySlot(slot, item->GetTemplate()->GetInventoryType())))
+        return nullptr;
+
+    return item;
 }
 
 Bag* Player::GetBagByPos(uint8 bag) const
@@ -9951,12 +9852,12 @@ Item* Player::GetShield(bool useable) const
     return item;
 }
 
-uint8 Player::GetAttackBySlot(uint8 slot)
+uint8 Player::GetAttackBySlot(uint8 slot, InventoryType inventoryType)
 {
 	
     switch (slot)
     {
-        case EQUIPMENT_SLOT_MAINHAND: return BASE_ATTACK;
+        case EQUIPMENT_SLOT_MAINHAND: return inventoryType != INVTYPE_RANGED && inventoryType != INVTYPE_RANGEDRIGHT ? BASE_ATTACK : RANGED_ATTACK;
         case EQUIPMENT_SLOT_OFFHAND:  return OFF_ATTACK;
         default:                      return MAX_ATTACK;
     }
@@ -11780,6 +11681,7 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
 			case EQUIPMENT_SLOT_MAINHAND:
 				RecalculateRating(CR_ARMOR_PENETRATION);
             case EQUIPMENT_SLOT_OFFHAND:
+                RecalculateRating(CR_ARMOR_PENETRATION);
             default:
                 break;
         }
@@ -11939,9 +11841,9 @@ void Player::RemoveItem(uint8 bag, uint8 slot, bool update)
                     // update armor penetration - passive auras may need it
                     switch (slot)
                     {
-						case EQUIPMENT_SLOT_MAINHAND:
-							RecalculateRating(CR_ARMOR_PENETRATION);
-						case EQUIPMENT_SLOT_OFFHAND:
+                        case EQUIPMENT_SLOT_MAINHAND:
+                        case EQUIPMENT_SLOT_OFFHAND:
+                            RecalculateRating(CR_ARMOR_PENETRATION);
                         default:
                             break;
                     }
@@ -12071,6 +11973,7 @@ void Player::DestroyItem(uint8 bag, uint8 slot, bool update)
 					case EQUIPMENT_SLOT_MAINHAND:
 						RecalculateRating(CR_ARMOR_PENETRATION);
                     case EQUIPMENT_SLOT_OFFHAND:
+                        RecalculateRating(CR_ARMOR_PENETRATION);
                     default:
                         break;
                 }
@@ -12992,7 +12895,13 @@ bool Player::IsUseEquipedWeapon(bool mainhand) const
 bool Player::IsTwoHandUsed() const
 {
     Item* mainItem = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND);
-	return mainItem && (mainItem->GetTemplate()->GetInventoryType() == INVTYPE_2HWEAPON || mainItem->GetTemplate()->GetInventoryType() == INVTYPE_RANGED || mainItem->GetTemplate()->GetInventoryType() == INVTYPE_RANGEDRIGHT || mainItem->GetTemplate()->GetInventoryType() == INVTYPE_THROWN) && !CanTitanGrip();
+    if (!mainItem)
+        return false;
+
+    ItemTemplate const* itemTemplate = mainItem->GetTemplate();
+    return (itemTemplate->GetInventoryType() == INVTYPE_2HWEAPON && !CanTitanGrip()) ||
+        itemTemplate->GetInventoryType() == INVTYPE_RANGED ||
+        (itemTemplate->GetInventoryType() == INVTYPE_RANGEDRIGHT && itemTemplate->GetClass() == ITEM_CLASS_WEAPON && itemTemplate->GetSubClass() != ITEM_SUBCLASS_WEAPON_WAND);
 }
 
 void Player::TradeCancel(bool sendback)
@@ -13251,11 +13160,13 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
                     // processed in Player::CastItemCombatSpell
                     break;
                 case ITEM_ENCHANTMENT_TYPE_DAMAGE:
-					if (item->GetSlot() == EQUIPMENT_SLOT_MAINHAND)
-					{
-						HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_VALUE, float(enchant_amount), apply);
-						HandleStatModifier(UNIT_MOD_DAMAGE_RANGED, TOTAL_VALUE, float(enchant_amount), apply);
-					}
+                    if (item->GetSlot() == EQUIPMENT_SLOT_MAINHAND)
+                    {
+                        if (item->GetTemplate()->GetInventoryType() != INVTYPE_RANGED && item->GetTemplate()->GetInventoryType() != INVTYPE_RANGEDRIGHT)
+                            HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_VALUE, float(enchant_amount), apply);
+                        else
+                            HandleStatModifier(UNIT_MOD_DAMAGE_RANGED, TOTAL_VALUE, float(enchant_amount), apply);
+                    }
                     else if (item->GetSlot() == EQUIPMENT_SLOT_OFFHAND)
                         HandleStatModifier(UNIT_MOD_DAMAGE_OFFHAND, TOTAL_VALUE, float(enchant_amount), apply);
                     break;
@@ -23641,10 +23552,12 @@ bool Player::HasItemFitToSpellRequirements(SpellInfo const* spellInfo, Item cons
     {
         case ITEM_CLASS_WEAPON:
         {
-            for (uint8 i = EQUIPMENT_SLOT_MAINHAND; i < EQUIPMENT_SLOT_TABARD; ++i)
-                if (Item* item = GetUseableItemByPos(INVENTORY_SLOT_BAG_0, i))
-                    if (item != ignoreItem && item->IsFitToSpellRequirements(spellInfo))
-                        return true;
+            if (Item* item = GetUseableItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
+                if (item != ignoreItem && item->IsFitToSpellRequirements(spellInfo))
+                    return true;
+            if (Item* item = GetUseableItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND))
+                if (item != ignoreItem && item->IsFitToSpellRequirements(spellInfo))
+                    return true;
             break;
         }
         case ITEM_CLASS_ARMOR:
@@ -23659,7 +23572,8 @@ bool Player::HasItemFitToSpellRequirements(SpellInfo const* spellInfo, Item cons
             if (Item* item = GetUseableItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND))
                 if (item != ignoreItem && item->IsFitToSpellRequirements(spellInfo))
                     return true;
-			break;
+
+            break;
         }
         default:
             TC_LOG_ERROR("entities.player", "HasItemFitToSpellRequirements: Not handled spell requirement for item class %u", spellInfo->EquippedItemClass);

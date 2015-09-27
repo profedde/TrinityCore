@@ -538,6 +538,7 @@ namespace WorldPackets
     namespace Spells
     {
         class CancelAura;
+        class CancelAutoRepeatSpell;
         class CancelGrowthAura;
         class CancelMountAura;
         class RequestCategoryCooldowns;
@@ -1342,7 +1343,7 @@ class WorldSession
         void HandleCancelAuraOpcode(WorldPackets::Spells::CancelAura& cancelAura);
         void HandleCancelGrowthAuraOpcode(WorldPackets::Spells::CancelGrowthAura& cancelGrowthAura);
         void HandleCancelMountAuraOpcode(WorldPackets::Spells::CancelMountAura& cancelMountAura);
-        void HandleCancelAutoRepeatSpellOpcode(WorldPacket& recvPacket);
+        void HandleCancelAutoRepeatSpellOpcode(WorldPackets::Spells::CancelAutoRepeatSpell& cancelAutoRepeatSpell);
 
         void HandleLearnTalentsOpcode(WorldPackets::Talent::LearnTalents& packet);
         void HandleConfirmRespecWipeOpcode(WorldPacket& recvPacket);
