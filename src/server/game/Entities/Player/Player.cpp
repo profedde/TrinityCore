@@ -22491,7 +22491,7 @@ void Player::AddComboPoints(Unit* target, int8 count, Spell* spell)
         target->AddComboPointHolder(GetGUID());
     }
 	TC_LOG_INFO("server.loading", ">> MAX PROC combopoints1 AMOUNT TO: %u ", comboPoints);
-	TC_LOG_INFO("server.loading", ">> MAX PROC combopoints2 AMOUNT TO: %u ", *comboPoints);
+	//TC_LOG_INFO("server.loading", ">> MAX PROC combopoints2 AMOUNT TO: %u ", *comboPoints);
 	TC_LOG_INFO("server.loading", ">> MAX PROC combopoints3 AMOUNT TO: %u ", m_comboPoints);
 	//TC_LOG_INFO("server.loading", ">> MAX PROC combopoints4 AMOUNT TO: %u ", *m_comboPoints);
 
