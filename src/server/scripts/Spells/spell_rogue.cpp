@@ -664,6 +664,34 @@ class spell_rog_recuperate : public SpellScriptLoader
         }
 };
 
+// 1329 - Mutilate
+class spell_rog_mutilate : public SpellScriptLoader
+{
+	public:
+		spell_rog_mutilate() : SpellScriptLoader("spell_rog_mutilate") {}
+
+		class spell_rog_mutilate_SpellScript : public SpellScript
+		{
+			PrepareSpellScript(spell_rog_mutilate_SpellScript);
+
+			void AddCP(SpellEffIndex /*effIndex*/)
+			{
+				Player* Caster = GetCaster()->ToPlayer();
+				Caster->AddComboPoints(Caster,2);
+			}
+
+			void Register() override
+			{
+				OnEffectHitTarget += SpellEffectFn(spell_rog_mutilate_SpellScript::AddCP, EFFECT_0, SPELL_EFFECT_ADD_COMBO_POINTS);
+			}
+		};
+
+		SpellScript* GetSpellScript() const override
+		{
+			return new spell_rog_mutilate_SpellScript();
+		}
+};
+
 // 1943 - Rupture
 class spell_rog_rupture : public SpellScriptLoader
 {
@@ -955,6 +983,7 @@ void AddSC_rogue_spell_scripts()
 	new spell_rog_burst_of_speed();
     new spell_rog_blade_flurry();
     new spell_rog_cheat_death();
+	new spell_rog_mutilate();
     new spell_rog_crippling_poison();
     new spell_rog_cut_to_the_chase();
     new spell_rog_deadly_poison();
