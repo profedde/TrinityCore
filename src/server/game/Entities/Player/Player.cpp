@@ -991,6 +991,11 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
         SetPower(POWER_RUNIC_POWER, 0);
         SetMaxPower(POWER_RUNIC_POWER, 1000);
     }
+	if (getPowerType() == POWER_BURNING_EMBERS)
+	{
+		SetPower(POWER_BURNING_EMBERS, 10);
+		SetMaxPower(POWER_BURNING_EMBERS, 40);
+	}
 
     // original spells
     LearnDefaultSkills();

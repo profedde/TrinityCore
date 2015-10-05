@@ -11703,7 +11703,7 @@ int32 Unit::GetCreatePowers(Powers power) const
         case POWER_SHADOW_ORBS:
             return 3;
         case POWER_BURNING_EMBERS:
-            return 10;
+            return 40;
         case POWER_DEMONIC_FURY:
             return 1000;
         case POWER_ARCANE_CHARGES:
