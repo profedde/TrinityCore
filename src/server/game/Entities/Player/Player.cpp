@@ -22448,7 +22448,8 @@ void Player::SendComboPoints()
     Unit* combotarget = ObjectAccessor::GetUnit(*this, m_comboTarget);
     if (combotarget)
     {
-        // Combo points are now a power
+		SetPower(POWER_COMBO_POINTS, m_comboPoints);
+		// Combo points are now a power
         //WorldPacket data;
         //if (m_mover != this)
         //{
@@ -22490,9 +22491,9 @@ void Player::AddComboPoints(Unit* target, int8 count, Spell* spell)
 
         target->AddComboPointHolder(GetGUID());
     }
-	TC_LOG_INFO("server.loading", ">> MAX PROC combopoints1 AMOUNT TO: %u ", count);
+	//TC_LOG_INFO("server.loading", ">> MAX PROC combopoints1 AMOUNT TO: %u ", count);
 	//TC_LOG_INFO("server.loading", ">> MAX PROC combopoints2 AMOUNT TO: %u ", *comboPoints);
-	TC_LOG_INFO("server.loading", ">> MAX PROC combopoints2 AMOUNT TO: %u ", m_comboPoints);
+	//TC_LOG_INFO("server.loading", ">> MAX PROC combopoints2 AMOUNT TO: %u ", m_comboPoints);
 	//TC_LOG_INFO("server.loading", ">> MAX PROC combopoints4 AMOUNT TO: %u ", *m_comboPoints);
 	
 
