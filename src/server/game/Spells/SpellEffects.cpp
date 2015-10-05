@@ -3841,8 +3841,8 @@ void Spell::EffectAddComboPoints(SpellEffIndex /*effIndex*/)
     if (damage <= 0)
         return;
 
-	TC_LOG_INFO("server.loading", ">> MAX PROC combopoints2 AMOUNT TO: %u ", damage);
-    m_caster->m_movedPlayer->AddComboPoints(unitTarget, damage, this);
+	TC_LOG_INFO("server.loading", ">> MAX PROC combopoints3 AMOUNT TO: %u ", damage);
+    //m_caster->m_movedPlayer->AddComboPoints(unitTarget, damage, this);
 }
 
 void Spell::EffectDuel(SpellEffIndex effIndex)
