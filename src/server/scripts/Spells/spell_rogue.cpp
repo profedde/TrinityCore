@@ -693,6 +693,152 @@ class spell_rog_mutilate : public SpellScriptLoader
 		}
 };
 
+// 1752 - Sinister Strike
+class spell_rog_sinister_strike : public SpellScriptLoader
+{
+public:
+	spell_rog_sinister_strike() : SpellScriptLoader("spell_rog_sinister_strike") {}
+
+	class spell_rog_sinister_strike_SpellScript : public SpellScript
+	{
+		PrepareSpellScript(spell_rog_sinister_strike_SpellScript);
+
+		void AddCP(SpellEffIndex /*effIndex*/)
+		{
+			Player* Caster = GetCaster()->ToPlayer();
+			Unit* thetarget = GetHitUnit();
+			Caster->AddComboPoints(thetarget, 1);
+		}
+
+		void Register() override
+		{
+			OnEffectHitTarget += SpellEffectFn(spell_rog_sinister_strike_SpellScript::AddCP, EFFECT_1, SPELL_EFFECT_ADD_COMBO_POINTS);
+		}
+	};
+
+	SpellScript* GetSpellScript() const override
+	{
+		return new spell_rog_sinister_strike_SpellScript();
+	}
+};
+
+// 53 - Backstab
+class spell_rog_backstab : public SpellScriptLoader
+{
+public:
+	spell_rog_backstab() : SpellScriptLoader("spell_rog_backstab") {}
+
+	class spell_rog_backstab_SpellScript : public SpellScript
+	{
+		PrepareSpellScript(spell_rog_backstab_SpellScript);
+
+		void AddCP(SpellEffIndex /*effIndex*/)
+		{
+			Player* Caster = GetCaster()->ToPlayer();
+			Unit* thetarget = GetHitUnit();
+			Caster->AddComboPoints(thetarget, 1);
+		}
+
+		void Register() override
+		{
+			OnEffectHitTarget += SpellEffectFn(spell_rog_backstab_SpellScript::AddCP, EFFECT_2, SPELL_EFFECT_ADD_COMBO_POINTS);
+		}
+	};
+
+	SpellScript* GetSpellScript() const override
+	{
+		return new spell_rog_backstab_SpellScript();
+	}
+};
+
+// 16511 - Hemorrhage
+class spell_rog_hemorrhage : public SpellScriptLoader
+{
+public:
+	spell_rog_hemorrhage() : SpellScriptLoader("spell_rog_hemorrhage") {}
+
+	class spell_rog_hemorrhage_SpellScript : public SpellScript
+	{
+		PrepareSpellScript(spell_rog_hemorrhage_SpellScript);
+
+		void AddCP(SpellEffIndex /*effIndex*/)
+		{
+			Player* Caster = GetCaster()->ToPlayer();
+			Unit* thetarget = GetHitUnit();
+			Caster->AddComboPoints(thetarget, 1);
+		}
+
+		void Register() override
+		{
+			OnEffectHitTarget += SpellEffectFn(spell_rog_hemorrhage_SpellScript::AddCP, EFFECT_2, SPELL_EFFECT_ADD_COMBO_POINTS);
+		}
+	};
+
+	SpellScript* GetSpellScript() const override
+	{
+		return new spell_rog_hemorrhage_SpellScript();
+	}
+};
+
+// 84617 - Revealing Strike
+class spell_rog_revealing_strike : public SpellScriptLoader
+{
+public:
+	spell_rog_revealing_strike() : SpellScriptLoader("spell_rog_revealing_strike") {}
+
+	class spell_rog_revealing_strike_SpellScript : public SpellScript
+	{
+		PrepareSpellScript(spell_rog_revealing_strike_SpellScript);
+
+		void AddCP(SpellEffIndex /*effIndex*/)
+		{
+			Player* Caster = GetCaster()->ToPlayer();
+			Unit* thetarget = GetHitUnit();
+			Caster->AddComboPoints(thetarget, 1);
+		}
+
+		void Register() override
+		{
+			OnEffectHitTarget += SpellEffectFn(spell_rog_revealing_strike_SpellScript::AddCP, EFFECT_1, SPELL_EFFECT_ADD_COMBO_POINTS);
+		}
+	};
+
+	SpellScript* GetSpellScript() const override
+	{
+		return new spell_rog_revealing_strike_SpellScript();
+	}
+};
+
+
+// 111240 - Dispatch
+class spell_rog_dispatch : public SpellScriptLoader
+{
+public:
+	spell_rog_dispatch() : SpellScriptLoader("spell_rog_dispatch") {}
+
+	class spell_rog_dispatch_SpellScript : public SpellScript
+	{
+		PrepareSpellScript(spell_rog_dispatch_SpellScript);
+
+		void AddCP(SpellEffIndex /*effIndex*/)
+		{
+			Player* Caster = GetCaster()->ToPlayer();
+			Unit* thetarget = GetHitUnit();
+			Caster->AddComboPoints(thetarget, 1);
+		}
+
+		void Register() override
+		{
+			OnEffectHitTarget += SpellEffectFn(spell_rog_dispatch_SpellScript::AddCP, EFFECT_2, SPELL_EFFECT_ADD_COMBO_POINTS);
+		}
+	};
+
+	SpellScript* GetSpellScript() const override
+	{
+		return new spell_rog_dispatch_SpellScript();
+	}
+};
+
 // 1943 - Rupture
 class spell_rog_rupture : public SpellScriptLoader
 {
@@ -985,6 +1131,11 @@ void AddSC_rogue_spell_scripts()
     new spell_rog_blade_flurry();
     new spell_rog_cheat_death();
 	new spell_rog_mutilate();
+	new spell_rog_sinister_strike();
+	new spell_rog_dispatch();
+	new spell_rog_revealing_strike();
+	new spell_rog_backstab();
+	new spell_rog_hemorrhage();
     new spell_rog_crippling_poison();
     new spell_rog_cut_to_the_chase();
     new spell_rog_deadly_poison();
