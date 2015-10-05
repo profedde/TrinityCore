@@ -693,6 +693,35 @@ class spell_rog_mutilate : public SpellScriptLoader
 		}
 };
 
+// 137619 - Marked for death
+class spell_rog_marked_for_death : public SpellScriptLoader
+{
+public:
+	spell_rog_marked_for_death() : SpellScriptLoader("spell_rog_marked_for_death") {}
+
+	class spell_rog_marked_for_death_SpellScript : public SpellScript
+	{
+		PrepareSpellScript(spell_rog_marked_for_death_SpellScript);
+
+		void AddCP(SpellEffIndex /*effIndex*/)
+		{
+			Player* Caster = GetCaster()->ToPlayer();
+			Unit* thetarget = GetHitUnit();
+			Caster->AddComboPoints(thetarget, 5);
+		}
+
+		void Register() override
+		{
+			OnEffectHitTarget += SpellEffectFn(spell_rog_marked_for_death_SpellScript::AddCP, EFFECT_0, SPELL_EFFECT_ADD_COMBO_POINTS);
+		}
+	};
+
+	SpellScript* GetSpellScript() const override
+	{
+		return new spell_rog_marked_for_death_SpellScript();
+	}
+};
+
 // 1752 - Sinister Strike
 class spell_rog_sinister_strike : public SpellScriptLoader
 {
@@ -1150,4 +1179,5 @@ void AddSC_rogue_spell_scripts()
     new spell_rog_tricks_of_the_trade();
     new spell_rog_tricks_of_the_trade_proc();
     new spell_rog_serrated_blades();
+	new spell_rog_marked_for_death();
 }
