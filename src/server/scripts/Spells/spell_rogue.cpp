@@ -677,7 +677,8 @@ class spell_rog_mutilate : public SpellScriptLoader
 			void AddCP(SpellEffIndex /*effIndex*/)
 			{
 				Player* Caster = GetCaster()->ToPlayer();
-				Caster->AddComboPoints(Caster,2);
+				Unit* thetarget = GetHitUnit();
+				Caster->AddComboPoints(thetarget,2);
 			}
 
 			void Register() override
