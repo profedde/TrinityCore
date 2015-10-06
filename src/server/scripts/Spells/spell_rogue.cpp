@@ -1061,6 +1061,76 @@ class spell_rog_stealth : public SpellScriptLoader
         }
 };
 
+// 115191 - Stealth
+class spell_rog_stealth2 : public SpellScriptLoader
+{
+public:
+	spell_rog_stealth2() : SpellScriptLoader("spell_rog_stealth2") { }
+
+	class spell_rog_stealth2_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_rog_stealth2_AuraScript);
+
+		bool Validate(SpellInfo const* spellInfo)
+		{
+			if (!sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE) ||
+				!sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_DAMAGE_PERCENT) ||
+				!sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_PERIODIC))
+				return false;
+			return true;
+		}
+
+		void HandleEffectApply(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+		{
+			Unit* target = GetTarget();
+
+			if (Unit* caster = GetCaster())
+			{
+				caster->AddAura(158185, caster);
+				caster->SetShapeshiftForm(FORM_STEALTH);
+			}
+			// Master of Subtlety
+			if (AuraEffect const* aurEff = target->GetAuraEffect(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE, EFFECT_0))
+			{
+				int32 basepoints0 = aurEff->GetAmount();
+				target->CastCustomSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_DAMAGE_PERCENT, &basepoints0, NULL, NULL, true);
+			}
+
+
+
+		}
+
+		void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+		{
+			if (Unit* caster = GetCaster())
+			{
+				caster->RemoveAura(158185);
+				if (caster->HasAura(108201))
+					caster->AddAura(115192, caster);
+				else
+					caster->SetShapeshiftForm(FORM_NONE);
+			}
+			Unit* target = GetTarget();
+			// Master of subtlety
+			if (target->HasAura(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE))
+				target->CastSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_PERIODIC, true);
+
+		}
+
+
+		void Register()
+		{
+			AfterEffectApply += AuraEffectApplyFn(spell_rog_stealth2_AuraScript::HandleEffectApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
+			AfterEffectRemove += AuraEffectRemoveFn(spell_rog_stealth2_AuraScript::HandleEffectRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
+		}
+	};
+
+	AuraScript* GetAuraScript() const
+	{
+		return new spell_rog_stealth2_AuraScript();
+	}
+};
+
 // 57934 - Tricks of the Trade
 class spell_rog_tricks_of_the_trade : public SpellScriptLoader
 {
@@ -1207,8 +1277,9 @@ void AddSC_rogue_spell_scripts()
     new spell_rog_preparation();
     new spell_rog_recuperate();
     new spell_rog_rupture();
-    new spell_rog_shiv();
-    new spell_rog_stealth();
+	new spell_rog_shiv();
+	new spell_rog_stealth();
+	new spell_rog_stealth2();
     new spell_rog_tricks_of_the_trade();
     new spell_rog_tricks_of_the_trade_proc();
     new spell_rog_serrated_blades();
