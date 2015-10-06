@@ -980,6 +980,11 @@ class spell_rog_subterfuge : public SpellScriptLoader
 			{
 				AfterEffectRemove += AuraEffectRemoveFn(spell_rog_subterfuge_AuraScript::HandleEffectRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
 			}
+		};
+		AuraScript* GetAuraScript() const
+		{
+			return new spell_rog_subterfuge_AuraScript();
+		}
 };
 
 // 1784 - Stealth
