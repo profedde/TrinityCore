@@ -18,6 +18,7 @@
 #include "BlackMarketMgr.h"
 #include "Player.h"
 #include "Language.h"
+#include "ObjectMgr.h"
 
 void BlackMarketMgr::LoadTemplates()
 {
@@ -232,14 +233,14 @@ void BlackMarketMgr::SendAuctionWonMail(BlackMarketEntry* entry, SQLTransaction&
     }
     else
     {
-        bidderAccId = ObjectMgr::GetPlayerAccountIdByGUID(bidderGuid);
+		bidderAccId = sWorld->GetCharacterInfo(bidderGuid)->AccountId;
 
         if (!bidderAccId) // Account exists
             return;
 
-        logGmTrade = AccountMgr::HasPermission(bidderAccId, rbac::RBAC_PERM_LOG_GM_TRADE, realmHandle.Index);
+        logGmTrade = AccountMgr::HasPermission(bidderAccId, rbac::RBAC_PERM_LOG_GM_TRADE, realm.Id.Realm);
 
-        if (logGmTrade && !ObjectMgr::GetPlayerNameByGUID(bidderGuid, bidderName))
+		if (logGmTrade && !ObjectMgr::GetPlayerNameByGUID(bidderGuid, bidderName))
             bidderName = sObjectMgr->GetTrinityStringForDBCLocale(LANG_UNKNOWN);
     }
 
