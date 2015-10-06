@@ -961,6 +961,27 @@ class spell_rog_shiv : public SpellScriptLoader
         }
 };
 
+// 115192 - Subterfuge
+class spell_rog_subterfuge : public SpellScriptLoader
+{
+	public:
+		spell_rog_subterfuge() : SpellScriptLoader("spell_rog_subterfuge") {}
+		class spell_rog_subterfuge_AuraScript : public AuraScript
+		{
+			PrepareAuraScript(spell_rog_subterfuge_AuraScript);
+
+			void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+			{
+				if (Unit* caster = GetCaster())
+					caster->SetShapeshiftForm(FORM_NONE);
+			}
+
+			void Register()
+			{
+				AfterEffectRemove += AuraEffectRemoveFn(spell_rog_subterfuge_AuraScript::HandleEffectRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
+			}
+};
+
 // 1784 - Stealth
 class spell_rog_stealth : public SpellScriptLoader
 {
@@ -986,6 +1007,10 @@ class spell_rog_stealth : public SpellScriptLoader
 				
 				if (Unit* caster = GetCaster())
 				{
+					if (caster->HasAura(108201))
+					{
+						caster->RemoveAura(115191);
+					}
 					caster->AddAura(158185, caster);
 					caster->SetShapeshiftForm(FORM_STEALTH);
 				}
@@ -996,7 +1021,7 @@ class spell_rog_stealth : public SpellScriptLoader
                     target->CastCustomSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_DAMAGE_PERCENT, &basepoints0, NULL, NULL, true);
                 }
 				
-
+				
 
             }
 
@@ -1005,7 +1030,10 @@ class spell_rog_stealth : public SpellScriptLoader
 				if (Unit* caster = GetCaster())
 				{
 					caster->RemoveAura(158185);
-					caster->SetShapeshiftForm(FORM_NONE);
+					if (caster->HasAura(108201))
+						caster->AddAura(115192, caster);
+					else
+						caster->SetShapeshiftForm(FORM_NONE);
 				}
 				Unit* target = GetTarget();
 				// Master of subtlety
@@ -1180,4 +1208,5 @@ void AddSC_rogue_spell_scripts()
     new spell_rog_tricks_of_the_trade_proc();
     new spell_rog_serrated_blades();
 	new spell_rog_marked_for_death();
+	new spell_rog_subterfuge();
 }
