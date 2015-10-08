@@ -53,6 +53,9 @@ enum RogueSpells
     SPELL_ROGUE_SERRATED_BLADES_R1                  = 14171,
     SPELL_ROGUE_RUPTURE                             = 1943,
 	SPELL_ROGUE_BURST_OF_SPEED						= 137573,
+	SPELL_ROGUE_SUBTERFUGE							= 108208,
+	SPELL_ROGUE_STEALTH1							= 1784,
+	SPELL_ROGUE_STEALTH2							= 115191,
 };
 
 enum RogueSpellIcons
@@ -987,6 +990,36 @@ class spell_rog_subterfuge : public SpellScriptLoader
 		}
 };
 
+// 108208 Subterfuge (change stealth actionbar)
+class spell_rog_subterfuge2 : public SpellScriptLoader
+{
+public:
+	spell_rog_subterfuge2() : SpellScriptLoader("spell_rog_subterfuge2") { }
+
+	class spell_rog_subterfuge2_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_rog_subterfuge2_AuraScript);
+
+		void CalculateAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
+		{
+			if (GetUnitOwner()->HasAura(SPELL_ROGUE_SUBTERFUGE))
+				amount = SPELL_ROGUE_STEALTH2;
+			else
+				amount = SPELL_ROGUE_STEALTH1;
+		}
+
+		void Register() override
+		{
+			DoEffectCalcAmount += AuraEffectCalcAmountFn(spell_rog_subterfuge2_AuraScript::CalculateAmount, EFFECT_0, SPELL_AURA_OVERRIDE_ACTIONBAR_SPELLS);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_rog_subterfuge2_AuraScript();
+	}
+};
+
 // 1784 - Stealth
 class spell_rog_stealth : public SpellScriptLoader
 {
@@ -1012,10 +1045,6 @@ class spell_rog_stealth : public SpellScriptLoader
 				
 				if (Unit* caster = GetCaster())
 				{
-					if (caster->HasAura(108201))
-					{
-						caster->RemoveAura(115191);
-					}
 					caster->AddAura(158185, caster);
 					caster->SetShapeshiftForm(FORM_STEALTH);
 				}
@@ -1285,4 +1314,5 @@ void AddSC_rogue_spell_scripts()
     new spell_rog_serrated_blades();
 	new spell_rog_marked_for_death();
 	new spell_rog_subterfuge();
+	new spell_rog_subterfuge2();
 }

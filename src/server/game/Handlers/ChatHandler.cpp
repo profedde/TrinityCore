@@ -237,7 +237,7 @@ void WorldSession::HandleChatMessage(ChatMsg type, uint32 lang, std::string msg,
             }
 
             Player* receiver = ObjectAccessor::FindConnectedPlayerByName(extName.Name);
-            if (!receiver || (lang != LANG_ADDON && !receiver->isAcceptWhispers() && receiver->GetSession()->HasPermission(rbac::RBAC_PERM_CAN_FILTER_WHISPERS) && !receiver->IsInWhisperWhiteList(sender->GetGUID())))
+			if (!receiver || (!sender->IsGameMaster() && lang != LANG_ADDON && !receiver->isAcceptWhispers() && receiver->GetSession()->HasPermission(rbac::RBAC_PERM_CAN_FILTER_WHISPERS) && !receiver->IsInWhisperWhiteList(sender->GetGUID())))
             {
                 SendChatPlayerNotfoundNotice(target);
                 return;
@@ -248,11 +248,12 @@ void WorldSession::HandleChatMessage(ChatMsg type, uint32 lang, std::string msg,
                 return;
             }
 
+			/* Allow Cross-Faction whispers
             if (GetPlayer()->GetTeam() != receiver->GetTeam() && !HasPermission(rbac::RBAC_PERM_TWO_SIDE_INTERACTION_CHAT) && !receiver->IsInWhisperWhiteList(sender->GetGUID()))
             {
                 SendChatPlayerNotfoundNotice(target);
                 return;
-            }
+            }*/
 
             if (GetPlayer()->HasAura(1852) && !receiver->IsGameMaster())
             {
