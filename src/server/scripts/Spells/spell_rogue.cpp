@@ -1003,7 +1003,7 @@ public:
 		void CalculateAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
 		{
 			/*if (GetCaster()->HasSpell(SPELL_ROGUE_SUBTERFUGE))*/
-				amount = SPELL_ROGUE_STEALTH2;
+				amount = SPELL_ROGUE_STEALTH1;
 			/*else
 				amount = SPELL_ROGUE_STEALTH1;*/
 		}
@@ -1064,7 +1064,7 @@ class spell_rog_stealth : public SpellScriptLoader
 				if (Unit* caster = GetCaster())
 				{
 					caster->RemoveAura(158185);
-					if (caster->HasAura(108201))
+					if (caster->HasSpell(108208))
 						caster->AddAura(115192, caster);
 					else
 						caster->SetShapeshiftForm(FORM_NONE);
