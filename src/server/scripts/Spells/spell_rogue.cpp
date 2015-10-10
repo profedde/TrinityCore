@@ -1064,7 +1064,7 @@ class spell_rog_stealth : public SpellScriptLoader
 				if (Unit* caster = GetCaster())
 				{
 					caster->RemoveAura(158185);
-					if (caster->HasSpell(108208))
+					if (caster->HasSpell(108208) && caster->IsInCombat())
 						caster->AddAura(115192, caster);
 					else
 						caster->SetShapeshiftForm(FORM_NONE);
