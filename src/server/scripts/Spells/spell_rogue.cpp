@@ -1002,7 +1002,7 @@ public:
 
 		void CalculateAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
 		{
-			if (GetUnitOwner()->HasAura(SPELL_ROGUE_SUBTERFUGE))
+			if (GetCaster()->HasSpell(SPELL_ROGUE_SUBTERFUGE))
 				amount = SPELL_ROGUE_STEALTH2;
 			else
 				amount = SPELL_ROGUE_STEALTH1;
