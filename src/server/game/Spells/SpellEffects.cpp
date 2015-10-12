@@ -675,22 +675,13 @@ void Spell::EffectTriggerSpell(SpellEffIndex /*effIndex*/)
                     return;
 
                 // See if we already are stealthed. If so, we're done.
-				if (unitTarget->HasAura(1784) || unitTarget->HasAura(115191))
+				if (unitTarget->HasAura(1784))
                     return;
 
                 // Reset cooldown on stealth if needed
-				if (unitTarget->HasSpell(108208))
-				{
-					unitTarget->GetSpellHistory()->ResetCooldown(115191);
-					unitTarget->CastSpell(unitTarget, 115191, true);
-					return;
-				}
-				else
-				{
-					unitTarget->GetSpellHistory()->ResetCooldown(1784);
-					unitTarget->CastSpell(unitTarget, 1784, true);
-					return;
-				}
+				unitTarget->GetSpellHistory()->ResetCooldown(1784);
+				unitTarget->CastSpell(unitTarget, 1784, true);
+				return;
             }
             // Demonic Empowerment -- succubus
             case 54437:

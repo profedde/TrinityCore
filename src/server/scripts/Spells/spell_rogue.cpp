@@ -141,8 +141,9 @@ public:
 
 		void HandleScriptEffect(SpellEffIndex /*effIndex*/)
 		{
+			PreventHitDefaultEffect();
 			Unit* caster = GetCaster();
-			caster->CastSpell(caster, SPELL_ROGUE_BURST_OF_SPEED, true);
+			caster->AddAura(SPELL_ROGUE_BURST_OF_SPEED, caster);
 		}
 		void Register() override
 		{
