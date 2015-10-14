@@ -607,7 +607,7 @@ public:
 		}
 
 		target->SetPower(value,value1);
-		handler->PSendSysMessage("Power value has been set to: ", value1);
+		handler->PSendSysMessage("Power value has been set to: %u", value1);
 		handler->SetSentErrorMessage(true);
 		return false;
 	}
@@ -692,7 +692,7 @@ public:
 		}
 		
 		uint32 value1 = target->GetPower(value);
-		handler->PSendSysMessage("Power value is: ", value1);
+		handler->PSendSysMessage("Power value is: %u", value1);
 		handler->SetSentErrorMessage(true);
 		return false;
 	}
