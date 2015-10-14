@@ -993,8 +993,8 @@ bool Player::Create(ObjectGuid::LowType guidlow, WorldPackets::Character::Charac
     }
 	if (getPowerType() == POWER_BURNING_EMBERS)
 	{
-		SetPower(POWER_BURNING_EMBERS, 10);
 		SetMaxPower(POWER_BURNING_EMBERS, 40);
+		SetPower(POWER_BURNING_EMBERS, 10);
 	}
 
     // original spells

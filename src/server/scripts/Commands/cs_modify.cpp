@@ -607,9 +607,9 @@ public:
 		}
 
 		target->SetPower(value,value1);
-		handler->PSendSysMessage("Power value has been set to: ", uint32(value1));
-
-
+		handler->PSendSysMessage("Power value has been set to: ", value1);
+		handler->SetSentErrorMessage(true);
+		return false;
 	}
 	static bool HandleModifyPowerGetCommand(ChatHandler* handler, const char* args)
 	{
@@ -692,7 +692,9 @@ public:
 		}
 		
 		uint32 value1 = target->GetPower(value);
-		handler->PSendSysMessage("Power value is: ", uint32(value1));
+		handler->PSendSysMessage("Power value is: ", value1);
+		handler->SetSentErrorMessage(true);
+		return false;
 	}
     //Edit Player Speed
     static bool HandleModifySpeedCommand(ChatHandler* handler, const char* args)
