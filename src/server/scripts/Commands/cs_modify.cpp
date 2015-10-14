@@ -48,6 +48,12 @@ public:
             { "",         rbac::RBAC_PERM_COMMAND_MODIFY_SPEED,          false, &HandleModifyASpeedCommand, "", NULL },
             { NULL,       0,                                       false, NULL,                       "", NULL }
         };
+		static ChatCommand modifypowerCommandTable[] =
+		{
+			{ "set", rbac::RBAC_PERM_COMMAND_MODIFY_POWER_SET, false, &HandleModifyPowerSetCommand, "", NULL },
+			{ "get", rbac::RBAC_PERM_COMMAND_MODIFY_POWER_GET, false, &HandleModifyPowerGetCommand, "", NULL },
+			{ NULL, 0, false, NULL, "", NULL }
+		};
         static ChatCommand modifyCommandTable[] =
         {
             { "bit",          rbac::RBAC_PERM_COMMAND_MODIFY_BIT,          false, &HandleModifyBitCommand,           "", NULL },
@@ -62,6 +68,7 @@ public:
             { "money",        rbac::RBAC_PERM_COMMAND_MODIFY_MONEY,        false, &HandleModifyMoneyCommand,         "", NULL },
             { "mount",        rbac::RBAC_PERM_COMMAND_MODIFY_MOUNT,        false, &HandleModifyMountCommand,         "", NULL },
             { "phase",        rbac::RBAC_PERM_COMMAND_MODIFY_PHASE,        false, &HandleModifyPhaseCommand,         "", NULL },
+            { "power",        rbac::RBAC_PERM_COMMAND_MODIFY_POWER,        false, NULL,           "", modifypowerCommandTable },
             { "rage",         rbac::RBAC_PERM_COMMAND_MODIFY_RAGE,         false, &HandleModifyRageCommand,          "", NULL },
             { "reputation",   rbac::RBAC_PERM_COMMAND_MODIFY_REPUTATION,   false, &HandleModifyRepCommand,           "", NULL },
             { "runicpower",   rbac::RBAC_PERM_COMMAND_MODIFY_RUNICPOWER,   false, &HandleModifyRunicPowerCommand,    "", NULL },
@@ -513,7 +520,175 @@ public:
         target->SetSpeed(MOVE_FLIGHT,     ASpeed, true);
         return true;
     }
+	static bool HandleModifyPowerSetCommand(ChatHandler* handler, const char* args)
+	{
+		if (!*args)
+			return false;
 
+		char const* Powervalue = handler->extractKeyFromLink((char*)args, "Hpower");
+		if (!Powervalue)
+			return false;
+
+		char const* Setvalue = strtok(NULL, " ");
+
+		if (!Setvalue)
+			return false;
+
+		int32 num = atoi(Powervalue);
+		int32 value1 = atoi(Setvalue);
+
+		if (num < 0 || num > 16)
+			return false;
+
+		Player* target = handler->getSelectedPlayerOrSelf();
+		if (!target)
+		{
+			handler->SendSysMessage(LANG_NO_CHAR_SELECTED);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
+
+		Powers value;
+		switch (num)
+		{
+		case 0:
+			value = POWER_MANA;
+			break;
+		case 1:
+			value = POWER_RAGE;
+			break;
+		case 2:
+			value = POWER_FOCUS;
+			break;
+		case 3:
+			value = POWER_ENERGY;
+			break;
+		case 4:
+			value = POWER_COMBO_POINTS;
+			break;
+		case 5:
+			value = POWER_RUNES;
+			break;
+		case 6:
+			value = POWER_RUNIC_POWER;
+			break;
+		case 7:
+			value = POWER_SOUL_SHARDS;
+			break;
+		case 8:
+			value = POWER_ECLIPSE;
+			break;
+		case 9:
+			value = POWER_HOLY_POWER;
+			break;
+		case 10:
+			value = POWER_ALTERNATE_POWER;
+			break;
+		case 11:
+			value = POWER_DARK_FORCE;
+			break;
+		case 12:
+			value = POWER_CHI;
+			break;
+		case 13:
+			value = POWER_SHADOW_ORBS;
+			break;
+		case 14:
+			value = POWER_BURNING_EMBERS;
+			break;
+		case 15:
+			value = POWER_DEMONIC_FURY;
+			break;
+		case 16:
+			value = POWER_ARCANE_CHARGES;
+			break;
+		default:
+			return false;
+		}
+
+		target->SetPower(value,value1);
+		handler->PSendSysMessage("Power value has been set to: ", value1);
+
+
+	}
+	static bool HandleModifyPowerGetCommand(ChatHandler* handler, const char* args)
+	{
+		if (!*args)
+			return false;
+
+		if (*args < 0 || *args > 16)
+			return false;
+
+		Player* target = handler->getSelectedPlayerOrSelf();
+		if (!target)
+		{
+			handler->SendSysMessage(LANG_NO_CHAR_SELECTED);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
+		int32 num = atoi((char*)args);
+
+		Powers value;
+		switch (num)
+		{
+		case 0:
+			value = POWER_MANA;
+			break;
+		case 1:
+			value = POWER_RAGE;
+			break;
+		case 2:
+			value = POWER_FOCUS;
+			break;
+		case 3:
+			value = POWER_ENERGY;
+			break;
+		case 4:
+			value = POWER_COMBO_POINTS;
+			break;
+		case 5:
+			value = POWER_RUNES;
+			break;
+		case 6:
+			value = POWER_RUNIC_POWER;
+			break;
+		case 7:
+			value = POWER_SOUL_SHARDS;
+			break;
+		case 8:
+			value = POWER_ECLIPSE;
+			break;
+		case 9:
+			value = POWER_HOLY_POWER;
+			break;
+		case 10:
+			value = POWER_ALTERNATE_POWER;
+			break;
+		case 11:
+			value = POWER_DARK_FORCE;
+			break;
+		case 12:
+			value = POWER_CHI;
+			break;
+		case 13:
+			value = POWER_SHADOW_ORBS;
+			break;
+		case 14:
+			value = POWER_BURNING_EMBERS;
+			break;
+		case 15:
+			value = POWER_DEMONIC_FURY;
+			break;
+		case 16:
+			value = POWER_ARCANE_CHARGES;
+			break;
+		default:
+			return false;
+		}
+		
+		uint32 value1 = target->GetPower(value);
+		handler->PSendSysMessage("Power value is: ", value1);
+	}
     //Edit Player Speed
     static bool HandleModifySpeedCommand(ChatHandler* handler, const char* args)
     {

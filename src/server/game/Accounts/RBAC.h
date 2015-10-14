@@ -58,10 +58,10 @@ enum RBACPermissions
     RBAC_PERM_JOIN_DUNGEON_FINDER                            = 6,
 	RBAC_PERM_COMMAND_LOOKUP_TRIGGER_TELEPORT				 = 7,
 	RBAC_PERM_COMMAND_CHEAT_ALL								 = 8,
-    //  9 - reuse
+	RBAC_PERM_COMMAND_MODIFY_POWER							 = 9,
     RBAC_PERM_USE_CHARACTER_TEMPLATES                        = 10,
     RBAC_PERM_LOG_GM_TRADE                                   = 11,
-    //  12 - reuse
+    RBAC_PERM_COMMAND_MODIFY_POWER_SET						 = 12,
     RBAC_PERM_SKIP_CHECK_INSTANCE_REQUIRED_BOSSES            = 13,
     RBAC_PERM_SKIP_CHECK_CHARACTER_CREATION_TEAMMASK         = 14,
     RBAC_PERM_SKIP_CHECK_CHARACTER_CREATION_CLASSMASK        = 15,
@@ -101,7 +101,8 @@ enum RBACPermissions
     RBAC_PERM_EMAIL_CONFIRM_FOR_PASS_CHANGE                  = 49,
     RBAC_PERM_MAY_CHECK_OWN_EMAIL                            = 50,
     RBAC_PERM_ALLOW_TWO_SIDE_TRADE                           = 51,
-
+	RBAC_PERM_COMMAND_MODIFY_POWER_GET						 = 52,
+    
     // Free space for core permissions (till 149)
     // Roles (Permissions with delegated permissions) use 199 and descending
     RBAC_PERM_COMMAND_RBAC                                   = 200,
