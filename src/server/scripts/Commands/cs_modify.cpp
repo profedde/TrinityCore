@@ -616,9 +616,15 @@ public:
 		if (!*args)
 			return false;
 
-		if (*args < 0 || *args > 16)
+		char const* Powervalue = handler->extractKeyFromLink((char*)args, "Hpower");
+		if (!Powervalue)
 			return false;
 
+		int32 num = atoi(Powervalue);
+
+		if (num < 0 || num > 16)
+			return false;
+		
 		Player* target = handler->getSelectedPlayerOrSelf();
 		if (!target)
 		{
@@ -626,7 +632,6 @@ public:
 			handler->SetSentErrorMessage(true);
 			return false;
 		}
-		int32 num = atoi((char*)args);
 
 		Powers value;
 		switch (num)
