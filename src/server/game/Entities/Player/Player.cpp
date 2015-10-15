@@ -543,6 +543,7 @@ Player::Player(WorldSession* session) : Unit(true)
     m_regenTimerCount = 0;
     m_holyPowerRegenTimerCount = 0;
     m_focusRegenTimerCount = 0;
+	m_burningembersRegenTimerCount = 0;
     m_weaponChangeTimer = 0;
 
     m_zoneUpdateId = uint32(-1);
@@ -2266,7 +2267,7 @@ void Player::RegenerateAll()
 	if (getClass() == CLASS_WARLOCK && getPowerType() == POWER_BURNING_EMBERS)
 	{
 		Regenerate(POWER_BURNING_EMBERS);
-		m_regenTimerCount -= 1000;
+		m_burningembersRegenTimerCount += m_regenTimer;
 	}
 
 
@@ -2341,8 +2342,6 @@ void Player::Regenerate(Powers power)
         break;
         case POWER_RUNES:
             break;
-        case POWER_HEALTH:
-            return;
 		case POWER_BURNING_EMBERS:
 		{
 			if (GetPower(POWER_BURNING_EMBERS) < 10)
@@ -2352,7 +2351,9 @@ void Player::Regenerate(Powers power)
 			if (!IsInCombat() && GetPower(POWER_BURNING_EMBERS) > 10)
 				addvalue += -1.0f;      // remove 1 every 1 sec
 		}
-			break;
+		break;
+        case POWER_HEALTH:
+            return;
         default:
             break;
     }
@@ -2487,6 +2488,9 @@ void Player::ResetAllPowers()
         case POWER_ECLIPSE:
             SetPower(POWER_ECLIPSE, 0);
             break;
+		case POWER_BURNING_EMBERS:
+			SetPower(POWER_BURNING_EMBERS, 10);
+			break;
         default:
             break;
     }

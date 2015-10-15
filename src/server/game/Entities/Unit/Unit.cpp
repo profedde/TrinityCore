@@ -6949,9 +6949,10 @@ bool Unit::HandleOverrideClassScriptAuraProc(Unit* victim, uint32 /*damage*/, Au
 
             switch (victim->getPowerType())
             {
-                case POWER_MANA:   triggered_spell_id = 28722; break;
-                case POWER_RAGE:   triggered_spell_id = 28723; break;
-                case POWER_ENERGY: triggered_spell_id = 28724; break;
+                case POWER_MANA:			triggered_spell_id = 28722; break;
+                case POWER_RAGE:			triggered_spell_id = 28723; break;
+                case POWER_ENERGY:			triggered_spell_id = 28724; break;
+				case POWER_BURNING_EMBERS:	triggered_spell_id = 105047; break;
                 default:
                     return false;
             }
@@ -7027,6 +7028,10 @@ void Unit::setPowerType(Powers new_powertype)
         case POWER_ENERGY:
             SetMaxPower(POWER_ENERGY, uint32(std::ceil(GetCreatePowers(POWER_ENERGY) * powerMultiplier)));
             break;
+		case POWER_BURNING_EMBERS:
+			SetMaxPower(POWER_BURNING_EMBERS, 40);
+			SetPower(POWER_BURNING_EMBERS, 10);
+			break;
     }
 }
 
