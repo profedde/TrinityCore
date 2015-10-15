@@ -2263,6 +2263,13 @@ void Player::RegenerateAll()
         m_holyPowerRegenTimerCount -= 10000;
     }
 
+	if (getClass() == CLASS_WARLOCK && getPowerType() == POWER_BURNING_EMBERS)
+	{
+		Regenerate(POWER_BURNING_EMBERS);
+		m_regenTimerCount -= 1000;
+	}
+
+
     m_regenTimer = 0;
 }
 
@@ -2336,6 +2343,16 @@ void Player::Regenerate(Powers power)
             break;
         case POWER_HEALTH:
             return;
+		case POWER_BURNING_EMBERS:
+		{
+			if (GetPower(POWER_BURNING_EMBERS) < 10)
+				addvalue += +1.0f;		// add 1 every 1 sec
+			if (GetPower(POWER_BURNING_EMBERS) == 10)
+				addvalue += 0.0f;		// dont do anything if burning ember = 10
+			if (!IsInCombat() && GetPower(POWER_BURNING_EMBERS) > 10)
+				addvalue += -1.0f;      // remove 1 every 1 sec
+		}
+			break;
         default:
             break;
     }
