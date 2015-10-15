@@ -842,41 +842,39 @@ class spell_warl_healthstone_heal : public SpellScriptLoader
         }
 };
 
-// -18119 - Improved Soul Fire
-class spell_warl_improved_soul_fire : public SpellScriptLoader
+// 108647 - Burning Embers
+class spell_warl_burning_embers : public SpellScriptLoader
 {
-    public:
-        spell_warl_improved_soul_fire() : SpellScriptLoader("spell_warl_improved_soul_fire") { }
+public:
+	spell_warl_burning_embers() : SpellScriptLoader("spell_warl_burning_embers") { }
 
-        class spell_warl_improved_soul_fire_AuraScript : public AuraScript
-        {
-            PrepareAuraScript(spell_warl_improved_soul_fire_AuraScript);
+	class spell_warl_burning_embers_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_warl_burning_embers_AuraScript);
 
-            bool Validate(SpellInfo const* /*spellInfo*/) override
-            {
-                if (!sSpellMgr->GetSpellInfo(SPELL_WARLOCK_IMPROVED_SOUL_FIRE_PCT) ||
-                    !sSpellMgr->GetSpellInfo(SPELL_WARLOCK_IMPROVED_SOUL_FIRE_STATE))
-                    return false;
-                return true;
-            }
+		void OnProc(AuraEffect const* aurEff, ProcEventInfo& /*eventInfo*/)
+		{
+			PreventDefaultAction();
+			TC_LOG_INFO("server.loading", "BURNING EMBERS PROCCED");
+			int32 embers = GetCaster()->GetPower(POWER_BURNING_EMBERS);
+			if (embers < 10)
+				GetCaster()->SetPower(POWER_BURNING_EMBERS, embers + 1);
+			if (embers = 10)
+				GetCaster()->SetPower(POWER_BURNING_EMBERS, 10);
+			if (embers > 10 && embers < 40)
+				GetCaster()->SetPower(POWER_BURNING_EMBERS, embers - 1);
+		}
 
-            void OnProc(AuraEffect const* aurEff, ProcEventInfo& /*eventInfo*/)
-            {
-                PreventDefaultAction();
-                GetTarget()->CastCustomSpell(SPELL_WARLOCK_IMPROVED_SOUL_FIRE_PCT, SPELLVALUE_BASE_POINT0, aurEff->GetAmount(), GetTarget(), true, NULL, aurEff);
-                GetTarget()->CastSpell(GetTarget(), SPELL_WARLOCK_IMPROVED_SOUL_FIRE_STATE, true, NULL, aurEff);
-            }
+		void Register() override
+		{
+			OnEffectProc += AuraEffectProcFn(spell_warl_burning_embers_AuraScript::OnProc, EFFECT_0, SPELL_AURA_MOD_POWER_REGEN_PERCENT);
+		}
+	};
 
-            void Register() override
-            {
-                OnEffectProc += AuraEffectProcFn(spell_warl_improved_soul_fire_AuraScript::OnProc, EFFECT_0, SPELL_AURA_DUMMY);
-            }
-        };
-
-        AuraScript* GetAuraScript() const override
-        {
-            return new spell_warl_improved_soul_fire_AuraScript();
-        }
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_warl_burning_embers_AuraScript();
+	}
 };
 
 // 1454 - Life Tap
@@ -1469,7 +1467,7 @@ void AddSC_warlock_spell_scripts()
     new spell_warl_haunt();
     new spell_warl_health_funnel();
     new spell_warl_healthstone_heal();
-    new spell_warl_improved_soul_fire();
+    new spell_warl_burning_embers();
     //new spell_warl_life_tap();
     new spell_warl_nether_ward_overrride();
     new spell_warl_seduction();

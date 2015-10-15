@@ -1059,8 +1059,8 @@ class spell_rog_stealth : public SpellScriptLoader
 
             }
 
-            void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
-            {
+			void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+			{
 				if (Unit* caster = GetCaster())
 				{
 					caster->RemoveAura(158185);
@@ -1071,9 +1071,17 @@ class spell_rog_stealth : public SpellScriptLoader
 				}
 				Unit* target = GetTarget();
 				// Master of subtlety
-                if (target->HasAura(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE))
-                    target->CastSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_PERIODIC, true);
-				
+				if (target->HasAura(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE))
+					target->CastSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_PERIODIC, true);
+
+			}
+			
+			void HandleEffectOnRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+			{
+				Player* caster = GetCaster()->ToPlayer();
+				if (caster->GetSpellHistory()->GetRemainingCooldown(sSpellMgr->GetSpellInfo(SPELL_ROGUE_BURST_OF_SPEED)) > 2 && !caster->IsInCombat)
+					return;
+
 			}
 
 
@@ -1081,7 +1089,8 @@ class spell_rog_stealth : public SpellScriptLoader
             {
 				AfterEffectApply += AuraEffectApplyFn(spell_rog_stealth_AuraScript::HandleEffectApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
 				AfterEffectRemove += AuraEffectRemoveFn(spell_rog_stealth_AuraScript::HandleEffectRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
-            }
+				OnEffectRemove += AuraEffectRemoveFn(spell_rog_stealth_AuraScript::HandleEffectOnRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
+			}
         };
 
         AuraScript* GetAuraScript() const
