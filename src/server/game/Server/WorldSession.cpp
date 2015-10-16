@@ -1187,6 +1187,7 @@ public:
         GLOBAL_ACCOUNT_TOYS = 0,
         BATTLE_PETS,
         BATTLE_PET_SLOTS,
+        GLOBAL_ACCOUNT_HEIRLOOMS,
 
         MAX_QUERIES
     };
@@ -1208,6 +1209,10 @@ public:
         stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_BATTLE_PET_SLOTS);
         stmt->setUInt32(0, battlenetAccountId);
         ok = SetPreparedQuery(BATTLE_PET_SLOTS, stmt) && ok;
+
+        stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_HEIRLOOMS);
+        stmt->setUInt32(0, battlenetAccountId);
+        ok = SetPreparedQuery(GLOBAL_ACCOUNT_HEIRLOOMS, stmt) && ok;
 
         return ok;
     }
@@ -1241,6 +1246,7 @@ void WorldSession::InitializeSessionCallback(SQLQueryHolder* realmHolder, SQLQue
     LoadAccountData(realmHolder->GetPreparedResult(AccountInfoQueryHolderPerRealm::GLOBAL_ACCOUNT_DATA), GLOBAL_CACHE_MASK);
     LoadTutorialsData(realmHolder->GetPreparedResult(AccountInfoQueryHolderPerRealm::TUTORIALS));
     _collectionMgr->LoadAccountToys(holder->GetPreparedResult(AccountInfoQueryHolder::GLOBAL_ACCOUNT_TOYS));
+    _collectionMgr->LoadAccountHeirlooms(holder->GetPreparedResult(AccountInfoQueryHolder::GLOBAL_ACCOUNT_HEIRLOOMS));
 
     if (!m_inQueue)
         SendAuthResponse(AUTH_OK, false);
