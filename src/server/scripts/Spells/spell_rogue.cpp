@@ -1079,7 +1079,7 @@ class spell_rog_stealth : public SpellScriptLoader
 			void HandleEffectOnRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
 			{
 				Player* caster = GetCaster()->ToPlayer();
-				if (caster->GetSpellHistory()->GetRemainingCooldown(sSpellMgr->GetSpellInfo(SPELL_ROGUE_BURST_OF_SPEED)) > 2 && !caster->IsInCombat)
+				if (caster->GetSpellHistory()->GetRemainingCooldown(sSpellMgr->GetSpellInfo(SPELL_ROGUE_BURST_OF_SPEED)) > 2 && !caster->IsInCombat())
 					return;
 
 			}
