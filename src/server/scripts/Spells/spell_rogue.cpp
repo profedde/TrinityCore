@@ -53,6 +53,7 @@ enum RogueSpells
     SPELL_ROGUE_SERRATED_BLADES_R1                  = 14171,
     SPELL_ROGUE_RUPTURE                             = 1943,
 	SPELL_ROGUE_BURST_OF_SPEED						= 137573,
+	SPELL_ROGUE_BURST_OF_SPEED2						= 108212,
 	SPELL_ROGUE_SUBTERFUGE							= 108208,
 	SPELL_ROGUE_STEALTH1							= 1784,
 	SPELL_ROGUE_STEALTH2							= 115191,
@@ -1079,7 +1080,7 @@ class spell_rog_stealth : public SpellScriptLoader
 			void HandleEffectOnRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
 			{
 				Player* caster = GetCaster()->ToPlayer();
-				if (caster->GetSpellHistory()->GetRemainingCooldown(sSpellMgr->GetSpellInfo(SPELL_ROGUE_BURST_OF_SPEED)) > 2 && !caster->IsInCombat())
+				if (caster->GetSpellHistory()->GetRemainingCooldown(sSpellMgr->GetSpellInfo(SPELL_ROGUE_BURST_OF_SPEED2)) > 2 && !caster->IsInCombat())
 					return;
 
 			}
