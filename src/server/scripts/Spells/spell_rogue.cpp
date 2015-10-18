@@ -1080,7 +1080,6 @@ class spell_rog_stealth : public SpellScriptLoader
 						target->CastSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_PERIODIC, true);
 				}
 			}
-			}
 			
 			void HandleEffectOnRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
 			{
