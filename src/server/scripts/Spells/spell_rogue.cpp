@@ -1062,19 +1062,24 @@ class spell_rog_stealth : public SpellScriptLoader
 
 			void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
 			{
-				if (Unit* caster = GetCaster())
+				if (Player* caster = GetCaster()->ToPlayer())
 				{
-					caster->RemoveAura(158185);
-					if (caster->HasSpell(108208) && caster->IsInCombat())
-						caster->AddAura(115192, caster);
+					if (caster->GetSpellHistory()->GetRemainingCooldown(sSpellMgr->GetSpellInfo(SPELL_ROGUE_BURST_OF_SPEED2)) > 2 && !caster->IsInCombat())
+						caster->AddAura(1784, caster);
 					else
-						caster->SetShapeshiftForm(FORM_NONE);
+					{
+						caster->RemoveAura(158185);
+						if (caster->HasSpell(108208) && caster->IsInCombat())
+							caster->AddAura(115192, caster);
+						else
+							caster->SetShapeshiftForm(FORM_NONE);
+					}
+					Unit* target = GetTarget();
+					// Master of subtlety
+					if (target->HasAura(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE))
+						target->CastSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_PERIODIC, true);
 				}
-				Unit* target = GetTarget();
-				// Master of subtlety
-				if (target->HasAura(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE))
-					target->CastSpell(target, SPELL_ROGUE_MASTER_OF_SUBTLETY_PERIODIC, true);
-
+			}
 			}
 			
 			void HandleEffectOnRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
