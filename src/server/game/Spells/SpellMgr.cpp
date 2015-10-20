@@ -3506,6 +3506,10 @@ void SpellMgr::LoadSpellInfoCorrections()
             case 75697: // Evolution
                 const_cast<SpellEffectInfo*>(spellInfo->GetEffect(EFFECT_0))->TargetA = SpellImplicitTargetInfo(TARGET_UNIT_SRC_AREA_ENTRY);
                 break;
+			case 108212: // Burst of Speed
+			case 137573:
+				spellInfo->AttributesEx |= SPELL_ATTR1_NOT_BREAK_STEALTH;
+				break;
             // ISLE OF CONQUEST SPELLS
             //
             case 66551: // Teleport
