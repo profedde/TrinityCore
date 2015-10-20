@@ -1064,16 +1064,16 @@ class spell_rog_stealth : public SpellScriptLoader
 			{
 				if (Player* caster = GetCaster()->ToPlayer())
 				{
-					if (caster->GetSpellHistory()->GetRemainingCooldown(sSpellMgr->GetSpellInfo(SPELL_ROGUE_BURST_OF_SPEED2)) > 2 && !caster->IsInCombat())
+					/*if (caster->GetSpellHistory()->GetRemainingCooldown(sSpellMgr->GetSpellInfo(SPELL_ROGUE_BURST_OF_SPEED2)) > 2 && !caster->IsInCombat())
 						caster->AddAura(1784, caster);
 					else
-					{
+					{*/
 						caster->RemoveAura(158185);
 						if (caster->HasSpell(108208) && caster->IsInCombat())
 							caster->AddAura(115192, caster);
 						else
 							caster->SetShapeshiftForm(FORM_NONE);
-					}
+					/*}*/
 					Unit* target = GetTarget();
 					// Master of subtlety
 					if (target->HasAura(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE))
