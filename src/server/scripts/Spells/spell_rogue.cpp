@@ -1081,20 +1081,20 @@ class spell_rog_stealth : public SpellScriptLoader
 				}
 			}
 			
-			void HandleEffectOnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+			/*void HandleEffectOnRemove(AuraEffect const* /*aurEff*//*, AuraEffectHandleModes /*mode*//*)
 			{
 				Player* caster = GetCaster()->ToPlayer();
 				if (caster->GetSpellHistory()->GetRemainingCooldown(sSpellMgr->GetSpellInfo(SPELL_ROGUE_BURST_OF_SPEED2)) > 2 && !caster->IsInCombat())
 					return;
 
-			}
+			}*/
 
 
             void Register()
             {
 				AfterEffectApply += AuraEffectApplyFn(spell_rog_stealth_AuraScript::HandleEffectApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
 				AfterEffectRemove += AuraEffectRemoveFn(spell_rog_stealth_AuraScript::HandleEffectRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
-				OnEffectRemove += AuraEffectRemoveFn(spell_rog_stealth_AuraScript::HandleEffectOnRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
+				/*OnEffectRemove += AuraEffectRemoveFn(spell_rog_stealth_AuraScript::HandleEffectOnRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);*/
 			}
         };
 
