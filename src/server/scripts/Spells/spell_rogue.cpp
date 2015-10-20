@@ -1031,7 +1031,7 @@ class spell_rog_stealth : public SpellScriptLoader
         {
             PrepareAuraScript(spell_rog_stealth_AuraScript);
 
-            bool Validate(SpellInfo const* spellInfo)
+            bool Validate(SpellInfo const* /*spellInfo*/)
             {
                 if (!sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE) ||
                     !sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_DAMAGE_PERCENT) ||
@@ -1040,7 +1040,7 @@ class spell_rog_stealth : public SpellScriptLoader
                 return true;
             }
 
-            void HandleEffectApply(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+            void HandleEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
             {
                 Unit* target = GetTarget();
 				
@@ -1060,7 +1060,7 @@ class spell_rog_stealth : public SpellScriptLoader
 
             }
 
-			void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+			void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 			{
 				if (Player* caster = GetCaster()->ToPlayer())
 				{
@@ -1081,7 +1081,7 @@ class spell_rog_stealth : public SpellScriptLoader
 				}
 			}
 			
-			void HandleEffectOnRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+			void HandleEffectOnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 			{
 				Player* caster = GetCaster()->ToPlayer();
 				if (caster->GetSpellHistory()->GetRemainingCooldown(sSpellMgr->GetSpellInfo(SPELL_ROGUE_BURST_OF_SPEED2)) > 2 && !caster->IsInCombat())
