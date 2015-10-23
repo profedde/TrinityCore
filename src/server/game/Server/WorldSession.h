@@ -909,9 +909,6 @@ class WorldSession
 
         void SendPetitionQueryOpcode(ObjectGuid petitionguid);
 
-        // Spell
-        void HandleClientCastFlags(WorldPacket& recvPacket, uint8 castFlags, SpellCastTargets& targets);
-
         // Pet
         void SendQueryPetNameResponse(ObjectGuid guid);
         void SendStablePet(ObjectGuid guid);
