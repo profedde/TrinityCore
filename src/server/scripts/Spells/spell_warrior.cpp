@@ -322,7 +322,7 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 
-		bool CheckProc(ProcEventInfo& eventInfo)
+		bool CheckProc(ProcEventInfo& /*eventInfo*/)
 		{
 			/*if (eventInfo.GetHitMask() == 66)
 				return true;*/
@@ -356,7 +356,7 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 
-		bool CheckProc(ProcEventInfo& eventInfo)
+		bool CheckProc(ProcEventInfo& /*eventInfo*/)
 		{
 			/*if (eventInfo.GetSpellInfo()->Id == 85288 && eventInfo.GetHitMask() == 2)
 				return true;*/
