@@ -615,7 +615,6 @@ class spell_pri_levitate : public SpellScriptLoader
 
 			void HandleEffectDummy(SpellEffIndex effIndex)
 			{
-				Unit* caster = GetCaster();
 				if (Unit* unitTarget = GetHitUnit())
 				{
 					if (!unitTarget->IsAlive())
