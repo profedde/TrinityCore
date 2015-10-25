@@ -20369,9 +20369,9 @@ void Player::PetSpellInitialize()
 
     TC_LOG_DEBUG("entities.pet", "Pet Spells Groups");
 
-	CharmInfo* charmInfo = pet->GetCharmInfo();
+	/*CharmInfo* charmInfo = pet->GetCharmInfo();
 	
-	/*From skyfire
+	From skyfire
 	ObjectGuid guid = pet->GetGUID();
 
 	uint32 spellCount = 0;

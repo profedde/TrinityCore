@@ -55,7 +55,7 @@ public:
 		return true;
 	}
 	
-	bool OnGossipSelect(Player* plr, Creature* npc, uint32 sender, uint32 uiAction)
+	bool OnGossipSelect(Player* plr, Creature* npc, uint32 /*sender*/, uint32 uiAction)
 	{
 		if (!plr)
 			return false;
