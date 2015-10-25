@@ -47,11 +47,10 @@ public:
             { "swim",     rbac::RBAC_PERM_COMMAND_MODIFY_SPEED_SWIM,     false, &HandleModifySwimCommand,   "" },
             { "",         rbac::RBAC_PERM_COMMAND_MODIFY_SPEED,          false, &HandleModifyASpeedCommand, "" },
         };
-		static ChatCommand modifypowerCommandTable[] =
+		static std::vector<ChatCommand> modifypowerCommandTable =
 		{
 			{ "set",rbac::RBAC_PERM_COMMAND_MODIFY_POWER_SET, false, &HandleModifyPowerSetCommand, "" },
 			{ "get", rbac::RBAC_PERM_COMMAND_MODIFY_POWER_GET, false, &HandleModifyPowerGetCommand, "" },
-			{ NULL, 0, false, NULL, "" }
 		};
         static std::vector<ChatCommand> modifyCommandTable =
         {
