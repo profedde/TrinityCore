@@ -852,7 +852,7 @@ public:
 	{
 		PrepareAuraScript(spell_warl_burning_embers_AuraScript);
 
-		void OnProc(AuraEffect const* aurEff, ProcEventInfo& /*eventInfo*/)
+		void OnProc(AuraEffect const* /*aurEff*/, ProcEventInfo& /*eventInfo*/)
 		{
 			PreventDefaultAction();
 			TC_LOG_INFO("server.loading", "BURNING EMBERS PROCCED");

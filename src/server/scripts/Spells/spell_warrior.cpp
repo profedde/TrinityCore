@@ -620,7 +620,7 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 
-		void HandleRemove(AuraEffect const* /*aurEff, AuraEffectHandleModes /*mode)
+		void HandleRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
 		{
 			Player* caster = GetCaster()->ToPlayer();
 			AuraRemoveMode removeMode = GetTargetApplication()->GetRemoveMode();
