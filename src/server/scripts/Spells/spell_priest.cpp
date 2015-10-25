@@ -613,7 +613,7 @@ class spell_pri_levitate : public SpellScriptLoader
 				return true;
 			}
 
-			void HandleEffectDummy(SpellEffIndex effIndex)
+			void HandleEffectDummy(SpellEffIndex /*effIndex*/)
 			{
 				if (Unit* unitTarget = GetHitUnit())
 				{
