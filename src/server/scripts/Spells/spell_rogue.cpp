@@ -974,7 +974,7 @@ class spell_rog_subterfuge : public SpellScriptLoader
 		{
 			PrepareAuraScript(spell_rog_subterfuge_AuraScript);
 
-			void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+			void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 			{
 				if (Unit* caster = GetCaster())
 					caster->SetShapeshiftForm(FORM_NONE);
@@ -1123,7 +1123,7 @@ public:
 			return true;
 		}
 
-		void HandleEffectApply(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+		void HandleEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
 			Unit* target = GetTarget();
 
@@ -1143,7 +1143,7 @@ public:
 
 		}
 
-		void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
+		void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
 			if (Unit* caster = GetCaster())
 			{
