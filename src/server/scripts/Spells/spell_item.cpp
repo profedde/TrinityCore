@@ -2681,7 +2681,7 @@ class spell_item_eye_of_the_black_prince : public SpellScriptLoader
 					if (GetExplTargetItem()->GetEntry() == shatouched[i])
 						return SPELL_CAST_OK;
 				}
-				for (int i = 0; i < sizeof(armamentsofthunderking) / sizeof(uint32); i++)
+				for (uint32 i = 0; i < sizeof(armamentsofthunderking) / sizeof(uint32); i++)
 				{
 					if (GetExplTargetItem()->GetEntry() == armamentsofthunderking[i])
 						return SPELL_CAST_OK;
