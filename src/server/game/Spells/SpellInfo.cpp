@@ -3274,7 +3274,7 @@ void SpellInfo::_UnloadImplicitTargetConditionLists()
         {
             if (SpellEffectInfo const* effect = GetEffect(d, i))
             {
-                ConditionList* cur = effect->ImplicitTargetConditions;
+                ConditionContainer* cur = effect->ImplicitTargetConditions;
                 if (!cur)
                     continue;
                 for (uint8 j = i; j < _effects.size(); ++j)
