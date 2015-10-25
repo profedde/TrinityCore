@@ -250,7 +250,10 @@ namespace WorldPackets
 		{
 		public:
 			PetSetAction(WorldPacket&& packet) : ClientPacket(CMSG_PET_SET_ACTION, std::move(packet)) { }
+			
+			void Read() override;
 
+			SpellCastRequest Cast;
 		};
 
         class PetCastSpell final : public ClientPacket
