@@ -859,7 +859,7 @@ public:
 			int32 embers = GetCaster()->GetPower(POWER_BURNING_EMBERS);
 			if (embers < 10)
 				GetCaster()->SetPower(POWER_BURNING_EMBERS, embers + 1);
-			if (embers = 10)
+			if (embers == 10)
 				GetCaster()->SetPower(POWER_BURNING_EMBERS, 10);
 			if (embers > 10 && embers < 40)
 				GetCaster()->SetPower(POWER_BURNING_EMBERS, embers - 1);

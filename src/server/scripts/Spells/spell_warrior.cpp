@@ -464,7 +464,7 @@ class spell_warr_intervene : public SpellScriptLoader
 
 			SpellCastResult CheckElevation()
 			{
-				if (WorldLocation const* dest = GetExplTargetDest())
+				if (GetExplTargetDest())
 				{
 
 					if (Player* caster = GetCaster()->ToPlayer())
