@@ -209,7 +209,7 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 
-		void OnPeriodic(AuraEffect const* aurEff)
+		void OnPeriodic(AuraEffect const* /*aurEff*/)
 		{
 
 			if (Player* caster = GetCaster()->ToPlayer())
