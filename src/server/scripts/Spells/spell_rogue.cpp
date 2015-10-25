@@ -1098,7 +1098,7 @@ public:
 	{
 		PrepareAuraScript(spell_rog_stealth2_AuraScript);
 
-		bool Validate(SpellInfo const* spellInfo)
+		bool Validate(SpellInfo const* /*spellInfo*/)
 		{
 			if (!sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE) ||
 				!sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_DAMAGE_PERCENT) ||
