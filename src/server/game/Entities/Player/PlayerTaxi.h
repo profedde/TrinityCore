@@ -33,7 +33,7 @@ class PlayerTaxi
             else
                 return false;
         }
-        void AppendTaximaskTo(WorldPackets::Taxi::ShowTaxiNodes& data, bool all);//
+        void AppendTaximaskTo(WorldPackets::Taxi::ShowTaxiNodes& data, bool all);
         TaxiMask const& GetTaxiMask() const { return m_taximask; }
 
         // Destinations
