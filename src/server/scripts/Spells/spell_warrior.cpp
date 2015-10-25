@@ -627,7 +627,7 @@ public:
 			if (removeMode != AURA_REMOVE_BY_EXPIRE)
 				return;
 			
-			/*
+			
 			if (GetSpellInfo()->Id != 85288)
 				PreventDefaultAction();
 			if(caster->GetAuraCount(SPELL_WARRIOR_RAGING_BLOW_TRIGGER) == 2)
