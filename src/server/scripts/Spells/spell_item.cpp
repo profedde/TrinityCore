@@ -2676,7 +2676,6 @@ class spell_item_eye_of_the_black_prince : public SpellScriptLoader
 
 			SpellCastResult CheckShaTouched()
 			{
-				Unit* caster = GetCaster();
 				for (int i = 0; i < sizeof(shatouched) / sizeof(uint32); i++)
 				{
 					if (GetExplTargetItem()->GetEntry() == shatouched[i])
@@ -2713,7 +2712,7 @@ class spell_item_unusual_compass : public SpellScriptLoader
         {
             PrepareSpellScript(spell_item_unusual_compass_SpellScript);
 
-            void HandleDummy(SpellEffIndex /* effIndex */)
+            void HandleDummy(SpellEffIndex /*effIndex*/)
             {
                 Unit* caster = GetCaster();
                 caster->SetFacingTo(frand(0.0f, 2.0f * float(M_PI)));
@@ -2760,7 +2759,7 @@ class spell_item_chicken_cover : public SpellScriptLoader
                 return true;
             }
 
-            void HandleDummy(SpellEffIndex /* effIndex */)
+            void HandleDummy(SpellEffIndex /*effIndex*/)
             {
                 Player* caster = GetCaster()->ToPlayer();
                 if (Unit* target = GetHitUnit())
