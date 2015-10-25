@@ -9,10 +9,6 @@ public:
 
 	bool OnGossipHello(Player* plr, Creature* npc)
 	{
-		//bool combat = plr->IsInCombat();
-		//bool gamer = plr->IsGameMaster();
-		uint32 pfaction = plr->getRace();
-		
 		plr->ADD_GOSSIP_ITEM(0, "Heal Me Up!", GOSSIP_SENDER_MAIN, 1);
 		if (plr->IsInCombat())
 		{
@@ -72,15 +68,12 @@ public:
 		{
 				  uint32 MaxHealth = plr->GetMaxHealth();
 				  plr->SetHealth(MaxHealth);
-				  //plr->GetSession()->SendAreaTriggerMessage("You've been healed!");
-				  
 				  plr->CLOSE_GOSSIP_MENU();
 				  break;
 		}
 		case 2:
 		{
 				  plr->CombatStop();
-				  //plr->GetSession()->SendAreaTriggerMessage("Combat Removed!");
 				  plr->CLOSE_GOSSIP_MENU();
 				  break;
 

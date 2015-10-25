@@ -6260,7 +6260,7 @@ void Player::SendMovieStart(uint32 MovieId)
 bool Player::isOutside()
 {
 	bool isOutdoor;
-	uint16 areaFlag = GetBaseMap()->GetAreaFlag(GetPositionX(), GetPositionY(), GetPositionZ(), &isOutdoor);
+	GetBaseMap()->GetAreaFlag(GetPositionX(), GetPositionY(), GetPositionZ(), &isOutdoor);
 	return isOutdoor;
 
 }
