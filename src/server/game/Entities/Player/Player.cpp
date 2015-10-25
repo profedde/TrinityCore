@@ -20538,8 +20538,8 @@ void Player::VehicleSpellInitialize()
     if (!vehicle)
         return;
 
-    uint8 cooldownCount = 0;
-	/*
+	/*uint8 cooldownCount = 0;
+	
     WorldPacket data(SMSG_PET_SPELLS_MESSAGE, 8 + 2 + 4 + 4 + 4 * 10 + 1 + 1 + cooldownCount * (4 + 2 + 4 + 4));
     data << vehicle->GetGUID();                             // Guid
     data << uint16(0);                                      // Pet Family (0 for all vehicles)
