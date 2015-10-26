@@ -47,7 +47,8 @@ enum RogueSpells
     SPELL_ROGUE_OVERKILL_POWER_REGEN                = 58427,
     SPELL_ROGUE_PREY_ON_THE_WEAK                    = 58670,
     SPELL_ROGUE_SHIV_TRIGGERED                      = 5940,
-    SPELL_ROGUE_SILCE_AND_DICE                      = 5171,
+    SPELL_ROGUE_SLICE_AND_DICE                      = 5171,
+	SPELL_ROGUE_HONOR_AMONG_THIEVES					= 51701,
     SPELL_ROGUE_TRICKS_OF_THE_TRADE_DMG_BOOST       = 57933,
     SPELL_ROGUE_TRICKS_OF_THE_TRADE_PROC            = 59628,
     SPELL_ROGUE_SERRATED_BLADES_R1                  = 14171,
@@ -56,7 +57,7 @@ enum RogueSpells
 	SPELL_ROGUE_BURST_OF_SPEED2						= 108212,
 	SPELL_ROGUE_SUBTERFUGE							= 108208,
 	SPELL_ROGUE_STEALTH1							= 1784,
-	SPELL_ROGUE_STEALTH2							= 115191,
+	//SPELL_ROGUE_STEALTH2							= 115191,
 };
 
 enum RogueSpellIcons
@@ -276,7 +277,7 @@ class spell_rog_cut_to_the_chase : public SpellScriptLoader
             void HandleProc(AuraEffect const* /*aurEff*/, ProcEventInfo& /*eventInfo*/)
             {
                 PreventDefaultAction();
-                if (Aura* aur = GetTarget()->GetAura(SPELL_ROGUE_SILCE_AND_DICE))
+                if (Aura* aur = GetTarget()->GetAura(SPELL_ROGUE_SLICE_AND_DICE))
                     aur->SetDuration(aur->GetSpellInfo()->GetMaxDuration(), true);
             }
 
@@ -1088,7 +1089,7 @@ class spell_rog_stealth : public SpellScriptLoader
         }
 };
 
-// 115191 - Stealth
+/* 115191 - Stealth
 class spell_rog_stealth2 : public SpellScriptLoader
 {
 public:
@@ -1098,7 +1099,7 @@ public:
 	{
 		PrepareAuraScript(spell_rog_stealth2_AuraScript);
 
-		bool Validate(SpellInfo const* /*spellInfo*/)
+		bool Validate(SpellInfo const* spellInfo)
 		{
 			if (!sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_PASSIVE) ||
 				!sSpellMgr->GetSpellInfo(SPELL_ROGUE_MASTER_OF_SUBTLETY_DAMAGE_PERCENT) ||
@@ -1107,7 +1108,7 @@ public:
 			return true;
 		}
 
-		void HandleEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		void HandleEffectApply(AuraEffect const* aurEff, AuraEffectHandleModes mode)
 		{
 			Unit* target = GetTarget();
 
@@ -1127,7 +1128,7 @@ public:
 
 		}
 
-		void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
 		{
 			if (Unit* caster = GetCaster())
 			{
@@ -1156,8 +1157,49 @@ public:
 	{
 		return new spell_rog_stealth2_AuraScript();
 	}
-};
+};*/
 
+// 51699 - Honor Among Thieves
+class spell_rog_honor_among_thieves_proc : public SpellScriptLoader
+{
+public:
+	spell_rog_honor_among_thieves_proc() : SpellScriptLoader("spell_rog_honor_among_thieves_proc") { }
+
+	class spell_rog_honor_among_thieves_proc_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_rog_honor_among_thieves_proc_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		bool CheckProc(ProcEventInfo& eventInfo)
+		{
+			Player* caster = GetCaster()->ToPlayer();
+			if (eventInfo.GetActor()->HasAura(SPELL_ROGUE_HONOR_AMONG_THIEVES, caster->GetGUID()))
+			{
+				if (eventInfo.GetHitMask() == 2)
+					return true;
+				return false;
+		
+			}
+		}
+		void OnProc(AuraEffect const* /*aurEff*/, ProcEventInfo& /*eventInfo*/)
+		{
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				caster->AddComboPoints(caster, 1);
+			}
+		}
+
+		void Register() override
+		{
+			AfterEffectProc += AuraEffectProcFn(spell_rog_honor_among_thieves_proc_AuraScript::OnProc, EFFECT_0, SPELL_AURA_PROC_TRIGGER_SPELL);
+			DoCheckProc += AuraCheckProcFn(spell_rog_honor_among_thieves_proc_AuraScript::CheckProc);
+		}
+	};
+};
 // 57934 - Tricks of the Trade
 class spell_rog_tricks_of_the_trade : public SpellScriptLoader
 {
@@ -1306,7 +1348,8 @@ void AddSC_rogue_spell_scripts()
     new spell_rog_rupture();
 	new spell_rog_shiv();
 	new spell_rog_stealth();
-	new spell_rog_stealth2();
+	new spell_rog_honor_among_thieves_proc();
+	//new spell_rog_stealth2();
     new spell_rog_tricks_of_the_trade();
     new spell_rog_tricks_of_the_trade_proc();
     new spell_rog_serrated_blades();
