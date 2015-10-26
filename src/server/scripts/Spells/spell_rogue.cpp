@@ -1195,7 +1195,7 @@ public:
 
 		void Register() override
 		{
-			AfterEffectProc += AuraEffectProcFn(spell_rog_honor_among_thieves_proc_AuraScript::OnProc, EFFECT_0, SPELL_AURA_PROC_TRIGGER_SPELL);
+			AfterEffectProc += AuraEffectProcFn(spell_rog_honor_among_thieves_proc_AuraScript::OnProc, EFFECT_0, SPELL_EFFECT_ENERGIZE);
 			DoCheckProc += AuraCheckProcFn(spell_rog_honor_among_thieves_proc_AuraScript::CheckProc);
 		}
 	};
