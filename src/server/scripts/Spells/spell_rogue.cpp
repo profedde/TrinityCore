@@ -1182,8 +1182,8 @@ public:
 				if (eventInfo.GetHitMask() == 2)
 					return true;
 				return false;
-		
 			}
+			return false;
 		}
 		void OnProc(AuraEffect const* /*aurEff*/, ProcEventInfo& /*eventInfo*/)
 		{
