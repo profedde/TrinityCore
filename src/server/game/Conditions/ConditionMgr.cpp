@@ -27,7 +27,6 @@
 #include "ScriptMgr.h"
 #include "SpellAuras.h"
 #include "SpellMgr.h"
-#include "Spell.h"
 
 char const* ConditionMgr::StaticSourceTypeData[CONDITION_SOURCE_TYPE_MAX] =
 {
@@ -300,10 +299,10 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
                     switch (object->GetTypeId())
                     {
                         case TYPEID_UNIT:
-                            condMeets &= object->ToCreature()->GetDBTableGUIDLow() == ConditionValue3;
+                            condMeets &= object->ToCreature()->GetSpawnId() == ConditionValue3;
                             break;
                         case TYPEID_GAMEOBJECT:
-                            condMeets &= object->ToGameObject()->GetDBTableGUIDLow() == ConditionValue3;
+                            condMeets &= object->ToGameObject()->GetSpawnId() == ConditionValue3;
                             break;
                         default:
                             break;
@@ -1535,6 +1534,9 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 if (!((1 << i) & cond->SourceGroup))
                     continue;
 
+                if (spellInfo->Effects[i].ChainTarget > 0)
+                    continue;
+
                 switch (spellInfo->Effects[i].TargetA.GetSelectionCategory())
                 {
                     case TARGET_SELECT_CATEGORY_NEARBY:
@@ -1555,7 +1557,7 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                         break;
                 }
 
-                TC_LOG_ERROR("sql.sql", "SourceEntry %u SourceGroup %u in `condition` table - spell %u does not have implicit targets of types: _AREA_, _CONE_, _NEARBY_ for effect %u, SourceGroup needs correction, ignoring.", cond->SourceEntry, origGroup, cond->SourceEntry, uint32(i));
+                TC_LOG_ERROR("sql.sql", "SourceEntry %u SourceGroup %u in `condition` table - spell %u does not have implicit targets of types: _AREA_, _CONE_, _NEARBY_, __CHAIN__ for effect %u, SourceGroup needs correction, ignoring.", cond->SourceEntry, origGroup, cond->SourceEntry, uint32(i));
                 cond->SourceGroup &= ~(1 << i);
             }
             // all effects were removed, no need to add the condition at all
