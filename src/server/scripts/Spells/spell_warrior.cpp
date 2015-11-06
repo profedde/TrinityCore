@@ -466,16 +466,16 @@ class spell_warr_intervene : public SpellScriptLoader
 			{
 				if (Player* caster = GetCaster()->ToPlayer())
 				{
-					/*if (caster->HasUnitMovementFlag(MOVEMENTFLAG_ROOT))
+					if (caster->HasUnitMovementFlag(MOVEMENTFLAG_ROOT))
 						return SPELL_FAILED_ROOTED;
-					else*/ if (!caster->IsInRange(GetExplTargetUnit(), 0.0f, 25.0f))
+					else if (!caster->IsInRange(GetExplTargetUnit(), 0.0f, 25.0f))
 						return SPELL_FAILED_OUT_OF_RANGE;
-					else if (!GetHitUnit()->ToPlayer() || !GetExplTargetUnit()->IsFriendlyTo(caster))
+					else if (!GetExplTargetUnit()->ToPlayer() || !GetExplTargetUnit()->IsFriendlyTo(caster))
 						return SPELL_FAILED_BAD_TARGETS;
 					else 
 						return SPELL_CAST_OK;
 				}
-				//return SPELL_FAILED_CUSTOM_ERROR;
+				return SPELL_FAILED_SPELL_UNAVAILABLE;
 			}
 			/*
 			void HandleEffect(SpellEffIndex effIndex)
