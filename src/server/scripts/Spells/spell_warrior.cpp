@@ -464,18 +464,29 @@ class spell_warr_intervene : public SpellScriptLoader
 
 			SpellCastResult CheckElevation()
 			{
-				if (Player* caster = GetCaster()->ToPlayer())
+				Unit* caster = GetCaster();
+				if (Unit* target = GetExplTargetUnit())
 				{
-					if (caster->HasUnitMovementFlag(MOVEMENTFLAG_ROOT))
-						return SPELL_FAILED_ROOTED;
-					else if (!caster->IsInRange(GetExplTargetUnit(), 0.0f, 25.0f))
-						return SPELL_FAILED_OUT_OF_RANGE;
-					else if (!GetExplTargetUnit()->IsFriendlyTo(caster))
+					if (!caster->IsFriendlyTo(target))
+					{
+						if (!caster->IsValidAttackTarget(target))
+							return SPELL_FAILED_BAD_TARGETS;
+						if (caster->HasUnitMovementFlag(MOVEMENTFLAG_ROOT))
+							return SPELL_FAILED_ROOTED;
+						if (!caster->isInFront(target))
+							return SPELL_FAILED_UNIT_NOT_INFRONT;
+						if (caster == target)
+							return SPELL_FAILED_NO_VALID_TARGETS;
+						if (!caster->IsInRange(target, 0.0f, 25.0f))
+							return SPELL_FAILED_OUT_OF_RANGE;
+
+					}
+					else
 						return SPELL_FAILED_BAD_TARGETS;
-					else 
-						return SPELL_CAST_OK;
 				}
-				return SPELL_FAILED_SPELL_UNAVAILABLE;
+				else
+					return SPELL_FAILED_BAD_TARGETS;
+				return SPELL_CAST_OK;
 			}
 
 			void Register() override
