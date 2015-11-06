@@ -467,9 +467,9 @@ class spell_warr_intervene : public SpellScriptLoader
 				Unit* caster = GetCaster();
 				if (Unit* target = GetExplTargetUnit())
 				{
-					if (!caster->IsFriendlyTo(target))
+					if (caster->IsFriendlyTo(target))
 					{
-						if (!caster->IsValidAttackTarget(target))
+						if (caster->IsValidAttackTarget(target))
 							return SPELL_FAILED_BAD_TARGETS;
 						if (caster->HasUnitMovementFlag(MOVEMENTFLAG_ROOT))
 							return SPELL_FAILED_ROOTED;
@@ -479,7 +479,8 @@ class spell_warr_intervene : public SpellScriptLoader
 							return SPELL_FAILED_NO_VALID_TARGETS;
 						if (!caster->IsInRange(target, 0.0f, 25.0f))
 							return SPELL_FAILED_OUT_OF_RANGE;
-
+						if (!caster->IsWithinLOS(target->m_positionX, target->m_positionY, target->m_positionZ))
+							return SPELL_FAILED_LINE_OF_SIGHT;
 					}
 					else
 						return SPELL_FAILED_BAD_TARGETS;
