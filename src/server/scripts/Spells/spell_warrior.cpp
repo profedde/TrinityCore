@@ -470,26 +470,17 @@ class spell_warr_intervene : public SpellScriptLoader
 						return SPELL_FAILED_ROOTED;
 					else if (!caster->IsInRange(GetExplTargetUnit(), 0.0f, 25.0f))
 						return SPELL_FAILED_OUT_OF_RANGE;
-					else if (!GetExplTargetUnit()->ToPlayer() || !GetExplTargetUnit()->IsFriendlyTo(caster))
+					else if (!GetExplTargetUnit()->IsFriendlyTo(caster))
 						return SPELL_FAILED_BAD_TARGETS;
 					else 
 						return SPELL_CAST_OK;
 				}
 				return SPELL_FAILED_SPELL_UNAVAILABLE;
 			}
-			/*
-			void HandleEffect(SpellEffIndex effIndex)
-			{
-				if (Player* caster = GetCaster()->ToPlayer())
-				{
-					caster->CastSpell(GetHitUnit(), SPELL_WARRIOR_INTERVENE);
-				}
-			}
-			*/
+
 			void Register() override
 			{
 				OnCheckCast += SpellCheckCastFn(spell_warr_intervene_SpellScript::CheckElevation);
-				//OnEffectHitTarget += SpellEffectFn(spell_warr_intervene_SpellScript::HandleEffect, EFFECT_0, SPELL_EFFECT_DUMMY);
 			}
 		};
 
