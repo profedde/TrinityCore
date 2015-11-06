@@ -15406,6 +15406,16 @@ bool Player::GetQuestRewardStatus(uint32 quest_id) const
     Quest const* qInfo = sObjectMgr->GetQuestTemplate(quest_id);
     if (qInfo)
     {
+        if (qInfo->IsSeasonal() && !qInfo->IsRepeatable())
+        {
+            uint16 eventId = sGameEventMgr->GetEventIdForQuest(qInfo);
+            if (m_seasonalquests.find(eventId) != m_seasonalquests.end())
+                return m_seasonalquests.find(eventId)->second.find(quest_id) != m_seasonalquests.find(eventId)->second.end();
+            
+            return false;
+        }
+
+
         // for repeatable quests: rewarded field is set after first reward only to prevent getting XP more than once
         if (!qInfo->IsRepeatable())
             return m_RewardedQuests.find(quest_id) != m_RewardedQuests.end();
@@ -15424,8 +15434,17 @@ QuestStatus Player::GetQuestStatus(uint32 quest_id) const
             return itr->second.Status;
 
         if (Quest const* qInfo = sObjectMgr->GetQuestTemplate(quest_id))
+        {
+            if (qInfo->IsSeasonal() && !qInfo->IsRepeatable())
+            {
+                uint16 eventId = sGameEventMgr->GetEventIdForQuest(qInfo);
+                if (m_seasonalquests.find(eventId) == m_seasonalquests.end() || m_seasonalquests.find(eventId)->second.find(quest_id) == m_seasonalquests.find(eventId)->second.end())
+                    return QUEST_STATUS_NONE;
+            }
+
             if (!qInfo->IsRepeatable() && m_RewardedQuests.find(quest_id) != m_RewardedQuests.end())
                 return QUEST_STATUS_REWARDED;
+        }
     }
     return QUEST_STATUS_NONE;
 }
@@ -18829,7 +18848,7 @@ void Player::SaveToDB(bool create /*=false*/)
         stmt->setString(index++, GetName());
         stmt->setUInt8(index++, getRace());
         stmt->setUInt8(index++, getClass());
-        stmt->setUInt8(index++, getGender());
+        stmt->setUInt8(index++, GetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_GENDER));   // save gender from PLAYER_BYTES_3, UNIT_BYTES_0 changes with every transform effect
         stmt->setUInt8(index++, getLevel());
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_XP));
         stmt->setUInt64(index++, GetMoney());
@@ -18951,7 +18970,7 @@ void Player::SaveToDB(bool create /*=false*/)
         stmt->setString(index++, GetName());
         stmt->setUInt8(index++, getRace());
         stmt->setUInt8(index++, getClass());
-        stmt->setUInt8(index++, getGender());
+        stmt->setUInt8(index++, GetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_GENDER));   // save gender from PLAYER_BYTES_3, UNIT_BYTES_0 changes with every transform effect
         stmt->setUInt8(index++, getLevel());
         stmt->setUInt32(index++, GetUInt32Value(PLAYER_XP));
         stmt->setUInt64(index++, GetMoney());
