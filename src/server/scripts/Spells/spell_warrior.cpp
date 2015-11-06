@@ -464,34 +464,32 @@ class spell_warr_intervene : public SpellScriptLoader
 
 			SpellCastResult CheckElevation()
 			{
-				if (GetExplTargetDest())
+				if (Player* caster = GetCaster()->ToPlayer())
 				{
-
-					if (Player* caster = GetCaster()->ToPlayer())
-					{
-						if (caster->HasUnitMovementFlag(MOVEMENTFLAG_ROOT))
-							return SPELL_FAILED_ROOTED;
-						if (!caster->IsInRange(GetHitUnit(), 0.0f, 25.0f))
-							return SPELL_FAILED_OUT_OF_RANGE;
-						if (!GetHitUnit()->ToPlayer() || !GetHitUnit()->IsFriendlyTo(caster))
-							return SPELL_FAILED_BAD_TARGETS;
-					}
+					if (caster->HasUnitMovementFlag(MOVEMENTFLAG_ROOT))
+						return SPELL_FAILED_ROOTED;
+					else if (!caster->IsInRange(GetHitUnit(), 0.0f, 25.0f))
+						return SPELL_FAILED_OUT_OF_RANGE;
+					else if (!GetHitUnit()->ToPlayer() || !GetHitUnit()->IsFriendlyTo(caster))
+						return SPELL_FAILED_BAD_TARGETS;
+					else 
+						return SPELL_CAST_OK;
 				}
-				return SPELL_CAST_OK;
+				return SPELL_FAILED_CUSTOM_ERROR;
 			}
-
-			void HandleEffect(SpellEffIndex /*effIndex*/)
+			/*
+			void HandleEffect(SpellEffIndex effIndex)
 			{
 				if (Player* caster = GetCaster()->ToPlayer())
 				{
 					caster->CastSpell(GetHitUnit(), SPELL_WARRIOR_INTERVENE);
 				}
 			}
-			
+			*/
 			void Register() override
 			{
 				OnCheckCast += SpellCheckCastFn(spell_warr_intervene_SpellScript::CheckElevation);
-				OnEffectHitTarget += SpellEffectFn(spell_warr_intervene_SpellScript::HandleEffect, EFFECT_0, SPELL_EFFECT_DUMMY);
+				//OnEffectHitTarget += SpellEffectFn(spell_warr_intervene_SpellScript::HandleEffect, EFFECT_0, SPELL_EFFECT_DUMMY);
 			}
 		};
 
