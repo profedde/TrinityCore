@@ -1774,7 +1774,7 @@ uint32 Item::GetItemLevel(Player const* owner) const
         return MIN_ITEM_LEVEL;
 
     uint32 itemLevel = stats->GetBaseItemLevel();
-    if (ScalingStatDistributionEntry const* ssd = sScalingStatDistributionStore.LookupEntry(stats->GetScalingStatDistribution()))
+    if (ScalingStatDistributionEntry const* ssd = sScalingStatDistributionStore.LookupEntry(GetScalingStatDistribution()))
         if (uint32 heirloomIlvl = sDB2Manager.GetHeirloomItemLevel(ssd->ItemLevelCurveID, owner->getLevel()))
             itemLevel = heirloomIlvl;
 
@@ -1858,6 +1858,8 @@ void BonusData::Initialize(ItemTemplate const* proto)
         SocketColor[i] = proto->GetSocketColor(i);
 
     AppearanceModID = 0;
+    RepairCostMultiplier = 1.0f;
+    ScalingStatDistribution = proto->GetScalingStatDistribution();
 }
 
 void BonusData::Initialize(WorldPackets::Item::ItemInstance const& itemInstance)
@@ -1919,6 +1921,12 @@ void BonusData::AddBonus(uint32 type, int32 const (&values)[2])
             break;
         case ITEM_BONUS_REQUIRED_LEVEL:
             RequiredLevel += values[0];
+            break;
+        case ITEM_BONUS_REPAIR_COST_MULTIPLIER:
+            RepairCostMultiplier *= static_cast<float>(values[0]) * 0.01f;
+            break;
+        case ITEM_BONUS_SCALING_STAT_DISTRIBUTION:
+            ScalingStatDistribution = static_cast<uint32>(values[0]);
             break;
     }
 }
