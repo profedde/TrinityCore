@@ -21322,8 +21322,7 @@ void Player::InitDisplayIds()
             SetNativeDisplayId(info->displayId_m);
             break;
         default:
-            TC_LOG_ERROR("entities.player", "Invalid gender %u for player", gender);
-            return;
+            TC_LOG_ERROR("entities.player", "Player %s (%s) has invalid gender %u", GetName().c_str(), GetGUID().ToString().c_str(), gender);
     }
 }
 
