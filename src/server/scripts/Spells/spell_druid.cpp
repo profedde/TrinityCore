@@ -1723,6 +1723,7 @@ void AddSC_druid_spell_scripts()
 	new spell_dru_bear_form();
 	new spell_dru_cat_form();
 	new spell_dru_flight_form();
+	new spell_dru_stag_flight_form();
 	new spell_dru_stag_form();
     new spell_dru_typhoon();
     new spell_dru_t10_restoration_4p_bonus();
