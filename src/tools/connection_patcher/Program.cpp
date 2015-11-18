@@ -99,8 +99,16 @@ namespace Connection_Patcher
         void do_patches(Patcher* patcher, boost::filesystem::path output, bool patchVersionPath, uint32_t buildNumber)
         {
             std::cout << "patching Portal\n";
-            // '.logon.battle.net' -> '' to allow for set portal 'host'
+            // '.logon.battle.net' -> '.infernos-wow.com' to allow for set portal 'host'
             patcher->Patch(Patches::Common::Portal(), Patterns::Common::Portal());
+
+			std::cout << "patching Config File\n";
+			// 'Config.wtf' -> 'Infernos' to change name of config file
+			patcher->Patch(Patches::Common::Config(), Patterns::Common::Config());
+			
+			std::cout << "patching Tag File\n";
+			// Date -> 'Infernos' to have tag at bottom of exe
+			patcher->Patch(Patches::Common::Tag(), Patterns::Common::Tag());
 
             std::cout << "patching redirect RSA Modulus\n";
             // public component of connection signing key to use known key pair

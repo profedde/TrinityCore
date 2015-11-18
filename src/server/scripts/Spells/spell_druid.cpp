@@ -194,6 +194,106 @@ public:
 	}
 };
 
+// 114338 - Glyph of the stag
+class spell_dru_stag : public SpellScriptLoader
+{
+public:
+	spell_dru_stag() : SpellScriptLoader("spell_dru_stag") { }
+
+	class spell_dru_stag_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_stag_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void ApplyEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			Player* caster = GetCaster()->ToPlayer();
+			caster->LearnSpell(114338, false);
+		}
+
+		void RemoveEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			Player* caster = GetCaster()->ToPlayer();
+			caster->RemoveSpell(114338, false);
+		}
+
+		void Register() override
+		{
+			OnEffectApply += AuraEffectApplyFn(spell_dru_stag_AuraScript::ApplyEffect, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			OnEffectRemove += AuraEffectRemoveFn(spell_dru_stag_AuraScript::RemoveEffect, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_stag_AuraScript();
+	}
+};
+
+// 165962 - Flight Form (glyph of stag)
+class spell_dru_stag_flight_form : public SpellScriptLoader
+{
+public:
+	spell_dru_stag_flight_form() : SpellScriptLoader("spell_dru_stag_flight_form") { }
+
+	class spell_dru_stag_flight_form_AuraScript : public AuraScript
+	{
+		PrepareAuraScript(spell_dru_stag_flight_form_AuraScript);
+
+		bool Load() override
+		{
+			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
+		}
+
+		void ApplyEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				if (caster->isOutside())
+				{
+						if (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
+							((caster->GetMapId() == 530) ||
+							(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
+							(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
+							(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646))))
+						{
+							if (caster->GetSkillValue(SKILL_RIDING) >= 300 && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
+								caster->CastSpell(caster, SPELL_DRUID_SWIFT_FLIGHT_FORM);
+							else if (!caster->HasAura(SPELL_DRUID_FLIGHT_FORM) && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
+								caster->CastSpell(caster, SPELL_DRUID_FLIGHT_FORM);
+						}
+				}
+			}
+		}
+
+		void RemoveEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+
+			if (Player* caster = GetCaster()->ToPlayer())
+			{
+				caster->RemoveAura(SPELL_DRUID_SWIFT_FLIGHT_FORM);
+				caster->RemoveAura(SPELL_DRUID_FLIGHT_FORM);
+			}
+		}
+
+		void Register() override
+		{
+			OnEffectApply += AuraEffectApplyFn(spell_dru_stag_flight_form_AuraScript::ApplyEffect, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+			OnEffectRemove += AuraEffectRemoveFn(spell_dru_stag_flight_form_AuraScript::RemoveEffect, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+		}
+	};
+
+	AuraScript* GetAuraScript() const override
+	{
+		return new spell_dru_stag_flight_form_AuraScript();
+	}
+};
+
 // 98386 - Form Controller
 class spell_dru_form_controller : public SpellScriptLoader
 {
@@ -229,9 +329,13 @@ public:
 							else if (!caster->HasAura(SPELL_DRUID_FLIGHT_FORM) && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
 								caster->CastSpell(caster, SPELL_DRUID_FLIGHT_FORM);
 						}
-						else if (!caster->HasAura(SPELL_DRUID_STAG_FORM) && !caster->HasAura(SPELL_DRUID_FLIGHT_FORM) && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
+						else if (!caster->HasAura(SPELL_DRUID_STAG_FORM) && !caster->HasAura(SPELL_DRUID_FLIGHT_FORM) && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM) && !caster->HasAura(165962))
 						{
 							caster->CastSpell(caster, SPELL_DRUID_STAG_FORM);
+							if (caster->HasAura(114338))
+							{
+								/*TODO: Convert player to vehicle for stag form*/
+							}
 						}
 					}
 				}
@@ -1606,6 +1710,7 @@ void AddSC_druid_spell_scripts()
     new spell_dru_predatory_strikes();
     new spell_dru_rip();
     new spell_dru_savage_defense();
+	new spell_dru_stag();
     new spell_dru_savage_roar();
     new spell_dru_starfall_dummy();
     new spell_dru_stampede();
