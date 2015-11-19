@@ -254,6 +254,8 @@ public:
 
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
+				if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
+					caster->RemoveAura(SPELL_DRUID_TRAVEL_FORM);
 				if (caster->isOutside())
 				{
 						if (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
