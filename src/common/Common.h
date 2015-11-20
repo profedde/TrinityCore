@@ -184,7 +184,7 @@ namespace Trinity
 namespace std
 {
     template<class K, class V>
-    struct hash<std::pair<K, V>>
+    class hash<std::pair<K, V>>
     {
     public:
         size_t operator()(std::pair<K, V> const& key) const
